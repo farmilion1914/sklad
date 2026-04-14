@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>📊 Складской учёт · Firebase</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; font-family: 'Segoe UI', -apple-system, Roboto, sans-serif; }
+        body { background: #eef2f6; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 0.5rem; -webkit-tap-highlight-color: transparent; }
+        .login-screen { max-width: 450px; width: 100%; margin: 20px auto; }
+        .login-card { background: white; border-radius: 32px; padding: 2rem 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        .login-title { font-size: 2rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.5rem; }
+        .login-subtitle { color: #5e7180; margin-bottom: 2rem; }
+        .employee-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; max-height: 400px; overflow-y: auto; }
+        .employee-btn { background: #f3f9ff; border: 2px solid #d9e2ec; padding: 18px 20px; border-radius: 20px; font-size: 1.3rem; font-weight: 600; color: #1e3a5f; cursor: pointer; transition: all 0.15s; text-align: left; display: flex; align-items: center; gap: 15px; }
+        .employee-btn.admin { background: linear-gradient(135deg, #1e3c5c, #2a5599); color: white; border-color: #1e3c5c; }
+        .employee-avatar { width: 45px; height: 45px; background: #2a6f97; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2rem; }
+        .admin-badge { background: #ffd700; color: #1e3a5f; padding: 4px 12px; border-radius: 30px; font-size: 0.8rem; margin-left: auto; }
+        .pin-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .pin-modal.active { display: flex; }
+        .pin-card { background: white; border-radius: 32px; padding: 2rem; max-width: 350px; width: 90%; text-align: center; }
+        .pin-title { font-size: 1.5rem; font-weight: 700; color: #1e3a5f; margin-bottom: 1.5rem; }
+        .pin-input { width: 100%; padding: 18px; font-size: 2rem; text-align: center; border: 2px solid #cbdae6; border-radius: 20px; margin-bottom: 20px; letter-spacing: 10px; outline: none; }
+        .pin-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
+        .pin-btn { background: #e0e9f2; border: none; padding: 18px; font-size: 1.5rem; font-weight: 700; border-radius: 16px; cursor: pointer; color: #1e3a5f; }
+        .pin-btn.clear { background: #f1e6e6; color: #934a4a; }
+        .pin-btn.submit { background: #2a6b3c; color: white; grid-column: span 2; }
+        .pin-error { color: #c75d1e; margin-top: 10px; font-weight: 600; }
+        
+        /* Основной интерфейс */
+        .dashboard { max-width: 1400px; width: 100%; display: none; }
+        .dashboard.active { display: block; }
+        
+        /* Шапка */
+        .employee-header { background: linear-gradient(135deg, #1e3c5c 0%, #2a5599 100%); color: white; padding: 0.8rem 1.2rem; border-radius: 20px; margin-bottom: 1.2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .user-avatar { width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.3rem; }
+        .user-name { font-size: 1.3rem; font-weight: 700; }
+        .admin-tag { background: #ffd700; color: #1e3a5f; padding: 4px 12px; border-radius: 30px; font-size: 0.8rem; font-weight: 700; }
+        .logout-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; }
+        .sync-status { font-size: 0.8rem; color: #a0c4e0; display: flex; align-items: center; gap: 5px; }
+        
+        /* Контейнеры */
+        .user-view { display: none; }
+        .user-view.active { display: block; }
+        .admin-view { display: none; }
+        .admin-view.active { display: block; }
+        
+        /* Стили для сотрудников */
+        .warehouse-container { display: none; }
+        .warehouse-container.active { display: block; }
+        .warehouse-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #1e3a5f; }
+        .work-day-card { background: linear-gradient(135deg, #e8f0fe, #d4e4f7); border-radius: 20px; padding: 1rem 1.2rem; margin-bottom: 20px; border: 2px solid #2a6f97; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+        .btn-work { background: #2a6b3c; border: none; color: white; font-weight: 700; font-size: 1.3rem; padding: 12px 30px; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 0 #1a4627; }
+        .operations-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 25px; }
+        @media (min-width: 600px) { .operations-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 900px) { .operations-grid { grid-template-columns: repeat(4, 1fr); } }
+        .op-card { background: white; border-radius: 20px; padding: 1.2rem 1.2rem 1.5rem; border: 1px solid #d9e2ec; }
+        .op-card h3 { font-weight: 600; font-size: 1rem; color: #1e3a5f; margin-bottom: 1rem; }
+        .counter-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: #f3f9ff; padding: 6px 14px; border-radius: 40px; }
+        .counter-value { font-size: 1.8rem; font-weight: 700; color: #0b2b44; }
+        .adjust-buttons { display: flex; gap: 8px; margin-bottom: 14px; }
+        .btn-adjust { flex: 1; background: #e0e9f2; border: 1.5px solid #b8cada; color: #1e3a5f; font-size: 1.6rem; font-weight: 700; padding: 8px 0; border-radius: 16px; cursor: pointer; }
+        .btn-ok { background: #2a6b3c; border: none; color: white; font-weight: 700; font-size: 1.2rem; padding: 14px 10px; border-radius: 50px; width: 100%; cursor: pointer; box-shadow: 0 5px 0 #1a4627; margin-top: 6px; }
+        .btn-ok.orange { background: #c75d1e; }
+        .btn-ok.blue { background: #2a6f97; }
+        .btn-ok.purple { background: #7b4f9e; }
+        .btn-ok.teal { background: #2a8f7a; }
+        .input-field { padding: 12px 14px; border: 1.5px solid #cbdae6; border-radius: 16px; font-size: 1rem; width: 100%; margin-bottom: 10px; }
+        .reset-btn { background: none; border: 1px solid #bacddc; padding: 5px 12px; border-radius: 30px; color: #3b5e7e; font-size: 0.75rem; cursor: pointer; margin-top: 8px; width: 100%; }
+        .history-section { background: white; border-radius: 20px; padding: 1.2rem; margin-top: 20px; }
+        
+        /* Админ-панель */
+        .admin-panel { background: white; border-radius: 20px; padding: 1.5rem; margin: 20px 0; border: 2px solid #ffd700; }
+        .admin-title { font-size: 1.3rem; font-weight: 700; color: #1e3a5f; margin-bottom: 1rem; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .admin-tab { background: #e0e9f2; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 600; cursor: pointer; }
+        .admin-tab.active { background: #1e4a7a; color: white; }
+        .delete-log-btn { background: #f1e6e6; border: 1px solid #cfb2b2; color: #934a4a; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 700px; }
+        th { background: #eef3f9; padding: 10px 8px; text-align: left; }
+        td { padding: 8px; border-bottom: 1px solid #dde5ef; }
+        .loading { text-align: center; padding: 40px; color: #667e96; }
+        .online-indicator { width: 10px; height: 10px; background: #4caf50; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .offline-indicator { background: #f44336; }
+        .stat-item { text-align: center; padding: 10px; background: #f3f9ff; border-radius: 16px; }
+        .stat-value { font-size: 1.8rem; font-weight: 800; color: #1e3a5f; }
+        .stat-label { color: #5e7180; font-size: 0.75rem; }
+        .header-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .warehouse-selector { display: flex; gap: 8px; background: rgba(255,255,255,0.1); padding: 5px; border-radius: 40px; }
+        .wh-btn { background: transparent; border: none; color: rgba(255,255,255,0.7); padding: 8px 20px; border-radius: 40px; font-weight: 600; font-size: 1rem; cursor: pointer; }
+        .wh-btn.active { background: white; color: #1e3a5f; }
+    </style>
+</head>
+<body>
+    <!-- ЭКРАН ВХОДА -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="login-title">🏭 Склад</div>
+            <div class="login-subtitle">Выберите сотрудника</div>
+            <div class="employee-list" id="loginEmployeeList"><div class="loading">Загрузка...</div></div>
+        </div>
+    </div>
+
+    <!-- PIN-КОД -->
+    <div id="pinModal" class="pin-modal">
+        <div class="pin-card">
+            <div class="pin-title">🔐 Введите PIN-код</div>
+            <input type="password" id="pinInput" class="pin-input" maxlength="4" inputmode="numeric" readonly>
+            <div class="pin-buttons">
+                <button class="pin-btn" data-num="1">1</button><button class="pin-btn" data-num="2">2</button><button class="pin-btn" data-num="3">3</button>
+                <button class="pin-btn" data-num="4">4</button><button class="pin-btn" data-num="5">5</button><button class="pin-btn" data-num="6">6</button>
+                <button class="pin-btn" data-num="7">7</button><button class="pin-btn" data-num="8">8</button><button class="pin-btn" data-num="9">9</button>
+                <button class="pin-btn clear" data-action="clear">⌫</button><button class="pin-btn" data-num="0">0</button><button class="pin-btn submit" data-action="submit">ОК</button>
+            </div>
+            <div id="pinError" class="pin-error"></div>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ ИНТЕРФЕЙС -->
+    <div id="dashboard" class="dashboard">
+        <!-- Шапка -->
+        <div class="employee-header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <div><div class="user-name" id="userName"></div><div id="syncStatus" class="sync-status"><span class="online-indicator"></span> Онлайн</div></div>
+                <span class="admin-tag" id="adminTag" style="display:none;">👑 АДМИН</span>
+            </div>
+            <div class="header-controls">
+                <div class="warehouse-selector" id="warehouseSelector" style="display:none;">
+                    <button class="wh-btn active" data-wh="Москва">🏢 Москва</button>
+                    <button class="wh-btn" data-wh="Пушкино">🏭 Пушкино</button>
+                </div>
+                <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
+            </div>
+        </div>
+
+        <!-- ИНТЕРФЕЙС СОТРУДНИКА -->
+        <div id="userView" class="user-view">
+            <!-- СКЛАД МОСКВА -->
+            <div id="moscowContainer" class="warehouse-container active">
+                <div class="warehouse-title">🏢 Склад Москва</div>
+                <div class="work-day-card"><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:2rem;">👷</span><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:15px;"><span id="moscowWorkedToday" style="color:#5e7180;">Не отмечено</span><button class="btn-work" id="moscowWorkBtn">ОК</button></div></div>
+                <div class="operations-grid">
+                    <div class="op-card"><h3>📦 СОБРАЛ паллет</h3><div class="counter-row"><span>счётчик</span><span class="counter-value" id="moscowCollected">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button></div><button class="btn-ok" data-action="collect">ОК</button><button class="reset-btn" data-reset="moscowCollected">↺ сброс</button></div>
+                    <div class="op-card"><h3>🚚 ОТГРУЗИЛ паллет</h3><div class="counter-row"><span>счётчик</span><span class="counter-value" id="moscowShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="ship">ОК</button><button class="reset-btn" data-reset="moscowShipped">↺ сброс</button></div>
+                    <div class="op-card"><h3>📋 ВЫЛОЖИЛ товар</h3><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" value="1" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:6px;font-size:0.75rem;">Последний: <span id="moscowLastArticle">—</span></div></div>
+                    <div class="op-card"><h3>📑 СБОРКА по накл.</h3><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" value="1" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:6px;font-size:0.75rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div>
+                </div>
+            </div>
+
+            <!-- СКЛАД ПУШКИНО -->
+            <div id="pushkinoContainer" class="warehouse-container">
+                <div class="warehouse-title">🏭 Склад Пушкино</div>
+                <div class="work-day-card"><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:2rem;">👷</span><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:15px;"><span id="pushkinoWorkedToday" style="color:#5e7180;">Не отмечено</span><button class="btn-work" id="pushkinoWorkBtn">ОК</button></div></div>
+                <div class="operations-grid">
+                    <div class="op-card"><h3>📥 ПРИНЯЛ с осн. склада</h3><div class="counter-row"><span>коробов</span><span class="counter-value" id="pushkinoAccepted">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="1">+</button></div><button class="btn-ok" data-action="accept">ОК</button><button class="reset-btn" data-reset="pushkinoAccepted">↺ сброс</button><div style="margin-top:6px;font-size:0.75rem;">Всего: <span id="pushkinoAcceptedTotal">0</span> кор.</div></div>
+                    <div class="op-card"><h3>🚛 ОТГРУЗИЛ на осн.</h3><div class="counter-row"><span>коробов</span><span class="counter-value" id="pushkinoShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="shipPushkino">ОК</button><button class="reset-btn" data-reset="pushkinoShipped">↺ сброс</button><div style="margin-top:6px;font-size:0.75rem;">Всего: <span id="pushkinoShippedTotal">0</span> кор.</div></div>
+                    <div class="op-card"><h3>🚛 ВЫГРУЗКА фуры</h3><div class="counter-row"><span>коробов</span><span class="counter-value" id="pushkinoUnloaded">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="1">+</button></div><button class="btn-ok blue" data-action="unload">ОК</button><button class="reset-btn" data-reset="pushkinoUnloaded">↺ сброс</button><div style="margin-top:6px;font-size:0.75rem;">Всего: <span id="pushkinoUnloadedTotal">0</span> кор.</div></div>
+                    <div class="op-card"><h3>🔄 ПЕРЕБРАЛ паллеты</h3><div class="counter-row"><span>коробов</span><span class="counter-value" id="pushkinoReworked">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoReworked" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoReworked" data-delta="1">+</button></div><button class="btn-ok teal" data-action="rework">ОК</button><button class="reset-btn" data-reset="pushkinoReworked">↺ сброс</button><div style="margin-top:6px;font-size:0.75rem;">Всего: <span id="pushkinoReworkedTotal">0</span> кор.</div></div>
+                </div>
+            </div>
+
+            <!-- История сотрудника -->
+            <div class="history-section">
+                <h3 style="margin-bottom:1rem;">📋 Мои записи сегодня</h3>
+                <div class="table-wrap"><table><thead><tr><th>Время</th><th>Склад</th><th>Действие</th><th>Детали</th></tr></thead><tbody id="myHistoryBody"><tr><td colspan="4" class="loading">Загрузка...</td></tr></tbody></table></div>
+            </div>
+        </div>
+
+        <!-- ИНТЕРФЕЙС АДМИНИСТРАТОРА -->
+        <div id="adminView" class="admin-view">
+            <div class="admin-panel">
+                <div class="admin-title">👑 Панель администратора</div>
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-tab="logs">📋 Все записи</button>
+                    <button class="admin-tab" data-tab="employees">👥 Сотрудники</button>
+                    <button class="admin-tab" data-tab="reports">📊 Отчёты</button>
+                </div>
+                
+                <!-- Все записи -->
+                <div id="tabLogs" class="admin-tab-content">
+                    <div class="table-wrap"><table><thead><tr><th>Время</th><th>Склад</th><th>Сотрудник</th><th>Действие</th><th>Детали</th><th></th></tr></thead><tbody id="adminLogsBody"><tr><td colspan="6" class="loading">Загрузка...</td></tr></tbody></table></div>
+                </div>
+                
+                <!-- Сотрудники -->
+                <div id="tabEmployees" class="admin-tab-content" style="display:none;">
+                    <button class="btn-ok" id="addEmployeeAdminBtn" style="width:auto;padding:10px 20px;margin-bottom:15px;">➕ Добавить сотрудника</button>
+                    <div class="table-wrap"><table><thead><tr><th>Сотрудник</th><th>Статус</th><th>Действия</th></tr></thead><tbody id="adminEmployeesBody"><tr><td colspan="3" class="loading">Загрузка...</td></tr></tbody></table></div>
+                </div>
+                
+                <!-- Отчёты -->
+                <div id="tabReports" class="admin-tab-content" style="display:none;">
+                    <div style="margin-bottom:15px;display:flex;flex-wrap:wrap;gap:10px;">
+                        <select id="reportEmployeeSelect" style="padding:10px;border-radius:30px;"><option value="">Все сотрудники</option></select>
+                        <input type="date" id="reportStartDate" style="padding:10px;border-radius:30px;">
+                        <input type="date" id="reportEndDate" style="padding:10px;border-radius:30px;">
+                        <button class="btn-ok" id="generateAdminReportBtn" style="width:auto;padding:10px 20px;">Сформировать</button>
+                    </div>
+                    <div id="adminReportResult" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyComSAJzMrarnUBATsTlNs60w6CDe2NTj0",
+            authDomain: "warehouse-b6b75.firebaseapp.com",
+            projectId: "warehouse-b6b75",
+            storageBucket: "warehouse-b6b75.firebasestorage.app",
+            messagingSenderId: "399929411326",
+            appId: "1:399929411326:web:c3c84828ad31b8810b47af",
+            measurementId: "G-V0YQYM869J"
+        };
+        
+        const CORRECT_PIN = "0111";
+        let pendingLoginUser = null;
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        db.enablePersistence().catch(console.warn);
+        
+        let currentUser = null, isAdmin = false, currentWarehouse = 'Москва', employees = [];
+        let counters = { moscowCollected:0, moscowShipped:0, moscowInvoiceTotal:0, pushkinoAccepted:0, pushkinoAcceptedTotal:0, pushkinoShipped:0, pushkinoShippedTotal:0, pushkinoUnloaded:0, pushkinoUnloadedTotal:0, pushkinoReworked:0, pushkinoReworkedTotal:0 };
+        let moscowLastArticle = '—';
+        
+        const pinModal = document.getElementById('pinModal'), pinInput = document.getElementById('pinInput'), pinError = document.getElementById('pinError');
+        
+        function initPinPad() {
+            document.querySelectorAll('.pin-btn[data-num]').forEach(btn => btn.addEventListener('click', () => { if(pinInput.value.length<4) pinInput.value += btn.dataset.num; }));
+            document.querySelector('[data-action="clear"]').addEventListener('click', () => { pinInput.value=''; pinError.textContent=''; });
+            document.querySelector('[data-action="submit"]').addEventListener('click', verifyPin);
+        }
+        
+        function verifyPin() {
+            if(pinInput.value === CORRECT_PIN) {
+                pinModal.classList.remove('active'); pinInput.value=''; pinError.textContent='';
+                if(pendingLoginUser) { completeLogin(pendingLoginUser.id, pendingLoginUser.name, pendingLoginUser.role); pendingLoginUser=null; }
+            } else { pinError.textContent='Неверный PIN-код'; pinInput.value=''; }
+        }
+        
+        function getTodayStr() { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+        
+        async function loadEmployees() {
+            try {
+                const snap = await db.collection('employees').orderBy('name').get();
+                employees = snap.docs.map(d => ({id:d.id, ...d.data()}));
+                if(employees.length===0) await createInitialEmployees();
+                renderLoginList();
+            } catch(e) { console.error(e); }
+        }
+        
+        async function createInitialEmployees() {
+            for (const e of [{name:'Сазонов М.',role:'admin',active:true},{name:'Якимов',role:'user',active:true},{name:'Варивцев',role:'user',active:true},{name:'Гончаров',role:'user',active:true}]) await db.collection('employees').add(e);
+            await loadEmployees();
+        }
+        
+        function renderLoginList() {
+            const c = document.getElementById('loginEmployeeList');
+            const active = employees.filter(e=>e.active!==false);
+            let h = '';
+            active.sort((a,b)=> a.role==='admin' ? -1 : b.role==='admin' ? 1 : a.name.localeCompare(b.name)).forEach(e => {
+                const isAd = e.role==='admin';
+                h += `<div class="employee-btn ${isAd?'admin':''}" data-id="${e.id}" data-name="${e.name}" data-role="${e.role}"><div class="employee-avatar">${e.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div><span>${e.name}</span>${isAd?'<span class="admin-badge">👑 Админ</span>':''}</div>`;
+            });
+            c.innerHTML = h;
+            c.querySelectorAll('.employee-btn').forEach(b => b.addEventListener('click', () => {
+                const id=b.dataset.id, name=b.dataset.name, role=b.dataset.role;
+                if(role==='admin'||name==='Сазонов М.') { pendingLoginUser={id,name,role}; pinModal.classList.add('active'); pinInput.focus(); }
+                else completeLogin(id,name,role);
+            }));
+        }
+        
+        async function completeLogin(id,name,role) {
+            currentUser={id,name,role}; isAdmin=(role==='admin'||name==='Сазонов М.');
+            document.getElementById('userName').textContent=name;
+            document.getElementById('userAvatar').textContent=name.split(' ').map(w=>w[0]).join('').slice(0,2);
+            document.getElementById('adminTag').style.display=isAdmin?'inline-block':'none';
+            
+            document.getElementById('loginScreen').style.display='none';
+            document.getElementById('dashboard').classList.add('active');
+            
+            if(isAdmin) {
+                document.getElementById('userView').classList.remove('active');
+                document.getElementById('adminView').classList.add('active');
+                document.getElementById('warehouseSelector').style.display='none';
+                await loadAdminLogs();
+                await loadAdminEmployees();
+                await updateReportEmployeeSelect();
+            } else {
+                document.getElementById('userView').classList.add('active');
+                document.getElementById('adminView').classList.remove('active');
+                document.getElementById('warehouseSelector').style.display='flex';
+                await loadUserData();
+                await checkTodayAttendance();
+                await loadMyHistory();
+            }
+        }
+        
+        function logout() { currentUser=null; isAdmin=false; document.getElementById('loginScreen').style.display='block'; document.getElementById('dashboard').classList.remove('active'); }
+        
+        async function loadUserData() {
+            if(!currentUser) return;
+            const snap = await db.collection('user_totals').where('userId','==',currentUser.id).get();
+            snap.docs.forEach(d => { const dt=d.data(); if(dt.type==='pushkino_accepted') counters.pushkinoAcceptedTotal=dt.total||0; if(dt.type==='pushkino_shipped') counters.pushkinoShippedTotal=dt.total||0; if(dt.type==='pushkino_unloaded') counters.pushkinoUnloadedTotal=dt.total||0; if(dt.type==='pushkino_reworked') counters.pushkinoReworkedTotal=dt.total||0; if(dt.type==='moscow_invoice') counters.moscowInvoiceTotal=dt.total||0; });
+            updateAllCounters();
+        }
+        
+        async function checkTodayAttendance() {
+            if(!currentUser) return;
+            const today = getTodayStr();
+            const m = await db.collection('attendance').where('userId','==',currentUser.id).where('warehouse','==','Москва').where('date','==',today).get();
+            const mEl = document.getElementById('moscowWorkedToday'); mEl.textContent = m.empty ? 'Не отмечено' : '✅ Отмечено'; mEl.style.color = m.empty ? '#5e7180' : '#2a6b3c';
+            const p = await db.collection('attendance').where('userId','==',currentUser.id).where('warehouse','==','Пушкино').where('date','==',today).get();
+            const pEl = document.getElementById('pushkinoWorkedToday'); pEl.textContent = p.empty ? 'Не отмечено' : '✅ Отмечено'; pEl.style.color = p.empty ? '#5e7180' : '#2a6b3c';
+        }
+        
+        async function markAttendance(wh) {
+            if(!currentUser) return;
+            const today = getTodayStr();
+            const snap = await db.collection('attendance').where('userId','==',currentUser.id).where('warehouse','==',wh).where('date','==',today).get();
+            if(!snap.empty) { alert(`Уже отмечены на ${wh}`); return; }
+            await db.collection('attendance').add({userId:currentUser.id, userName:currentUser.name, warehouse:wh, date:today, timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+            await db.collection('work_logs').add({userId:currentUser.id, userName:currentUser.name, warehouse:wh, action:'👷 Работал на складе', details:`Присутствие на складе ${wh}`, timestamp:firebase.firestore.FieldValue.serverTimestamp(), date:today});
+            await checkTodayAttendance(); await loadMyHistory(); if(isAdmin) await loadAdminLogs();
+        }
+        
+        async function addLog(wh, action, details, qty=null) {
+            if(!currentUser) return;
+            const today = getTodayStr();
+            await db.collection('work_logs').add({userId:currentUser.id, userName:currentUser.name, warehouse:wh, action, details, quantity:qty, timestamp:firebase.firestore.FieldValue.serverTimestamp(), date:today});
+            await loadMyHistory(); if(isAdmin) await loadAdminLogs();
+        }
+        
+        async function updateTotal(type, inc) {
+            if(!currentUser) return;
+            const docId = `${currentUser.id}_${type}`;
+            await db.runTransaction(async t => {
+                const ref = db.collection('user_totals').doc(docId);
+                const doc = await t.get(ref);
+                let nt = inc; if(doc.exists) nt = (doc.data().total||0) + inc;
+                t.set(ref, {userId:currentUser.id, userName:currentUser.name, type, total:nt, updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+            });
+            if(type==='pushkino_accepted') counters.pushkinoAcceptedTotal+=inc; if(type==='pushkino_shipped') counters.pushkinoShippedTotal+=inc; if(type==='pushkino_unloaded') counters.pushkinoUnloadedTotal+=inc; if(type==='pushkino_reworked') counters.pushkinoReworkedTotal+=inc; if(type==='moscow_invoice') counters.moscowInvoiceTotal+=inc;
+            updateAllCounters();
+        }
+        
+        function updateAllCounters() {
+            document.getElementById('moscowCollected').textContent=counters.moscowCollected; document.getElementById('moscowShipped').textContent=counters.moscowShipped; document.getElementById('moscowInvoiceTotal').textContent=counters.moscowInvoiceTotal;
+            document.getElementById('pushkinoAccepted').textContent=counters.pushkinoAccepted; document.getElementById('pushkinoAcceptedTotal').textContent=counters.pushkinoAcceptedTotal;
+            document.getElementById('pushkinoShipped').textContent=counters.pushkinoShipped; document.getElementById('pushkinoShippedTotal').textContent=counters.pushkinoShippedTotal;
+            document.getElementById('pushkinoUnloaded').textContent=counters.pushkinoUnloaded; document.getElementById('pushkinoUnloadedTotal').textContent=counters.pushkinoUnloadedTotal;
+            document.getElementById('pushkinoReworked').textContent=counters.pushkinoReworked; document.getElementById('pushkinoReworkedTotal').textContent=counters.pushkinoReworkedTotal;
+            document.getElementById('moscowLastArticle').textContent=moscowLastArticle;
+        }
+        
+        async function loadMyHistory() {
+            if(!currentUser) return;
+            const today = getTodayStr(), tbody = document.getElementById('myHistoryBody');
+            try {
+                const snap = await db.collection('work_logs').where('userId','==',currentUser.id).where('date','==',today).get();
+                if(snap.empty) { tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;">Нет записей за сегодня</td></tr>'; return; }
+                const logs = snap.docs.map(d=>({...d.data()})).sort((a,b)=> (b.timestamp?.toDate()||0) - (a.timestamp?.toDate()||0));
+                let h = '';
+                logs.forEach(l => { const time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—';
+                    h += `<tr><td>${time}</td><td>${l.warehouse||'—'}</td><td>${l.action||'—'}</td><td>${l.details||'—'}</td></tr>`; });
+                tbody.innerHTML = h;
+            } catch(e) { tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:20px;color:#c75d1e;">Ошибка загрузки</td></tr>'; }
+        }
+        
+        async function loadAdminLogs() {
+            if(!isAdmin) return;
+            const snap = await db.collection('work_logs').orderBy('timestamp','desc').limit(100).get();
+            const tbody = document.getElementById('adminLogsBody');
+            if(snap.empty) { tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;">Нет записей</td></tr>'; return; }
+            let h = '';
+            snap.docs.forEach(d => { const l=d.data(); const time=l.timestamp?new Date(l.timestamp.toDate()).toLocaleString('ru-RU'):'—';
+                h += `<tr><td>${time}</td><td>${l.warehouse}</td><td><strong>${l.userName}</strong></td><td>${l.action}</td><td>${l.details||'—'}</td><td><button class="delete-log-btn" data-id="${d.id}">🗑️</button></td></tr>`; });
+            tbody.innerHTML = h;
+            tbody.querySelectorAll('.delete-log-btn').forEach(b => b.addEventListener('click', async () => { if(confirm('Удалить?')) { await db.collection('work_logs').doc(b.dataset.id).delete(); await loadAdminLogs(); } }));
+        }
+        
+        async function loadAdminEmployees() {
+            if(!isAdmin) return;
+            const snap = await db.collection('employees').orderBy('name').get();
+            const tbody = document.getElementById('adminEmployeesBody');
+            let h = '';
+            snap.docs.forEach(d => { const e=d.data(); h += `<tr><td><strong>${e.name}</strong> ${e.role==='admin'?'👑':''}</td><td>${e.active!==false?'✅ Активен':'❌ Неактивен'}</td><td><button class="delete-log-btn" data-id="${d.id}" data-name="${e.name}">🗑️ Удалить</button></td></tr>`; });
+            tbody.innerHTML = h;
+            tbody.querySelectorAll('.delete-log-btn').forEach(b => b.addEventListener('click', async () => {
+                if(b.dataset.name==='Сазонов М.') { alert('Нельзя удалить администратора'); return; }
+                if(confirm(`Удалить ${b.dataset.name}?`)) {
+                    const batch = db.batch(); const logs = await db.collection('work_logs').where('userId','==',b.dataset.id).get(); logs.docs.forEach(d=>batch.delete(d.ref));
+                    batch.delete(db.collection('employees').doc(b.dataset.id)); await batch.commit(); await loadAdminEmployees(); await loadEmployees(); renderLoginList();
+                }
+            }));
+        }
+        
+        async function addEmployee(name) { if(!name) return; await db.collection('employees').add({name:name.trim(),role:'user',active:true}); await loadEmployees(); await loadAdminEmployees(); renderLoginList(); }
+        async function updateReportEmployeeSelect() { const s=document.getElementById('reportEmployeeSelect'); s.innerHTML='<option value="">Все сотрудники</option>'; employees.filter(e=>e.active).forEach(e=>{ const o=document.createElement('option'); o.value=e.id; o.textContent=e.name; s.appendChild(o); }); }
+        
+        async function generateAdminReport() {
+            const eid=document.getElementById('reportEmployeeSelect').value, start=document.getElementById('reportStartDate').value, end=document.getElementById('reportEndDate').value;
+            if(!start||!end) return;
+            let q=db.collection('work_logs').where('date','>=',start).where('date','<=',end); if(eid) q=q.where('userId','==',eid);
+            const snap=await q.get();
+            const stats={collected:0,shipped:0,laid:0,invoice:0,accepted:0,shippedPush:0,unloaded:0,reworked:0,daysM:new Set(),daysP:new Set()};
+            snap.docs.forEach(d=>{ const l=d.data(); if(l.action==='👷 Работал на складе') { if(l.warehouse==='Москва') stats.daysM.add(l.date); else stats.daysP.add(l.date); }
+                const qty=l.quantity||0; if(l.action.includes('Собрал')) stats.collected+=qty; if(l.action.includes('Отгрузил паллеты')) stats.shipped+=qty;
+                if(l.action.includes('Выложил')) stats.laid+=qty; if(l.action.includes('Сборка')) stats.invoice+=qty; if(l.action.includes('Принял с осн')) stats.accepted+=qty;
+                if(l.action.includes('Отгрузил на осн')) stats.shippedPush+=qty; if(l.action.includes('Выгрузка')) stats.unloaded+=qty; if(l.action.includes('Перебрал')) stats.reworked+=qty; });
+            document.getElementById('adminReportResult').innerHTML = `<div class="stat-item"><div class="stat-value">${stats.daysM.size}</div><div class="stat-label">Дней в Москве</div></div><div class="stat-item"><div class="stat-value">${stats.daysP.size}</div><div class="stat-label">Дней в Пушкино</div></div><div class="stat-item"><div class="stat-value">${stats.collected}</div><div class="stat-label">Собрано паллет</div></div><div class="stat-item"><div class="stat-value">${stats.shipped}</div><div class="stat-label">Отгружено паллет</div></div><div class="stat-item"><div class="stat-value">${stats.laid}</div><div class="stat-label">Выложено (шт.)</div></div><div class="stat-item"><div class="stat-value">${stats.invoice}</div><div class="stat-label">По накладным</div></div><div class="stat-item"><div class="stat-value">${stats.accepted}</div><div class="stat-label">Принято коробов</div></div><div class="stat-item"><div class="stat-value">${stats.shippedPush}</div><div class="stat-label">Отгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.unloaded}</div><div class="stat-label">Выгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.reworked}</div><div class="stat-label">Перебрано коробов</div></div>`;
+        }
+        
+        async function init() {
+            initPinPad(); await loadEmployees();
+            
+            // Переключение складов для сотрудников
+            document.querySelectorAll('.wh-btn').forEach(b=>b.addEventListener('click',()=>{ document.querySelectorAll('.wh-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); currentWarehouse=b.dataset.wh; document.getElementById('moscowContainer').classList.toggle('active',currentWarehouse==='Москва'); document.getElementById('pushkinoContainer').classList.toggle('active',currentWarehouse==='Пушкино'); }));
+            
+            document.getElementById('logoutBtn').addEventListener('click',logout);
+            document.getElementById('moscowWorkBtn').addEventListener('click',()=>markAttendance('Москва'));
+            document.getElementById('pushkinoWorkBtn').addEventListener('click',()=>markAttendance('Пушкино'));
+            
+            document.querySelectorAll('.btn-adjust').forEach(b=>b.addEventListener('click',()=>{ const t=b.dataset.target, d=parseInt(b.dataset.delta); counters[t]=Math.max(0,counters[t]+d); updateAllCounters(); }));
+            document.querySelectorAll('[data-reset]').forEach(b=>b.addEventListener('click',()=>{ counters[b.dataset.reset]=0; updateAllCounters(); }));
+            
+            document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',async ()=>{
+                const a=b.dataset.action;
+                if(a==='collect'&&counters.moscowCollected){ await addLog('Москва','📦 Собрал паллеты',`${counters.moscowCollected} шт.`,counters.moscowCollected); counters.moscowCollected=0; }
+                if(a==='ship'&&counters.moscowShipped){ await addLog('Москва','🚚 Отгрузил паллеты',`${counters.moscowShipped} шт.`,counters.moscowShipped); counters.moscowShipped=0; }
+                if(a==='lay'){ const art=document.getElementById('moscowArticle').value.trim(), qty=parseInt(document.getElementById('moscowQuantity').value)||1; if(!art){ alert('Укажите артикул'); return; } moscowLastArticle=art; await addLog('Москва','📋 Выложил товар',`арт. ${art}, ${qty} шт.`,qty); document.getElementById('moscowArticle').value=''; }
+                if(a==='invoice'){ const inv=document.getElementById('moscowInvoiceNumber').value.trim(), qty=parseInt(document.getElementById('moscowInvoiceQuantity').value)||1; if(!inv){ alert('Укажите накладную'); return; } await addLog('Москва','📑 Сборка по накладной',`накл. ${inv}, ${qty} шт.`,qty); await updateTotal('moscow_invoice',qty); document.getElementById('moscowInvoiceNumber').value=''; }
+                if(a==='accept'&&counters.pushkinoAccepted){ await addLog('Пушкино','📥 Принял с осн. склада',`${counters.pushkinoAccepted} кор.`,counters.pushkinoAccepted); await updateTotal('pushkino_accepted',counters.pushkinoAccepted); counters.pushkinoAccepted=0; }
+                if(a==='shipPushkino'&&counters.pushkinoShipped){ await addLog('Пушкино','🚛 Отгрузил на осн. склад',`${counters.pushkinoShipped} кор.`,counters.pushkinoShipped); await updateTotal('pushkino_shipped',counters.pushkinoShipped); counters.pushkinoShipped=0; }
+                if(a==='unload'&&counters.pushkinoUnloaded){ await addLog('Пушкино','🚛 Выгрузка фуры',`${counters.pushkinoUnloaded} кор.`,counters.pushkinoUnloaded); await updateTotal('pushkino_unloaded',counters.pushkinoUnloaded); counters.pushkinoUnloaded=0; }
+                if(a==='rework'&&counters.pushkinoReworked){ await addLog('Пушкино','🔄 Перебрал паллеты',`${counters.pushkinoReworked} кор.`,counters.pushkinoReworked); await updateTotal('pushkino_reworked',counters.pushkinoReworked); counters.pushkinoReworked=0; }
+                updateAllCounters(); document.getElementById('moscowQuantity').value=1; document.getElementById('moscowInvoiceQuantity').value=1;
+            }));
+            
+            // Админ-вкладки
+            document.querySelectorAll('.admin-tab').forEach(t=>t.addEventListener('click',()=>{ document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); const tn=t.dataset.tab; document.getElementById('tabLogs').style.display=tn==='logs'?'block':'none'; document.getElementById('tabEmployees').style.display=tn==='employees'?'block':'none'; document.getElementById('tabReports').style.display=tn==='reports'?'block':'none'; }));
+            
+            document.getElementById('addEmployeeAdminBtn').addEventListener('click',()=>{ const n=prompt('Фамилия нового сотрудника:'); if(n) addEmployee(n); });
+            document.getElementById('generateAdminReportBtn').addEventListener('click',generateAdminReport);
+            
+            const today=new Date(), weekAgo=new Date(today); weekAgo.setDate(today.getDate()-7);
+            document.getElementById('reportStartDate').value=weekAgo.toISOString().split('T')[0]; document.getElementById('reportEndDate').value=today.toISOString().split('T')[0];
+            
+            window.addEventListener('online',()=>document.querySelector('#syncStatus').innerHTML='<span class="online-indicator"></span> Онлайн');
+            window.addEventListener('offline',()=>document.querySelector('#syncStatus').innerHTML='<span class="online-indicator offline-indicator"></span> Офлайн');
+            pinModal.addEventListener('click',e=>{ if(e.target===pinModal) pinModal.classList.remove('active'); });
+        }
+        
+        init();
+    </script>
+</body>
+</html>
