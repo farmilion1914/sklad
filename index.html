@@ -280,6 +280,34 @@
         .input-field { padding: 12px 14px; border: 1.5px solid #cbdae6; border-radius: 16px; font-size: 1rem; width: 100%; margin-bottom: 10px; }
         .reset-btn { background: none; border: 1px solid #bacddc; padding: 5px 12px; border-radius: 30px; color: #3b5e7e; font-size: 0.75rem; cursor: pointer; margin-top: 8px; width: 100%; }
         
+        /* Поле для ручного ввода */
+        .manual-input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .manual-input-row .input-field {
+            margin-bottom: 0;
+            text-align: center;
+        }
+        .btn-set {
+            background: #2a6f97;
+            border: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 12px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #1b4b68;
+            white-space: nowrap;
+        }
+        .btn-set:active {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 #1b4b68;
+        }
+        
         .history-section { background: white; border-radius: 20px; padding: 1.2rem; margin-top: 20px; transition: background 0.3s, border-color 0.3s; }
         .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
         .date-selector { display: flex; align-items: center; gap: 10px; background: #f3f9ff; padding: 5px 15px; border-radius: 40px; }
@@ -375,6 +403,10 @@
                             <span>коробов</span>
                             <span class="counter-value" id="moscowReceived">0</span>
                         </div>
+                        <div class="manual-input-row">
+                            <input type="number" id="moscowReceivedManual" class="input-field" placeholder="Введите" min="0" value="" inputmode="numeric">
+                            <button class="btn-set" data-target="moscowReceived" data-manual="moscowReceivedManual">Уст.</button>
+                        </div>
                         <div class="adjust-buttons">
                             <button class="btn-adjust" data-target="moscowReceived" data-delta="-1">–</button>
                             <button class="btn-adjust" data-target="moscowReceived" data-delta="1">+</button>
@@ -387,8 +419,12 @@
                     <div class="op-card">
                         <h3>📦 СОБРАЛ паллет</h3>
                         <div class="counter-row">
-                            <span>счётчик</span>
+                            <span>паллет</span>
                             <span class="counter-value" id="moscowCollected">0</span>
+                        </div>
+                        <div class="manual-input-row">
+                            <input type="number" id="moscowCollectedManual" class="input-field" placeholder="Введите" min="0" value="" inputmode="numeric">
+                            <button class="btn-set" data-target="moscowCollected" data-manual="moscowCollectedManual">Уст.</button>
                         </div>
                         <div class="adjust-buttons">
                             <button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button>
@@ -402,8 +438,12 @@
                     <div class="op-card">
                         <h3>🚚 ОТГРУЗИЛ паллет</h3>
                         <div class="counter-row">
-                            <span>счётчик</span>
+                            <span>паллет</span>
                             <span class="counter-value" id="moscowShipped">0</span>
+                        </div>
+                        <div class="manual-input-row">
+                            <input type="number" id="moscowShippedManual" class="input-field" placeholder="Введите" min="0" value="" inputmode="numeric">
+                            <button class="btn-set" data-target="moscowShipped" data-manual="moscowShippedManual">Уст.</button>
                         </div>
                         <div class="adjust-buttons">
                             <button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button>
@@ -787,6 +827,24 @@
         async function init() {
             initTheme();
             initPinPad(); await loadEmployees();
+            
+            // Ручной ввод
+            document.querySelectorAll('.btn-set').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const target = btn.dataset.target;
+                    const manualId = btn.dataset.manual;
+                    const manualInput = document.getElementById(manualId);
+                    let value = parseInt(manualInput.value);
+                    if (!isNaN(value) && value >= 0) {
+                        counters[target] = value;
+                    } else {
+                        counters[target] = 0;
+                    }
+                    manualInput.value = '';
+                    updateAllCounters();
+                });
+            });
+            
             document.getElementById('prevDayBtn').addEventListener('click', () => { currentHistoryDate.setDate(currentHistoryDate.getDate() - 1); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
             document.getElementById('nextDayBtn').addEventListener('click', () => { currentHistoryDate.setDate(currentHistoryDate.getDate() + 1); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
             document.getElementById('todayHistoryBtn').addEventListener('click', () => { currentHistoryDate = new Date(); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
