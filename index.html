@@ -368,11 +368,11 @@
                 <div class="warehouse-title">🏢 Склад Москва</div>
                 <div class="work-day-card"><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:2rem;">👷</span><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:15px;"><span id="moscowWorkedToday" style="color:#5e7180;">Не отмечено</span><button class="btn-work" id="moscowWorkBtn">ОК</button></div></div>
                 <div class="operations-grid">
-                    <!-- Принял паллет (НОВАЯ КАРТОЧКА) -->
+                    <!-- Принял коробов -->
                     <div class="op-card">
-                        <h3>📥 ПРИНЯЛ паллет</h3>
+                        <h3>📥 ПРИНЯЛ коробов</h3>
                         <div class="counter-row">
-                            <span>паллет</span>
+                            <span>коробов</span>
                             <span class="counter-value" id="moscowReceived">0</span>
                         </div>
                         <div class="adjust-buttons">
@@ -771,7 +771,7 @@
             const stats={received:0, collected:0, shipped:0, laid:0, invoice:0, accepted:0, shippedPush:0, unloaded:0, reworked:0, daysM:new Set(), daysP:new Set()};
             snap.docs.forEach(d=>{ const l=d.data(); if(l.action==='👷 Работал на складе') { if(l.warehouse==='Москва') stats.daysM.add(l.date); else stats.daysP.add(l.date); }
                 const qty=l.quantity||0;
-                if(l.action.includes('Принял паллет')) stats.received+=qty;
+                if(l.action.includes('Принял коробов')) stats.received+=qty;
                 if(l.action.includes('Собрал')) stats.collected+=qty;
                 if(l.action.includes('Отгрузил паллеты')) stats.shipped+=qty;
                 if(l.action.includes('Выложил')) stats.laid+=qty;
@@ -781,7 +781,7 @@
                 if(l.action.includes('Выгрузка')) stats.unloaded+=qty;
                 if(l.action.includes('Перебрал')) stats.reworked+=qty;
             });
-            document.getElementById('adminReportResult').innerHTML = `<div class="stat-item"><div class="stat-value">${stats.daysM.size}</div><div class="stat-label">Дней в Москве</div></div><div class="stat-item"><div class="stat-value">${stats.daysP.size}</div><div class="stat-label">Дней в Пушкино</div></div><div class="stat-item"><div class="stat-value">${stats.received}</div><div class="stat-label">Принято паллет</div></div><div class="stat-item"><div class="stat-value">${stats.collected}</div><div class="stat-label">Собрано паллет</div></div><div class="stat-item"><div class="stat-value">${stats.shipped}</div><div class="stat-label">Отгружено паллет</div></div><div class="stat-item"><div class="stat-value">${stats.laid}</div><div class="stat-label">Выложено (шт.)</div></div><div class="stat-item"><div class="stat-value">${stats.invoice}</div><div class="stat-label">По накладным</div></div><div class="stat-item"><div class="stat-value">${stats.accepted}</div><div class="stat-label">Принято коробов</div></div><div class="stat-item"><div class="stat-value">${stats.shippedPush}</div><div class="stat-label">Отгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.unloaded}</div><div class="stat-label">Выгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.reworked}</div><div class="stat-label">Перебрано коробов</div></div>`;
+            document.getElementById('adminReportResult').innerHTML = `<div class="stat-item"><div class="stat-value">${stats.daysM.size}</div><div class="stat-label">Дней в Москве</div></div><div class="stat-item"><div class="stat-value">${stats.daysP.size}</div><div class="stat-label">Дней в Пушкино</div></div><div class="stat-item"><div class="stat-value">${stats.received}</div><div class="stat-label">Принято коробов</div></div><div class="stat-item"><div class="stat-value">${stats.collected}</div><div class="stat-label">Собрано паллет</div></div><div class="stat-item"><div class="stat-value">${stats.shipped}</div><div class="stat-label">Отгружено паллет</div></div><div class="stat-item"><div class="stat-value">${stats.laid}</div><div class="stat-label">Выложено (шт.)</div></div><div class="stat-item"><div class="stat-value">${stats.invoice}</div><div class="stat-label">По накладным</div></div><div class="stat-item"><div class="stat-value">${stats.accepted}</div><div class="stat-label">Принято коробов (П)</div></div><div class="stat-item"><div class="stat-value">${stats.shippedPush}</div><div class="stat-label">Отгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.unloaded}</div><div class="stat-label">Выгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.reworked}</div><div class="stat-label">Перебрано коробов</div></div>`;
         }
         
         async function init() {
@@ -801,7 +801,7 @@
             document.querySelectorAll('[data-reset]').forEach(b=>b.addEventListener('click',()=>{ counters[b.dataset.reset]=0; updateAllCounters(); }));
             document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',async ()=>{
                 const a=b.dataset.action;
-                if(a==='receive'&&counters.moscowReceived){ await addLog('Москва','📥 Принял паллет',`${counters.moscowReceived} паллет(а)`,counters.moscowReceived); counters.moscowReceived=0; }
+                if(a==='receive'&&counters.moscowReceived){ await addLog('Москва','📥 Принял коробов',`${counters.moscowReceived} кор.`,counters.moscowReceived); counters.moscowReceived=0; }
                 if(a==='collect'&&counters.moscowCollected){ await addLog('Москва','📦 Собрал паллеты',`${counters.moscowCollected} шт.`,counters.moscowCollected); counters.moscowCollected=0; }
                 if(a==='ship'&&counters.moscowShipped){ await addLog('Москва','🚚 Отгрузил паллеты',`${counters.moscowShipped} шт.`,counters.moscowShipped); counters.moscowShipped=0; }
                 if(a==='lay'){ const art=document.getElementById('moscowArticle').value.trim(), qty=parseInt(document.getElementById('moscowQuantity').value)||1; if(!art){ alert('Укажите артикул'); return; } moscowLastArticle=art; await addLog('Москва','📋 Выложил товар',`арт. ${art}, ${qty} шт.`,qty); document.getElementById('moscowArticle').value=''; }
