@@ -220,7 +220,7 @@
             border-color: rgba(255,255,255,0.2);
         }
         
-        /* Остальные стили (как в предыдущей версии) */
+        /* Остальные стили */
         .login-screen { max-width: 450px; width: 100%; margin: 20px auto; }
         .login-card { background: white; border-radius: 32px; padding: 2rem 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; transition: background 0.3s, border-color 0.3s; }
         .login-title { font-size: 2rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.5rem; }
@@ -276,6 +276,7 @@
         .btn-ok.blue { background: #2a6f97; }
         .btn-ok.purple { background: #7b4f9e; }
         .btn-ok.teal { background: #2a8f7a; }
+        .btn-ok.green { background: #2a8f7a; }
         .input-field { padding: 12px 14px; border: 1.5px solid #cbdae6; border-radius: 16px; font-size: 1rem; width: 100%; margin-bottom: 10px; }
         .reset-btn { background: none; border: 1px solid #bacddc; padding: 5px 12px; border-radius: 30px; color: #3b5e7e; font-size: 0.75rem; cursor: pointer; margin-top: 8px; width: 100%; }
         
@@ -352,7 +353,6 @@
                 <span class="admin-tag" id="adminTag" style="display:none;">👑 АДМИН</span>
             </div>
             <div class="header-controls">
-                <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ -->
                 <button class="theme-toggle" id="themeToggle" title="Переключить тему">🌙</button>
                 <div class="warehouse-selector" id="warehouseSelector" style="display:none;">
                     <button class="wh-btn active" data-wh="Москва">🏢 Москва</button>
@@ -368,10 +368,68 @@
                 <div class="warehouse-title">🏢 Склад Москва</div>
                 <div class="work-day-card"><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:2rem;">👷</span><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:15px;"><span id="moscowWorkedToday" style="color:#5e7180;">Не отмечено</span><button class="btn-work" id="moscowWorkBtn">ОК</button></div></div>
                 <div class="operations-grid">
-                    <div class="op-card"><h3>📦 СОБРАЛ паллет</h3><div class="counter-row"><span>счётчик</span><span class="counter-value" id="moscowCollected">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button></div><button class="btn-ok" data-action="collect">ОК</button><button class="reset-btn" data-reset="moscowCollected">↺ сброс</button></div>
-                    <div class="op-card"><h3>🚚 ОТГРУЗИЛ паллет</h3><div class="counter-row"><span>счётчик</span><span class="counter-value" id="moscowShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="ship">ОК</button><button class="reset-btn" data-reset="moscowShipped">↺ сброс</button></div>
-                    <div class="op-card"><h3>📋 ВЫЛОЖИЛ товар</h3><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" value="1" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:6px;font-size:0.75rem;">Последний: <span id="moscowLastArticle">—</span></div></div>
-                    <div class="op-card"><h3>📑 СБОРКА по накл.</h3><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" value="1" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:6px;font-size:0.75rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div>
+                    <!-- Принял паллет (НОВАЯ КАРТОЧКА) -->
+                    <div class="op-card">
+                        <h3>📥 ПРИНЯЛ паллет</h3>
+                        <div class="counter-row">
+                            <span>паллет</span>
+                            <span class="counter-value" id="moscowReceived">0</span>
+                        </div>
+                        <div class="adjust-buttons">
+                            <button class="btn-adjust" data-target="moscowReceived" data-delta="-1">–</button>
+                            <button class="btn-adjust" data-target="moscowReceived" data-delta="1">+</button>
+                        </div>
+                        <button class="btn-ok green" data-action="receive">ОК</button>
+                        <button class="reset-btn" data-reset="moscowReceived">↺ сброс</button>
+                    </div>
+                    
+                    <!-- Собрал паллеты -->
+                    <div class="op-card">
+                        <h3>📦 СОБРАЛ паллет</h3>
+                        <div class="counter-row">
+                            <span>счётчик</span>
+                            <span class="counter-value" id="moscowCollected">0</span>
+                        </div>
+                        <div class="adjust-buttons">
+                            <button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button>
+                            <button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button>
+                        </div>
+                        <button class="btn-ok" data-action="collect">ОК</button>
+                        <button class="reset-btn" data-reset="moscowCollected">↺ сброс</button>
+                    </div>
+
+                    <!-- Отгрузил паллеты -->
+                    <div class="op-card">
+                        <h3>🚚 ОТГРУЗИЛ паллет</h3>
+                        <div class="counter-row">
+                            <span>счётчик</span>
+                            <span class="counter-value" id="moscowShipped">0</span>
+                        </div>
+                        <div class="adjust-buttons">
+                            <button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button>
+                            <button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button>
+                        </div>
+                        <button class="btn-ok orange" data-action="ship">ОК</button>
+                        <button class="reset-btn" data-reset="moscowShipped">↺ сброс</button>
+                    </div>
+
+                    <!-- Выложил товар -->
+                    <div class="op-card">
+                        <h3>📋 ВЫЛОЖИЛ товар</h3>
+                        <input type="text" id="moscowArticle" class="input-field" placeholder="Артикул">
+                        <input type="number" id="moscowQuantity" class="input-field" value="1" min="1">
+                        <button class="btn-ok blue" data-action="lay">ОК</button>
+                        <div style="margin-top:6px;font-size:0.75rem;">Последний: <span id="moscowLastArticle">—</span></div>
+                    </div>
+
+                    <!-- Сборка по накладным -->
+                    <div class="op-card">
+                        <h3>📑 СБОРКА по накл.</h3>
+                        <input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная">
+                        <input type="number" id="moscowInvoiceQuantity" class="input-field" value="1" min="1">
+                        <button class="btn-ok purple" data-action="invoice">ОК</button>
+                        <div style="margin-top:6px;font-size:0.75rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div>
+                    </div>
                 </div>
             </div>
 
@@ -469,14 +527,8 @@
         function initTheme() {
             const savedTheme = localStorage.getItem('warehouse_theme');
             const themeToggle = document.getElementById('themeToggle');
-            
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-theme');
-                themeToggle.textContent = '☀️';
-            } else {
-                themeToggle.textContent = '🌙';
-            }
-            
+            if (savedTheme === 'dark') { document.body.classList.add('dark-theme'); themeToggle.textContent = '☀️'; }
+            else { themeToggle.textContent = '🌙'; }
             themeToggle.addEventListener('click', () => {
                 document.body.classList.toggle('dark-theme');
                 const isDark = document.body.classList.contains('dark-theme');
@@ -485,7 +537,6 @@
             });
         }
         
-        // ========== ОСТАЛЬНОЙ КОД (как в предыдущей версии) ==========
         const CORRECT_PIN = "0111";
         let pendingLoginUser = null;
         let currentHistoryDate = new Date();
@@ -495,7 +546,13 @@
         db.enablePersistence().catch(console.warn);
         
         let currentUser = null, isAdmin = false, currentWarehouse = 'Москва', employees = [];
-        let counters = { moscowCollected:0, moscowShipped:0, moscowInvoiceTotal:0, pushkinoAccepted:0, pushkinoAcceptedTotal:0, pushkinoShipped:0, pushkinoShippedTotal:0, pushkinoUnloaded:0, pushkinoUnloadedTotal:0, pushkinoReworked:0, pushkinoReworkedTotal:0 };
+        let counters = { 
+            moscowReceived: 0, moscowCollected: 0, moscowShipped: 0, moscowInvoiceTotal: 0, 
+            pushkinoAccepted: 0, pushkinoAcceptedTotal: 0,
+            pushkinoShipped: 0, pushkinoShippedTotal: 0,
+            pushkinoUnloaded: 0, pushkinoUnloadedTotal: 0,
+            pushkinoReworked: 0, pushkinoReworkedTotal: 0 
+        };
         let moscowLastArticle = '—';
         
         const pinModal = document.getElementById('pinModal'), pinInput = document.getElementById('pinInput'), pinError = document.getElementById('pinError');
@@ -564,7 +621,6 @@
             document.getElementById('userName').textContent=name;
             document.getElementById('userAvatar').textContent=name.split(' ').map(w=>w[0]).join('').slice(0,2);
             document.getElementById('adminTag').style.display=isAdmin?'inline-block':'none';
-            
             document.getElementById('loginScreen').style.display='none';
             document.getElementById('dashboard').classList.add('active');
             
@@ -641,11 +697,18 @@
         }
         
         function updateAllCounters() {
-            document.getElementById('moscowCollected').textContent=counters.moscowCollected; document.getElementById('moscowShipped').textContent=counters.moscowShipped; document.getElementById('moscowInvoiceTotal').textContent=counters.moscowInvoiceTotal;
-            document.getElementById('pushkinoAccepted').textContent=counters.pushkinoAccepted; document.getElementById('pushkinoAcceptedTotal').textContent=counters.pushkinoAcceptedTotal;
-            document.getElementById('pushkinoShipped').textContent=counters.pushkinoShipped; document.getElementById('pushkinoShippedTotal').textContent=counters.pushkinoShippedTotal;
-            document.getElementById('pushkinoUnloaded').textContent=counters.pushkinoUnloaded; document.getElementById('pushkinoUnloadedTotal').textContent=counters.pushkinoUnloadedTotal;
-            document.getElementById('pushkinoReworked').textContent=counters.pushkinoReworked; document.getElementById('pushkinoReworkedTotal').textContent=counters.pushkinoReworkedTotal;
+            document.getElementById('moscowReceived').textContent=counters.moscowReceived;
+            document.getElementById('moscowCollected').textContent=counters.moscowCollected;
+            document.getElementById('moscowShipped').textContent=counters.moscowShipped;
+            document.getElementById('moscowInvoiceTotal').textContent=counters.moscowInvoiceTotal;
+            document.getElementById('pushkinoAccepted').textContent=counters.pushkinoAccepted;
+            document.getElementById('pushkinoAcceptedTotal').textContent=counters.pushkinoAcceptedTotal;
+            document.getElementById('pushkinoShipped').textContent=counters.pushkinoShipped;
+            document.getElementById('pushkinoShippedTotal').textContent=counters.pushkinoShippedTotal;
+            document.getElementById('pushkinoUnloaded').textContent=counters.pushkinoUnloaded;
+            document.getElementById('pushkinoUnloadedTotal').textContent=counters.pushkinoUnloadedTotal;
+            document.getElementById('pushkinoReworked').textContent=counters.pushkinoReworked;
+            document.getElementById('pushkinoReworkedTotal').textContent=counters.pushkinoReworkedTotal;
             document.getElementById('moscowLastArticle').textContent=moscowLastArticle;
         }
         
@@ -705,12 +768,20 @@
             if(!start||!end) return;
             let q=db.collection('work_logs').where('date','>=',start).where('date','<=',end); if(eid) q=q.where('userId','==',eid);
             const snap=await q.get();
-            const stats={collected:0,shipped:0,laid:0,invoice:0,accepted:0,shippedPush:0,unloaded:0,reworked:0,daysM:new Set(),daysP:new Set()};
+            const stats={received:0, collected:0, shipped:0, laid:0, invoice:0, accepted:0, shippedPush:0, unloaded:0, reworked:0, daysM:new Set(), daysP:new Set()};
             snap.docs.forEach(d=>{ const l=d.data(); if(l.action==='👷 Работал на складе') { if(l.warehouse==='Москва') stats.daysM.add(l.date); else stats.daysP.add(l.date); }
-                const qty=l.quantity||0; if(l.action.includes('Собрал')) stats.collected+=qty; if(l.action.includes('Отгрузил паллеты')) stats.shipped+=qty;
-                if(l.action.includes('Выложил')) stats.laid+=qty; if(l.action.includes('Сборка')) stats.invoice+=qty; if(l.action.includes('Принял с осн')) stats.accepted+=qty;
-                if(l.action.includes('Отгрузил на осн')) stats.shippedPush+=qty; if(l.action.includes('Выгрузка')) stats.unloaded+=qty; if(l.action.includes('Перебрал')) stats.reworked+=qty; });
-            document.getElementById('adminReportResult').innerHTML = `<div class="stat-item"><div class="stat-value">${stats.daysM.size}</div><div class="stat-label">Дней в Москве</div></div><div class="stat-item"><div class="stat-value">${stats.daysP.size}</div><div class="stat-label">Дней в Пушкино</div></div><div class="stat-item"><div class="stat-value">${stats.collected}</div><div class="stat-label">Собрано паллет</div></div><div class="stat-item"><div class="stat-value">${stats.shipped}</div><div class="stat-label">Отгружено паллет</div></div><div class="stat-item"><div class="stat-value">${stats.laid}</div><div class="stat-label">Выложено (шт.)</div></div><div class="stat-item"><div class="stat-value">${stats.invoice}</div><div class="stat-label">По накладным</div></div><div class="stat-item"><div class="stat-value">${stats.accepted}</div><div class="stat-label">Принято коробов</div></div><div class="stat-item"><div class="stat-value">${stats.shippedPush}</div><div class="stat-label">Отгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.unloaded}</div><div class="stat-label">Выгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.reworked}</div><div class="stat-label">Перебрано коробов</div></div>`;
+                const qty=l.quantity||0;
+                if(l.action.includes('Принял паллет')) stats.received+=qty;
+                if(l.action.includes('Собрал')) stats.collected+=qty;
+                if(l.action.includes('Отгрузил паллеты')) stats.shipped+=qty;
+                if(l.action.includes('Выложил')) stats.laid+=qty;
+                if(l.action.includes('Сборка')) stats.invoice+=qty;
+                if(l.action.includes('Принял с осн')) stats.accepted+=qty;
+                if(l.action.includes('Отгрузил на осн')) stats.shippedPush+=qty;
+                if(l.action.includes('Выгрузка')) stats.unloaded+=qty;
+                if(l.action.includes('Перебрал')) stats.reworked+=qty;
+            });
+            document.getElementById('adminReportResult').innerHTML = `<div class="stat-item"><div class="stat-value">${stats.daysM.size}</div><div class="stat-label">Дней в Москве</div></div><div class="stat-item"><div class="stat-value">${stats.daysP.size}</div><div class="stat-label">Дней в Пушкино</div></div><div class="stat-item"><div class="stat-value">${stats.received}</div><div class="stat-label">Принято паллет</div></div><div class="stat-item"><div class="stat-value">${stats.collected}</div><div class="stat-label">Собрано паллет</div></div><div class="stat-item"><div class="stat-value">${stats.shipped}</div><div class="stat-label">Отгружено паллет</div></div><div class="stat-item"><div class="stat-value">${stats.laid}</div><div class="stat-label">Выложено (шт.)</div></div><div class="stat-item"><div class="stat-value">${stats.invoice}</div><div class="stat-label">По накладным</div></div><div class="stat-item"><div class="stat-value">${stats.accepted}</div><div class="stat-label">Принято коробов</div></div><div class="stat-item"><div class="stat-value">${stats.shippedPush}</div><div class="stat-label">Отгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.unloaded}</div><div class="stat-label">Выгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.reworked}</div><div class="stat-label">Перебрано коробов</div></div>`;
         }
         
         async function init() {
@@ -730,6 +801,7 @@
             document.querySelectorAll('[data-reset]').forEach(b=>b.addEventListener('click',()=>{ counters[b.dataset.reset]=0; updateAllCounters(); }));
             document.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',async ()=>{
                 const a=b.dataset.action;
+                if(a==='receive'&&counters.moscowReceived){ await addLog('Москва','📥 Принял паллет',`${counters.moscowReceived} паллет(а)`,counters.moscowReceived); counters.moscowReceived=0; }
                 if(a==='collect'&&counters.moscowCollected){ await addLog('Москва','📦 Собрал паллеты',`${counters.moscowCollected} шт.`,counters.moscowCollected); counters.moscowCollected=0; }
                 if(a==='ship'&&counters.moscowShipped){ await addLog('Москва','🚚 Отгрузил паллеты',`${counters.moscowShipped} шт.`,counters.moscowShipped); counters.moscowShipped=0; }
                 if(a==='lay'){ const art=document.getElementById('moscowArticle').value.trim(), qty=parseInt(document.getElementById('moscowQuantity').value)||1; if(!art){ alert('Укажите артикул'); return; } moscowLastArticle=art; await addLog('Москва','📋 Выложил товар',`арт. ${art}, ${qty} шт.`,qty); document.getElementById('moscowArticle').value=''; }
