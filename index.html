@@ -804,24 +804,85 @@
         async function updateReportEmployeeSelect() { const s=document.getElementById('reportEmployeeSelect'); s.innerHTML='<option value="">Все сотрудники</option>'; employees.filter(e=>e.active).forEach(e=>{ const o=document.createElement('option'); o.value=e.id; o.textContent=e.name; s.appendChild(o); }); }
         
         async function generateAdminReport() {
-            const eid=document.getElementById('reportEmployeeSelect').value, start=document.getElementById('reportStartDate').value, end=document.getElementById('reportEndDate').value;
-            if(!start||!end) return;
-            let q=db.collection('work_logs').where('date','>=',start).where('date','<=',end); if(eid) q=q.where('userId','==',eid);
-            const snap=await q.get();
-            const stats={received:0, collected:0, shipped:0, laid:0, invoice:0, accepted:0, shippedPush:0, unloaded:0, reworked:0, daysM:new Set(), daysP:new Set()};
-            snap.docs.forEach(d=>{ const l=d.data(); if(l.action==='👷 Работал на складе') { if(l.warehouse==='Москва') stats.daysM.add(l.date); else stats.daysP.add(l.date); }
-                const qty=l.quantity||0;
-                if(l.action.includes('Принял коробов')) stats.received+=qty;
-                if(l.action.includes('Собрал')) stats.collected+=qty;
-                if(l.action.includes('Отгрузил паллеты')) stats.shipped+=qty;
-                if(l.action.includes('Выложил')) stats.laid+=qty;
-                if(l.action.includes('Сборка')) stats.invoice+=qty;
-                if(l.action.includes('Принял с осн')) stats.accepted+=qty;
-                if(l.action.includes('Отгрузил на осн')) stats.shippedPush+=qty;
-                if(l.action.includes('Выгрузка')) stats.unloaded+=qty;
-                if(l.action.includes('Перебрал')) stats.reworked+=qty;
-            });
-            document.getElementById('adminReportResult').innerHTML = `<div class="stat-item"><div class="stat-value">${stats.daysM.size}</div><div class="stat-label">Дней в Москве</div></div><div class="stat-item"><div class="stat-value">${stats.daysP.size}</div><div class="stat-label">Дней в Пушкино</div></div><div class="stat-item"><div class="stat-value">${stats.received}</div><div class="stat-label">Принято коробов</div></div><div class="stat-item"><div class="stat-value">${stats.collected}</div><div class="stat-label">Собрано паллет</div></div><div class="stat-item"><div class="stat-value">${stats.shipped}</div><div class="stat-label">Отгружено паллет</div></div><div class="stat-item"><div class="stat-value">${stats.laid}</div><div class="stat-label">Выложено (шт.)</div></div><div class="stat-item"><div class="stat-value">${stats.invoice}</div><div class="stat-label">По накладным</div></div><div class="stat-item"><div class="stat-value">${stats.accepted}</div><div class="stat-label">Принято коробов (П)</div></div><div class="stat-item"><div class="stat-value">${stats.shippedPush}</div><div class="stat-label">Отгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.unloaded}</div><div class="stat-label">Выгружено коробов</div></div><div class="stat-item"><div class="stat-value">${stats.reworked}</div><div class="stat-label">Перебрано коробов</div></div>`;
+            const eid = document.getElementById('reportEmployeeSelect').value;
+            const start = document.getElementById('reportStartDate').value;
+            const end = document.getElementById('reportEndDate').value;
+            
+            if(!start || !end) {
+                alert('Выберите даты начала и конца периода');
+                return;
+            }
+            
+            // Показываем загрузку
+            document.getElementById('adminReportResult').innerHTML = '<div style="text-align:center;padding:20px;">Загрузка отчёта...</div>';
+            
+            try {
+                let query = db.collection('work_logs')
+                    .where('date', '>=', start)
+                    .where('date', '<=', end);
+                
+                if(eid) {
+                    query = query.where('userId', '==', eid);
+                }
+                
+                const snap = await query.get();
+                
+                const stats = {
+                    received: 0, collected: 0, shipped: 0, laid: 0, invoice: 0, 
+                    accepted: 0, shippedPush: 0, unloaded: 0, reworked: 0, 
+                    daysM: new Set(), daysP: new Set()
+                };
+                
+                snap.docs.forEach(doc => {
+                    const l = doc.data();
+                    
+                    // Дни присутствия
+                    if(l.action === '👷 Работал на складе') {
+                        if(l.warehouse === 'Москва') stats.daysM.add(l.date);
+                        else if(l.warehouse === 'Пушкино') stats.daysP.add(l.date);
+                    }
+                    
+                    const qty = l.quantity || 0;
+                    
+                    // Подсчёт по типам действий
+                    if(l.action.includes('Принял коробов')) stats.received += qty;
+                    if(l.action.includes('Собрал паллеты')) stats.collected += qty;
+                    if(l.action.includes('Отгрузил паллеты')) stats.shipped += qty;
+                    if(l.action.includes('Выложил товар')) stats.laid += qty;
+                    if(l.action.includes('Сборка по накладной')) stats.invoice += qty;
+                    if(l.action.includes('Принял с осн. склада')) stats.accepted += qty;
+                    if(l.action.includes('Отгрузил на осн. склад')) stats.shippedPush += qty;
+                    if(l.action.includes('Выгрузка фуры')) stats.unloaded += qty;
+                    if(l.action.includes('Перебрал паллеты')) stats.reworked += qty;
+                });
+                
+                // Формируем результат
+                let html = `
+                    <div class="stat-item"><div class="stat-value">${stats.daysM.size}</div><div class="stat-label">Дней в Москве</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.daysP.size}</div><div class="stat-label">Дней в Пушкино</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.received}</div><div class="stat-label">Принято коробов</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.collected}</div><div class="stat-label">Собрано паллет</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.shipped}</div><div class="stat-label">Отгружено паллет</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.laid}</div><div class="stat-label">Выложено (шт.)</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.invoice}</div><div class="stat-label">По накладным</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.accepted}</div><div class="stat-label">Принято коробов (П)</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.shippedPush}</div><div class="stat-label">Отгружено коробов</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.unloaded}</div><div class="stat-label">Выгружено коробов</div></div>
+                    <div class="stat-item"><div class="stat-value">${stats.reworked}</div><div class="stat-label">Перебрано коробов</div></div>
+                `;
+                
+                document.getElementById('adminReportResult').innerHTML = html;
+                
+            } catch(error) {
+                console.error('Ошибка формирования отчёта:', error);
+                document.getElementById('adminReportResult').innerHTML = `
+                    <div style="text-align:center;padding:20px;color:#c75d1e;grid-column:1/-1;">
+                        Ошибка загрузки отчёта.<br>
+                        <small>${error.message}</small><br><br>
+                        <button onclick="location.reload()" style="padding:10px 20px;background:#1e4a7a;color:white;border:none;border-radius:30px;cursor:pointer;">Обновить страницу</button>
+                    </div>
+                `;
+            }
         }
         
         async function init() {
@@ -872,7 +933,7 @@
             }));
             document.querySelectorAll('.admin-tab').forEach(t=>t.addEventListener('click',()=>{ document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); const tn=t.dataset.tab; document.getElementById('tabLogs').style.display=tn==='logs'?'block':'none'; document.getElementById('tabEmployees').style.display=tn==='employees'?'block':'none'; document.getElementById('tabReports').style.display=tn==='reports'?'block':'none'; }));
             document.getElementById('addEmployeeAdminBtn').addEventListener('click',()=>{ const n=prompt('Фамилия нового сотрудника:'); if(n) addEmployee(n); });
-            document.getElementById('generateAdminReportBtn').addEventListener('click',generateAdminReport);
+            document.getElementById('generateAdminReportBtn').addEventListener('click', generateAdminReport);
             const today=new Date(), weekAgo=new Date(today); weekAgo.setDate(today.getDate()-7);
             document.getElementById('reportStartDate').value=weekAgo.toISOString().split('T')[0]; document.getElementById('reportEndDate').value=today.toISOString().split('T')[0];
             window.addEventListener('online',()=>document.querySelector('#syncStatus').innerHTML='<span class="online-indicator"></span> Онлайн');
