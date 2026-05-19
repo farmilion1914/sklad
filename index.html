@@ -30,13 +30,11 @@
         }
         body.dark-theme .op-card, body.dark-theme .history-section, body.dark-theme .admin-panel, body.dark-theme .login-card { background: rgba(35, 40, 55, 0.95); border-color: #3d4555; }
         body.dark-theme .warehouse-title, body.dark-theme .op-card h3, body.dark-theme .admin-title, body.dark-theme .history-section h3 { color: #e4e9f2; }
-        body.dark-theme .login-subtitle, body.dark-theme .counter-label { color: #a0adc0; }
         body.dark-theme .counter-row { background: #2d3345; }
         body.dark-theme .counter-value { color: #e4e9f2; }
         body.dark-theme .btn-adjust { background: #3d4555; border-color: #555d70; color: #e4e9f2; }
         body.dark-theme .input-field { background: #2d3345; border-color: #4a5265; color: #e4e9f2; }
         body.dark-theme .input-field::placeholder { color: #78849e; }
-        body.dark-theme .input-field:focus { border-color: #5ba0d0; box-shadow: 0 0 20px rgba(91, 160, 208, 0.2); }
         body.dark-theme .work-day-card { background: linear-gradient(135deg, #2a3345, #1e3a5f); border-color: #3d6b9c; }
         body.dark-theme th { background: #2d3345; color: #c0ccda; }
         body.dark-theme td { color: #b0bdd0; border-bottom-color: #3d4555; }
@@ -48,13 +46,12 @@
         body.dark-theme .admin-filters { background: #2d3345; }
         body.dark-theme .admin-filter-select, body.dark-theme .admin-filter-date { background: #232837; border-color: #4a5265; color: #e4e9f2; }
         body.dark-theme .admin-filter-clear { background: #3d4555; color: #e4e9f2; }
-        body.dark-theme .report-result { background: #2d3345; }
         body.dark-theme .stat-item { background: #232837; }
         body.dark-theme .stat-value { color: #e4e9f2; }
         body.dark-theme .stat-label { color: #a0adc0; }
         body.dark-theme .reset-btn { color: #a0adc0; border-color: #4a5265; }
         body.dark-theme .delete-log-btn { background: #4a3030; border-color: #7a4a4a; color: #e4a0a0; }
-        body.dark-theme .loading, body.dark-theme .empty-message { color: #a0adc0; }
+        body.dark-theme .loading { color: #a0adc0; }
         body.dark-theme select, body.dark-theme input[type="date"] { color-scheme: dark; }
         body.dark-theme .login-input { background: #2d3345; border-color: #4a5265; color: #e4e9f2; }
         body.dark-theme .login-input::placeholder { color: #78849e; }
@@ -67,7 +64,6 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; font-size: 1.1rem; z-index: 100;
             backdrop-filter: blur(10px); -webkit-tap-highlight-color: transparent;
-            transition: all 0.3s;
         }
         body.dark-theme .theme-toggle-fixed { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
         
@@ -79,7 +75,7 @@
         .logo-text { font-size: 1.6rem; font-weight: 800; letter-spacing: 1.5px; color: white; }
         
         .input-group-login { margin-bottom: 16px; text-align: left; }
-        .input-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #5b7a99; margin-bottom: 5px; letter-spacing: 0.5px; }
+        .input-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #5b7a99; margin-bottom: 5px; }
         .login-input { width: 100%; padding: 13px 16px; font-size: 1rem; border: 2px solid #e0e8f0; border-radius: 16px; background: #f8fafd; transition: all 0.3s; outline: none; color: #1e3a5f; -webkit-appearance: none; }
         .login-input:focus { border-color: #2a7ab5; box-shadow: 0 0 15px rgba(42,122,181,0.12); background: white; }
         .login-input::placeholder { color: #a0b5c9; }
@@ -89,7 +85,6 @@
         .error-msg { background: #ffe6e2; color: #b13e24; padding: 9px 14px; border-radius: 12px; margin-top: 12px; font-size: 0.82rem; display: none; animation: shake 0.4s ease; }
         @keyframes shake { 0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)} }
         
-        /* Основной интерфейс */
         .dashboard { max-width: 100%; width: 100%; display: none; padding: 0.25rem; }
         .dashboard.active { display: block; }
         .employee-header { background: linear-gradient(135deg, #1e3c5c 0%, #2a5599 100%); color: white; padding: 0.6rem 0.8rem; border-radius: 16px; margin-bottom: 0.8rem; }
@@ -112,7 +107,6 @@
         .warehouse-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.6rem; color: white; }
         .work-day-card { background: rgba(255,255,255,0.95); border-radius: 14px; padding: 0.7rem 0.9rem; margin-bottom: 12px; border: 2px solid #2a6f97; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
         .btn-work { background: #2a6b3c; border: none; color: white; font-weight: 700; font-size: 1rem; padding: 8px 18px; border-radius: 25px; cursor: pointer; box-shadow: 0 4px 0 #1a4627; }
-        .btn-work:active { transform: translateY(3px); box-shadow: 0 1px 0 #1a4627; }
         .operations-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 16px; }
         @media (min-width: 480px) { .operations-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (min-width: 768px) { .operations-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -173,6 +167,191 @@
         </div>
     </div>
 
-    <!-- Остальной код (dashboard, userView, adminView, script) без изменений -->
+    <div id="dashboard" class="dashboard">
+        <div class="employee-header">
+            <div class="header-top-row">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">👤</div>
+                    <div class="user-name" id="userName"></div>
+                    <span class="admin-tag" id="adminTag" style="display:none;">👑 АДМИН</span>
+                    <span class="superadmin-tag" id="superadminTag" style="display:none;">⭐ СУПЕРАДМИН</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">🚪</button>
+            </div>
+            <div class="header-bottom-row">
+                <div id="syncStatus" class="sync-status"><span class="online-indicator"></span> Онлайн</div>
+                <div class="warehouse-selector" id="warehouseSelector" style="display:none;">
+                    <button class="wh-btn active" data-wh="Москва">🏢 Москва</button>
+                    <button class="wh-btn" data-wh="Пушкино">🏭 Пушкино</button>
+                </div>
+            </div>
+        </div>
+        <div id="userView" class="user-view"></div>
+        <div id="adminView" class="admin-view"></div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyComSAJzMrarnUBATsTlNs60w6CDe2NTj0",
+            authDomain: "warehouse-b6b75.firebaseapp.com",
+            projectId: "warehouse-b6b75",
+            storageBucket: "warehouse-b6b75.firebasestorage.app",
+            messagingSenderId: "399929411326",
+            appId: "1:399929411326:web:c3c84828ad31b8810b47af",
+            measurementId: "G-V0YQYM869J"
+        };
+        
+        function initTheme() {
+            const s = localStorage.getItem('warehouse_theme');
+            const t = document.getElementById('themeToggleFixed');
+            if (s === 'dark') { document.body.classList.add('dark-theme'); t.textContent = '☀️'; }
+            else { t.textContent = '🌙'; }
+            t.addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme');
+                localStorage.setItem('warehouse_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+                t.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙';
+            });
+        }
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        db.enablePersistence().catch(console.warn);
+        
+        let currentUser = null, isAdmin = false, isSuperAdmin = false, currentWarehouse = 'Москва', employees = [];
+        let counters = { moscowReceived: 0, moscowCollected: 0, moscowShipped: 0, moscowInvoiceTotal: 0, pushkinoAccepted: 0, pushkinoAcceptedTotal: 0, pushkinoShipped: 0, pushkinoShippedTotal: 0, pushkinoUnloaded: 0, pushkinoUnloadedTotal: 0, pushkinoReworked: 0, pushkinoReworkedTotal: 0 };
+        let moscowLastArticle = '—', currentHistoryDate = new Date();
+        
+        const SESSION_KEY = "warehouse_session";
+        function saveSession(u) { localStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
+        function getSession() { const r = localStorage.getItem(SESSION_KEY); return r ? JSON.parse(r) : null; }
+        function clearSession() { localStorage.removeItem(SESSION_KEY); }
+        function getTodayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+        function formatDateForInput(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+        function formatDateForDisplay(s) { const p = s.split('-'); return `${p[2]}.${p[1]}.${p[0]}`; }
+        
+        async function createInitialEmployees() {
+            const i = [
+                { login: 'popov', password: 'admin0111', name: 'Попов А.', role: 'superadmin', active: true },
+                { login: 'sazonov', password: 'admin0111', name: 'Сазонов М.', role: 'admin', active: true },
+                { login: 'yakimov', password: '123', name: 'Якимов', role: 'user', active: true },
+                { login: 'varivcev', password: '123', name: 'Варивцев', role: 'user', active: true },
+                { login: 'goncharov', password: '123', name: 'Гончаров', role: 'user', active: true }
+            ];
+            for (const e of i) await db.collection('employees').add(e);
+        }
+        
+        async function getEmployees() {
+            const s = await db.collection('employees').orderBy('name').get();
+            let e = s.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (e.length === 0) { await createInitialEmployees(); const s2 = await db.collection('employees').orderBy('name').get(); e = s2.docs.map(d => ({ id: d.id, ...d.data() })); }
+            employees = e;
+            return e;
+        }
+        
+        async function loginUser(l, p) {
+            const a = await db.collection('employees').get();
+            if (a.empty) await createInitialEmployees();
+            const s = await db.collection('employees').where('login', '==', l).where('password', '==', p).get();
+            if (s.empty) return null;
+            const d = s.docs[0];
+            return { id: d.id, ...d.data() };
+        }
+        
+        function updateFilterEmployeeSelect() {
+            const s = document.getElementById('adminFilterEmployee');
+            if (!s) return;
+            s.innerHTML = '<option value="">Все сотрудники</option>';
+            employees.filter(e => e.active !== false).forEach(e => { const o = document.createElement('option'); o.value = e.id; o.textContent = e.name; s.appendChild(o); });
+        }
+        
+        async function completeLogin(u) {
+            currentUser = u; isAdmin = (u.role === 'admin' || u.role === 'superadmin'); isSuperAdmin = (u.role === 'superadmin');
+            document.getElementById('userName').textContent = u.name;
+            document.getElementById('userAvatar').textContent = u.name.split(' ').map(w => w[0]).join('').slice(0, 2);
+            if (isSuperAdmin) { document.getElementById('superadminTag').style.display = 'inline-block'; document.getElementById('adminTag').style.display = 'none'; }
+            else if (isAdmin) { document.getElementById('adminTag').style.display = 'inline-block'; document.getElementById('superadminTag').style.display = 'none'; }
+            else { document.getElementById('adminTag').style.display = 'none'; document.getElementById('superadminTag').style.display = 'none'; }
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            if (isAdmin) {
+                document.getElementById('userView').classList.remove('active'); document.getElementById('adminView').classList.add('active');
+                document.getElementById('warehouseSelector').style.display = 'none';
+                document.getElementById('adminFilterDate').value = getTodayStr();
+                await loadAdminLogs(); await loadAdminEmployees(); await updateReportEmployeeSelect();
+            } else {
+                document.getElementById('userView').classList.add('active'); document.getElementById('adminView').classList.remove('active');
+                document.getElementById('warehouseSelector').style.display = 'flex';
+                await loadUserData(); await checkTodayAttendance();
+                currentHistoryDate = new Date(); document.getElementById('historyDateInput').value = formatDateForInput(currentHistoryDate);
+                await loadHistoryForDate(formatDateForInput(currentHistoryDate));
+            }
+        }
+        
+        function logout() { currentUser = null; isAdmin = false; isSuperAdmin = false; clearSession(); document.getElementById('loginScreen').style.display = 'block'; document.getElementById('dashboard').classList.remove('active'); }
+        
+        // Остальные функции (loadUserData, checkTodayAttendance, markAttendance, addLog, updateTotal, updateAllCounters, loadHistoryForDate, loadAdminLogs, loadAdminEmployees, addEmployee, updateReportEmployeeSelect, generateAdminReport) — без изменений
+        async function loadUserData() { if (!currentUser) return; const s = await db.collection('user_totals').where('userId', '==', currentUser.id).get(); s.docs.forEach(d => { const dt = d.data(); if (dt.type === 'pushkino_accepted') counters.pushkinoAcceptedTotal = dt.total || 0; if (dt.type === 'pushkino_shipped') counters.pushkinoShippedTotal = dt.total || 0; if (dt.type === 'pushkino_unloaded') counters.pushkinoUnloadedTotal = dt.total || 0; if (dt.type === 'pushkino_reworked') counters.pushkinoReworkedTotal = dt.total || 0; if (dt.type === 'moscow_invoice') counters.moscowInvoiceTotal = dt.total || 0; }); updateAllCounters(); }
+        async function checkTodayAttendance() { if (!currentUser) return; const t = getTodayStr(); const m = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Москва').where('date', '==', t).get(); const mE = document.getElementById('moscowWorkedToday'); mE.textContent = m.empty ? 'Не отмечено' : '✅ Отмечено'; mE.style.color = m.empty ? '#5e7180' : '#2a6b3c'; const p = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Пушкино').where('date', '==', t).get(); const pE = document.getElementById('pushkinoWorkedToday'); pE.textContent = p.empty ? 'Не отмечено' : '✅ Отмечено'; pE.style.color = p.empty ? '#5e7180' : '#2a6b3c'; }
+        async function markAttendance(w) { if (!currentUser) return; const t = getTodayStr(); const s = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', w).where('date', '==', t).get(); if (!s.empty) { alert(`Уже отмечены на ${w}`); return; } await db.collection('attendance').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, date: t, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: '👷 Работал на складе', details: `Присутствие на складе ${w}`, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); await checkTodayAttendance(); if (formatDateForInput(currentHistoryDate) === t) await loadHistoryForDate(t); if (isAdmin) await loadAdminLogs(); }
+        async function addLog(w, a, d, q = null) { if (!currentUser) return; const t = getTodayStr(); await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); if (formatDateForInput(currentHistoryDate) === t) await loadHistoryForDate(t); if (isAdmin) await loadAdminLogs(); }
+        async function updateTotal(ty, inc) { if (!currentUser) return; const dId = `${currentUser.id}_${ty}`; await db.runTransaction(async t => { const r = db.collection('user_totals').doc(dId); const d = await t.get(r); let nt = inc; if (d.exists) nt = (d.data().total || 0) + inc; t.set(r, { userId: currentUser.id, userName: currentUser.name, type: ty, total: nt, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); }); if (ty === 'pushkino_accepted') counters.pushkinoAcceptedTotal += inc; if (ty === 'pushkino_shipped') counters.pushkinoShippedTotal += inc; if (ty === 'pushkino_unloaded') counters.pushkinoUnloadedTotal += inc; if (ty === 'pushkino_reworked') counters.pushkinoReworkedTotal += inc; if (ty === 'moscow_invoice') counters.moscowInvoiceTotal += inc; updateAllCounters(); }
+        function updateAllCounters() { document.getElementById('moscowReceived').textContent = counters.moscowReceived; document.getElementById('moscowCollected').textContent = counters.moscowCollected; document.getElementById('moscowShipped').textContent = counters.moscowShipped; document.getElementById('moscowInvoiceTotal').textContent = counters.moscowInvoiceTotal; document.getElementById('pushkinoAccepted').textContent = counters.pushkinoAccepted; document.getElementById('pushkinoAcceptedTotal').textContent = counters.pushkinoAcceptedTotal; document.getElementById('pushkinoShipped').textContent = counters.pushkinoShipped; document.getElementById('pushkinoShippedTotal').textContent = counters.pushkinoShippedTotal; document.getElementById('pushkinoUnloaded').textContent = counters.pushkinoUnloaded; document.getElementById('pushkinoUnloadedTotal').textContent = counters.pushkinoUnloadedTotal; document.getElementById('pushkinoReworked').textContent = counters.pushkinoReworked; document.getElementById('pushkinoReworkedTotal').textContent = counters.pushkinoReworkedTotal; document.getElementById('moscowLastArticle').textContent = moscowLastArticle; }
+        async function loadHistoryForDate(ds) { if (!currentUser) return; const tb = document.getElementById('myHistoryBody'); tb.innerHTML = '<tr><td colspan="4" class="loading">Загрузка...</td></tr>'; const s = await db.collection('work_logs').where('userId', '==', currentUser.id).where('date', '==', ds).get(); if (s.empty) { const dd = formatDateForDisplay(ds); const isT = ds === getTodayStr(); tb.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;">${isT ? 'Нет записей за сегодня' : `Нет записей за ${dd}`}</td></tr>`; return; } const logs = s.docs.map(d => ({ ...d.data() })).sort((a, b) => (b.timestamp?.toDate() || 0) - (a.timestamp?.toDate() || 0)); let h = ''; logs.forEach(l => { const time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '—'; h += `<tr><td>${time}</td><td>${l.warehouse || '—'}</td><td>${l.action || '—'}</td><td>${l.details || '—'}</td></tr>`; }); tb.innerHTML = h; }
+        async function loadAdminLogs() { if (!isAdmin) return; const tb = document.getElementById('adminLogsBody'); tb.innerHTML = '<tr><td colspan="6" class="loading">Загрузка...</td></tr>'; const eid = document.getElementById('adminFilterEmployee').value, fd = document.getElementById('adminFilterDate').value; let q = db.collection('work_logs'); if (eid) q = q.where('userId', '==', eid); if (fd) q = q.where('date', '==', fd); const s = await q.orderBy('timestamp', 'desc').limit(200).get(); if (s.empty) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Нет записей</td></tr>'; return; } let h = ''; s.docs.forEach(d => { const l = d.data(); const time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleString('ru-RU') : '—'; h += `<tr><td>${time}</td><td>${l.warehouse}</td><td><strong>${l.userName}</strong></td><td>${l.action}</td><td>${l.details || '—'}</td><td><button class="delete-log-btn" data-id="${d.id}">🗑️</button></td></tr>`; }); tb.innerHTML = h; tb.querySelectorAll('.delete-log-btn').forEach(b => b.addEventListener('click', async () => { if (confirm('Удалить?')) { await db.collection('work_logs').doc(b.dataset.id).delete(); await loadAdminLogs(); } })); }
+        async function loadAdminEmployees() { if (!isAdmin) return; const s = await db.collection('employees').orderBy('name').get(); const tb = document.getElementById('adminEmployeesBody'); let h = ''; s.docs.forEach(d => { const e = d.data(); let rt = '👤 Сотрудник'; if (e.role === 'superadmin') rt = '⭐ Суперадмин'; else if (e.role === 'admin') rt = '👑 Админ'; let ac = `<button class="delete-log-btn" data-id="${d.id}" data-name="${e.name}" data-role="${e.role}">🗑️</button>`; h += `<tr><td><strong>${e.name}</strong></td><td>${rt}</td><td>${e.active !== false ? '✅' : '❌'}</td><td>${ac}</td></tr>`; }); tb.innerHTML = h; tb.querySelectorAll('.delete-log-btn').forEach(b => b.addEventListener('click', async () => { const n = b.dataset.name, r = b.dataset.role, id = b.dataset.id; if (r === 'superadmin') { alert('Невозможно удалить суперадмина'); return; } if (r === 'admin' && !isSuperAdmin) { alert('Только суперадмин может удалять админов'); return; } if (n === currentUser.name) { alert('Нельзя удалить себя'); return; } if (confirm(`Удалить ${n}?`)) { const ba = db.batch(); const ls = await db.collection('work_logs').where('userId', '==', id).get(); ls.docs.forEach(d => ba.delete(d.ref)); ba.delete(db.collection('employees').doc(id)); await ba.commit(); await loadAdminEmployees(); await getEmployees(); updateFilterEmployeeSelect(); } })); }
+        async function addEmployee(n) { if (!n) return; await db.collection('employees').add({ login: n.toLowerCase().replace(/\s/g, ''), password: '123', name: n.trim(), role: 'user', active: true }); await getEmployees(); await loadAdminEmployees(); updateFilterEmployeeSelect(); }
+        async function updateReportEmployeeSelect() { const s = document.getElementById('reportEmployeeSelect'); s.innerHTML = '<option value="">Все сотрудники</option>'; employees.filter(e => e.active).forEach(e => { const o = document.createElement('option'); o.value = e.id; o.textContent = e.name; s.appendChild(o); }); }
+        async function generateAdminReport() { const eid = document.getElementById('reportEmployeeSelect').value, start = document.getElementById('reportStartDate').value, end = document.getElementById('reportEndDate').value; if (!start || !end) { alert('Выберите даты'); return; } document.getElementById('adminReportResult').innerHTML = '<div style="text-align:center;padding:20px;">Загрузка...</div>'; let q = db.collection('work_logs').where('date', '>=', start).where('date', '<=', end); if (eid) q = q.where('userId', '==', eid); const s = await q.get(); const st = { received: 0, collected: 0, shipped: 0, laid: 0, invoice: 0, accepted: 0, shippedPush: 0, unloaded: 0, reworked: 0, daysM: new Set(), daysP: new Set() }; s.docs.forEach(doc => { const l = doc.data(); if (l.action === '👷 Работал на складе') { if (l.warehouse === 'Москва') st.daysM.add(l.date); else st.daysP.add(l.date); } const qty = l.quantity || 0; if (l.action.includes('Принял коробов')) st.received += qty; if (l.action.includes('Собрал паллеты')) st.collected += qty; if (l.action.includes('Отгрузил паллеты')) st.shipped += qty; if (l.action.includes('Выложил товар')) st.laid += qty; if (l.action.includes('Сборка по накладной')) st.invoice += qty; if (l.action.includes('Принял с осн. склада')) st.accepted += qty; if (l.action.includes('Отгрузил на осн. склад')) st.shippedPush += qty; if (l.action.includes('Выгрузка фуры')) st.unloaded += qty; if (l.action.includes('Перебрал паллеты')) st.reworked += qty; }); document.getElementById('adminReportResult').innerHTML = `<div class="stat-item"><div class="stat-value">${st.daysM.size}</div><div class="stat-label">Дней в Мск</div></div><div class="stat-item"><div class="stat-value">${st.daysP.size}</div><div class="stat-label">Дней в Пушк</div></div><div class="stat-item"><div class="stat-value">${st.received}</div><div class="stat-label">Принято кор.</div></div><div class="stat-item"><div class="stat-value">${st.collected}</div><div class="stat-label">Собрано палл.</div></div><div class="stat-item"><div class="stat-value">${st.shipped}</div><div class="stat-label">Отгруж. палл.</div></div><div class="stat-item"><div class="stat-value">${st.laid}</div><div class="stat-label">Вылож.(шт)</div></div><div class="stat-item"><div class="stat-value">${st.invoice}</div><div class="stat-label">По накл.</div></div><div class="stat-item"><div class="stat-value">${st.accepted}</div><div class="stat-label">Прин.кор(П)</div></div><div class="stat-item"><div class="stat-value">${st.shippedPush}</div><div class="stat-label">Отгр.кор.</div></div><div class="stat-item"><div class="stat-value">${st.unloaded}</div><div class="stat-label">Выгр.кор.</div></div><div class="stat-item"><div class="stat-value">${st.reworked}</div><div class="stat-label">Перебр.кор.</div></div>`; }
+        
+        function attachLoginEvents() {
+            const dl = async () => {
+                const lv = document.getElementById("loginUser").value.trim();
+                const pv = document.getElementById("loginPass").value.trim();
+                const le = document.getElementById("loginError");
+                const lb = document.getElementById("doLogin");
+                if (!lv || !pv) { le.style.display = "block"; le.innerText = "Введите логин и пароль"; return; }
+                le.style.display = "none"; lb.disabled = true; lb.textContent = "Вход...";
+                const u = await loginUser(lv, pv);
+                if (!u) { le.style.display = "block"; le.innerText = "Неверный логин или пароль"; lb.disabled = false; lb.textContent = "Войти в систему"; return; }
+                saveSession(u);
+                await completeLogin(u);
+            };
+            document.getElementById("doLogin").onclick = dl;
+            document.getElementById("loginPass")?.addEventListener("keypress", e => { if (e.key === "Enter") dl(); });
+        }
+        
+        async function init() {
+            initTheme();
+            await getEmployees();
+            const session = getSession();
+            if (session) { await completeLogin(session); }
+            else { attachLoginEvents(); }
+            
+            document.querySelectorAll('.btn-set').forEach(b => { b.addEventListener('click', () => { const t = b.dataset.target, mi = b.dataset.manual, m = document.getElementById(mi); let v = parseInt(m.value); if (!isNaN(v) && v >= 0) { counters[t] = v; } else { counters[t] = 0; } m.value = ''; updateAllCounters(); }); });
+            document.getElementById('prevDayBtn')?.addEventListener('click', () => { currentHistoryDate.setDate(currentHistoryDate.getDate() - 1); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
+            document.getElementById('nextDayBtn')?.addEventListener('click', () => { currentHistoryDate.setDate(currentHistoryDate.getDate() + 1); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
+            document.getElementById('todayHistoryBtn')?.addEventListener('click', () => { currentHistoryDate = new Date(); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
+            document.getElementById('historyDateInput')?.addEventListener('change', (e) => { currentHistoryDate = new Date(e.target.value); loadHistoryForDate(e.target.value); });
+            document.getElementById('applyAdminFilterBtn')?.addEventListener('click', loadAdminLogs);
+            document.getElementById('clearAdminFilterBtn')?.addEventListener('click', () => { document.getElementById('adminFilterEmployee').value = ''; document.getElementById('adminFilterDate').value = getTodayStr(); loadAdminLogs(); });
+            document.querySelectorAll('.wh-btn').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.wh-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); currentWarehouse = b.dataset.wh; document.getElementById('moscowContainer').classList.toggle('active', currentWarehouse === 'Москва'); document.getElementById('pushkinoContainer').classList.toggle('active', currentWarehouse === 'Пушкино'); }));
+            document.getElementById('logoutBtn')?.addEventListener('click', logout);
+            document.getElementById('moscowWorkBtn')?.addEventListener('click', () => markAttendance('Москва'));
+            document.getElementById('pushkinoWorkBtn')?.addEventListener('click', () => markAttendance('Пушкино'));
+            document.querySelectorAll('.btn-adjust').forEach(b => b.addEventListener('click', () => { const t = b.dataset.target, d = parseInt(b.dataset.delta); counters[t] = Math.max(0, counters[t] + d); updateAllCounters(); }));
+            document.querySelectorAll('[data-reset]').forEach(b => b.addEventListener('click', () => { counters[b.dataset.reset] = 0; updateAllCounters(); }));
+            document.querySelectorAll('[data-action]').forEach(b => b.addEventListener('click', async () => { const a = b.dataset.action; if (a === 'receive' && counters.moscowReceived) { await addLog('Москва', '📥 Принял коробов', `${counters.moscowReceived} кор.`, counters.moscowReceived); counters.moscowReceived = 0; } if (a === 'collect' && counters.moscowCollected) { await addLog('Москва', '📦 Собрал паллеты', `${counters.moscowCollected} шт.`, counters.moscowCollected); counters.moscowCollected = 0; } if (a === 'ship' && counters.moscowShipped) { await addLog('Москва', '🚚 Отгрузил паллеты', `${counters.moscowShipped} шт.`, counters.moscowShipped); counters.moscowShipped = 0; } if (a === 'lay') { const art = document.getElementById('moscowArticle').value.trim(), qty = parseInt(document.getElementById('moscowQuantity').value) || 1; if (!art) { alert('Укажите артикул'); return; } moscowLastArticle = art; await addLog('Москва', '📋 Выложил товар', `арт. ${art}, ${qty} шт.`, qty); document.getElementById('moscowArticle').value = ''; } if (a === 'invoice') { const inv = document.getElementById('moscowInvoiceNumber').value.trim(), qty = parseInt(document.getElementById('moscowInvoiceQuantity').value) || 1; if (!inv) { alert('Укажите накладную'); return; } await addLog('Москва', '📑 Сборка по накладной', `накл. ${inv}, ${qty} шт.`, qty); await updateTotal('moscow_invoice', qty); document.getElementById('moscowInvoiceNumber').value = ''; } if (a === 'accept' && counters.pushkinoAccepted) { await addLog('Пушкино', '📥 Принял с осн. склада', `${counters.pushkinoAccepted} кор.`, counters.pushkinoAccepted); await updateTotal('pushkino_accepted', counters.pushkinoAccepted); counters.pushkinoAccepted = 0; } if (a === 'shipPushkino' && counters.pushkinoShipped) { await addLog('Пушкино', '🚛 Отгрузил на осн. склад', `${counters.pushkinoShipped} кор.`, counters.pushkinoShipped); await updateTotal('pushkino_shipped', counters.pushkinoShipped); counters.pushkinoShipped = 0; } if (a === 'unload' && counters.pushkinoUnloaded) { await addLog('Пушкино', '🚛 Выгрузка фуры', `${counters.pushkinoUnloaded} кор.`, counters.pushkinoUnloaded); await updateTotal('pushkino_unloaded', counters.pushkinoUnloaded); counters.pushkinoUnloaded = 0; } if (a === 'rework' && counters.pushkinoReworked) { await addLog('Пушкино', '🔄 Перебрал паллеты', `${counters.pushkinoReworked} кор.`, counters.pushkinoReworked); await updateTotal('pushkino_reworked', counters.pushkinoReworked); counters.pushkinoReworked = 0; } updateAllCounters(); document.getElementById('moscowQuantity').value = 1; document.getElementById('moscowInvoiceQuantity').value = 1; }));
+            document.querySelectorAll('.admin-tab').forEach(t => t.addEventListener('click', () => { document.querySelectorAll('.admin-tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); document.getElementById('tabLogs').style.display = t.dataset.tab === 'logs' ? 'block' : 'none'; document.getElementById('tabEmployees').style.display = t.dataset.tab === 'employees' ? 'block' : 'none'; document.getElementById('tabReports').style.display = t.dataset.tab === 'reports' ? 'block' : 'none'; }));
+            document.getElementById('addEmployeeAdminBtn')?.addEventListener('click', () => { const n = prompt('Фамилия нового сотрудника:'); if (n) addEmployee(n); });
+            document.getElementById('generateAdminReportBtn')?.addEventListener('click', generateAdminReport);
+            const today = new Date(), weekAgo = new Date(today); weekAgo.setDate(today.getDate() - 7);
+            if (document.getElementById('reportStartDate')) document.getElementById('reportStartDate').value = weekAgo.toISOString().split('T')[0];
+            if (document.getElementById('reportEndDate')) document.getElementById('reportEndDate').value = today.toISOString().split('T')[0];
+            window.addEventListener('online', () => { const el = document.querySelector('#syncStatus'); if (el) el.innerHTML = '<span class="online-indicator"></span> Онлайн'; });
+            window.addEventListener('offline', () => { const el = document.querySelector('#syncStatus'); if (el) el.innerHTML = '<span class="online-indicator offline-indicator"></span> Офлайн'; });
+        }
+        
+        init();
+    </script>
 </body>
 </html>
