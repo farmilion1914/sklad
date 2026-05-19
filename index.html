@@ -273,14 +273,18 @@
             else { document.getElementById('adminTag').style.display = 'none'; document.getElementById('superadminTag').style.display = 'none'; }
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('dashboard').classList.add('active');
+            
             if (isAdmin) {
                 document.getElementById('userView').classList.remove('active'); document.getElementById('adminView').classList.add('active');
                 document.getElementById('warehouseSelector').style.display = 'none';
+                document.getElementById('adminView').innerHTML = await renderAdminPanel();
                 document.getElementById('adminFilterDate').value = getTodayStr();
+                await updateFilterEmployeeSelect();
                 await loadAdminLogs(); await loadAdminEmployees(); await updateReportEmployeeSelect();
             } else {
                 document.getElementById('userView').classList.add('active'); document.getElementById('adminView').classList.remove('active');
                 document.getElementById('warehouseSelector').style.display = 'flex';
+                document.getElementById('userView').innerHTML = await renderUserPanel();
                 await loadUserData(); await checkTodayAttendance();
                 currentHistoryDate = new Date(); document.getElementById('historyDateInput').value = formatDateForInput(currentHistoryDate);
                 await loadHistoryForDate(formatDateForInput(currentHistoryDate));
@@ -289,7 +293,6 @@
         
         function logout() { currentUser = null; isAdmin = false; isSuperAdmin = false; clearSession(); document.getElementById('loginScreen').style.display = 'block'; document.getElementById('dashboard').classList.remove('active'); }
         
-        // Остальные функции (loadUserData, checkTodayAttendance, markAttendance, addLog, updateTotal, updateAllCounters, loadHistoryForDate, loadAdminLogs, loadAdminEmployees, addEmployee, updateReportEmployeeSelect, generateAdminReport) — без изменений
         async function loadUserData() { if (!currentUser) return; const s = await db.collection('user_totals').where('userId', '==', currentUser.id).get(); s.docs.forEach(d => { const dt = d.data(); if (dt.type === 'pushkino_accepted') counters.pushkinoAcceptedTotal = dt.total || 0; if (dt.type === 'pushkino_shipped') counters.pushkinoShippedTotal = dt.total || 0; if (dt.type === 'pushkino_unloaded') counters.pushkinoUnloadedTotal = dt.total || 0; if (dt.type === 'pushkino_reworked') counters.pushkinoReworkedTotal = dt.total || 0; if (dt.type === 'moscow_invoice') counters.moscowInvoiceTotal = dt.total || 0; }); updateAllCounters(); }
         async function checkTodayAttendance() { if (!currentUser) return; const t = getTodayStr(); const m = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Москва').where('date', '==', t).get(); const mE = document.getElementById('moscowWorkedToday'); mE.textContent = m.empty ? 'Не отмечено' : '✅ Отмечено'; mE.style.color = m.empty ? '#5e7180' : '#2a6b3c'; const p = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Пушкино').where('date', '==', t).get(); const pE = document.getElementById('pushkinoWorkedToday'); pE.textContent = p.empty ? 'Не отмечено' : '✅ Отмечено'; pE.style.color = p.empty ? '#5e7180' : '#2a6b3c'; }
         async function markAttendance(w) { if (!currentUser) return; const t = getTodayStr(); const s = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', w).where('date', '==', t).get(); if (!s.empty) { alert(`Уже отмечены на ${w}`); return; } await db.collection('attendance').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, date: t, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: '👷 Работал на складе', details: `Присутствие на складе ${w}`, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); await checkTodayAttendance(); if (formatDateForInput(currentHistoryDate) === t) await loadHistoryForDate(t); if (isAdmin) await loadAdminLogs(); }
@@ -302,6 +305,69 @@
         async function addEmployee(n) { if (!n) return; await db.collection('employees').add({ login: n.toLowerCase().replace(/\s/g, ''), password: '123', name: n.trim(), role: 'user', active: true }); await getEmployees(); await loadAdminEmployees(); updateFilterEmployeeSelect(); }
         async function updateReportEmployeeSelect() { const s = document.getElementById('reportEmployeeSelect'); s.innerHTML = '<option value="">Все сотрудники</option>'; employees.filter(e => e.active).forEach(e => { const o = document.createElement('option'); o.value = e.id; o.textContent = e.name; s.appendChild(o); }); }
         async function generateAdminReport() { const eid = document.getElementById('reportEmployeeSelect').value, start = document.getElementById('reportStartDate').value, end = document.getElementById('reportEndDate').value; if (!start || !end) { alert('Выберите даты'); return; } document.getElementById('adminReportResult').innerHTML = '<div style="text-align:center;padding:20px;">Загрузка...</div>'; let q = db.collection('work_logs').where('date', '>=', start).where('date', '<=', end); if (eid) q = q.where('userId', '==', eid); const s = await q.get(); const st = { received: 0, collected: 0, shipped: 0, laid: 0, invoice: 0, accepted: 0, shippedPush: 0, unloaded: 0, reworked: 0, daysM: new Set(), daysP: new Set() }; s.docs.forEach(doc => { const l = doc.data(); if (l.action === '👷 Работал на складе') { if (l.warehouse === 'Москва') st.daysM.add(l.date); else st.daysP.add(l.date); } const qty = l.quantity || 0; if (l.action.includes('Принял коробов')) st.received += qty; if (l.action.includes('Собрал паллеты')) st.collected += qty; if (l.action.includes('Отгрузил паллеты')) st.shipped += qty; if (l.action.includes('Выложил товар')) st.laid += qty; if (l.action.includes('Сборка по накладной')) st.invoice += qty; if (l.action.includes('Принял с осн. склада')) st.accepted += qty; if (l.action.includes('Отгрузил на осн. склад')) st.shippedPush += qty; if (l.action.includes('Выгрузка фуры')) st.unloaded += qty; if (l.action.includes('Перебрал паллеты')) st.reworked += qty; }); document.getElementById('adminReportResult').innerHTML = `<div class="stat-item"><div class="stat-value">${st.daysM.size}</div><div class="stat-label">Дней в Мск</div></div><div class="stat-item"><div class="stat-value">${st.daysP.size}</div><div class="stat-label">Дней в Пушк</div></div><div class="stat-item"><div class="stat-value">${st.received}</div><div class="stat-label">Принято кор.</div></div><div class="stat-item"><div class="stat-value">${st.collected}</div><div class="stat-label">Собрано палл.</div></div><div class="stat-item"><div class="stat-value">${st.shipped}</div><div class="stat-label">Отгруж. палл.</div></div><div class="stat-item"><div class="stat-value">${st.laid}</div><div class="stat-label">Вылож.(шт)</div></div><div class="stat-item"><div class="stat-value">${st.invoice}</div><div class="stat-label">По накл.</div></div><div class="stat-item"><div class="stat-value">${st.accepted}</div><div class="stat-label">Прин.кор(П)</div></div><div class="stat-item"><div class="stat-value">${st.shippedPush}</div><div class="stat-label">Отгр.кор.</div></div><div class="stat-item"><div class="stat-value">${st.unloaded}</div><div class="stat-label">Выгр.кор.</div></div><div class="stat-item"><div class="stat-value">${st.reworked}</div><div class="stat-label">Перебр.кор.</div></div>`; }
+        
+        async function renderUserPanel() {
+            return `
+                <div id="moscowContainer" class="warehouse-container active">
+                    <div class="warehouse-title">🏢 Склад Москва</div>
+                    <div class="work-day-card"><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:1.5rem;">👷</span><span style="font-size:0.9rem;">Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:10px;"><span id="moscowWorkedToday" style="color:#5e7180;font-size:0.8rem;">Не отмечено</span><button class="btn-work" id="moscowWorkBtn">ОК</button></div></div>
+                    <div class="operations-grid">
+                        <div class="op-card"><h3>📥 ПРИНЯЛ коробов</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="moscowReceived">0</span></div><div class="manual-input-row"><input type="number" id="moscowReceivedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowReceived" data-manual="moscowReceivedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowReceived" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowReceived" data-delta="1">+</button></div><button class="btn-ok green" data-action="receive">ОК</button><button class="reset-btn" data-reset="moscowReceived">↺ сброс</button></div>
+                        <div class="op-card"><h3>📦 СОБРАЛ паллет</h3><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowCollected">0</span></div><div class="manual-input-row"><input type="number" id="moscowCollectedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowCollected" data-manual="moscowCollectedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button></div><button class="btn-ok" data-action="collect">ОК</button><button class="reset-btn" data-reset="moscowCollected">↺ сброс</button></div>
+                        <div class="op-card"><h3>🚚 ОТГРУЗИЛ паллет</h3><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowShipped">0</span></div><div class="manual-input-row"><input type="number" id="moscowShippedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowShipped" data-manual="moscowShippedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="ship">ОК</button><button class="reset-btn" data-reset="moscowShipped">↺ сброс</button></div>
+                        <div class="op-card"><h3>📋 ВЫЛОЖИЛ товар</h3><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" value="1" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:4px;font-size:0.7rem;">Последний: <span id="moscowLastArticle">—</span></div></div>
+                        <div class="op-card"><h3>📑 СБОРКА по накл.</h3><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" value="1" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:4px;font-size:0.7rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div>
+                    </div>
+                </div>
+                <div id="pushkinoContainer" class="warehouse-container">
+                    <div class="warehouse-title">🏭 Склад Пушкино</div>
+                    <div class="work-day-card"><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:1.5rem;">👷</span><span style="font-size:0.9rem;">Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:10px;"><span id="pushkinoWorkedToday" style="color:#5e7180;font-size:0.8rem;">Не отмечено</span><button class="btn-work" id="pushkinoWorkBtn">ОК</button></div></div>
+                    <div class="operations-grid">
+                        <div class="op-card"><h3>📥 ПРИНЯЛ с осн. склада</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoAccepted">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="1">+</button></div><button class="btn-ok" data-action="accept">ОК</button><button class="reset-btn" data-reset="pushkinoAccepted">↺ сброс</button><div style="margin-top:4px;font-size:0.7rem;">Всего: <span id="pushkinoAcceptedTotal">0</span> кор.</div></div>
+                        <div class="op-card"><h3>🚛 ОТГРУЗИЛ на осн.</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="shipPushkino">ОК</button><button class="reset-btn" data-reset="pushkinoShipped">↺ сброс</button><div style="margin-top:4px;font-size:0.7rem;">Всего: <span id="pushkinoShippedTotal">0</span> кор.</div></div>
+                        <div class="op-card"><h3>🚛 ВЫГРУЗКА фуры</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoUnloaded">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="1">+</button></div><button class="btn-ok blue" data-action="unload">ОК</button><button class="reset-btn" data-reset="pushkinoUnloaded">↺ сброс</button><div style="margin-top:4px;font-size:0.7rem;">Всего: <span id="pushkinoUnloadedTotal">0</span> кор.</div></div>
+                        <div class="op-card"><h3>🔄 ПЕРЕБРАЛ паллеты</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoReworked">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoReworked" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoReworked" data-delta="1">+</button></div><button class="btn-ok teal" data-action="rework">ОК</button><button class="reset-btn" data-reset="pushkinoReworked">↺ сброс</button><div style="margin-top:4px;font-size:0.7rem;">Всего: <span id="pushkinoReworkedTotal">0</span> кор.</div></div>
+                    </div>
+                </div>
+                <div class="history-section">
+                    <div class="history-header"><h3>📋 Мои записи</h3><div class="date-selector"><div class="date-nav"><button class="date-nav-btn" id="prevDayBtn">←</button><button class="date-nav-btn" id="nextDayBtn">→</button></div><input type="date" id="historyDateInput"><button class="date-nav-btn" id="todayHistoryBtn">Сегодня</button></div></div>
+                    <div class="table-wrap"><table><thead><tr><th>Время</th><th>Склад</th><th>Действие</th><th>Детали</th></tr></thead><tbody id="myHistoryBody"><tr><td colspan="4" class="loading">Выберите дату</td></tr></tbody></table></div>
+                </div>`;
+        }
+        
+        async function renderAdminPanel() {
+            return `
+                <div class="admin-panel">
+                    <div class="admin-title">👑 Панель администратора</div>
+                    <div class="admin-tabs">
+                        <button class="admin-tab active" data-tab="logs">📋 Все записи</button>
+                        <button class="admin-tab" data-tab="employees">👥 Сотрудники</button>
+                        <button class="admin-tab" data-tab="reports">📊 Отчёты</button>
+                    </div>
+                    <div id="tabLogs">
+                        <div class="admin-filters">
+                            <select id="adminFilterEmployee" class="admin-filter-select"><option value="">Все сотрудники</option></select>
+                            <input type="date" id="adminFilterDate" class="admin-filter-date">
+                            <button class="admin-filter-btn" id="applyAdminFilterBtn">🔍</button>
+                            <button class="admin-filter-clear" id="clearAdminFilterBtn">🗑️</button>
+                        </div>
+                        <div class="table-wrap"><table><thead><tr><th>Время</th><th>Склад</th><th>Сотрудник</th><th>Действие</th><th>Детали</th><th></th></tr></thead><tbody id="adminLogsBody"><tr><td colspan="6" class="loading">Загрузка...</td></tr></tbody></table></div>
+                    </div>
+                    <div id="tabEmployees" style="display:none;">
+                        <button class="btn-ok" id="addEmployeeAdminBtn" style="width:auto;padding:8px 16px;margin-bottom:12px;font-size:0.9rem;">➕ Добавить сотрудника</button>
+                        <div class="table-wrap"><table><thead><tr><th>Сотрудник</th><th>Роль</th><th>Статус</th><th></th></tr></thead><tbody id="adminEmployeesBody"><tr><td colspan="4" class="loading">Загрузка...</td></tr></tbody></table></div>
+                    </div>
+                    <div id="tabReports" style="display:none;">
+                        <div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;">
+                            <select id="reportEmployeeSelect" style="padding:8px;border-radius:20px;font-size:0.8rem;"><option value="">Все сотрудники</option></select>
+                            <input type="date" id="reportStartDate" style="padding:8px;border-radius:20px;font-size:0.8rem;">
+                            <input type="date" id="reportEndDate" style="padding:8px;border-radius:20px;font-size:0.8rem;">
+                            <button class="btn-ok" id="generateAdminReportBtn" style="width:auto;padding:8px 14px;font-size:0.85rem;">Сформировать</button>
+                        </div>
+                        <div id="adminReportResult" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;"></div>
+                    </div>
+                </div>`;
+        }
         
         function attachLoginEvents() {
             const dl = async () => {
@@ -327,6 +393,7 @@
             if (session) { await completeLogin(session); }
             else { attachLoginEvents(); }
             
+            // Все обработчики событий
             document.querySelectorAll('.btn-set').forEach(b => { b.addEventListener('click', () => { const t = b.dataset.target, mi = b.dataset.manual, m = document.getElementById(mi); let v = parseInt(m.value); if (!isNaN(v) && v >= 0) { counters[t] = v; } else { counters[t] = 0; } m.value = ''; updateAllCounters(); }); });
             document.getElementById('prevDayBtn')?.addEventListener('click', () => { currentHistoryDate.setDate(currentHistoryDate.getDate() - 1); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
             document.getElementById('nextDayBtn')?.addEventListener('click', () => { currentHistoryDate.setDate(currentHistoryDate.getDate() + 1); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
