@@ -67,10 +67,10 @@
         }
         body.dark-theme .theme-toggle-fixed { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
         
-        .login-screen { max-width: 400px; width: 100%; margin: 0 auto; animation: fadeInUp 0.5s ease; }
+        .login-screen { max-width: 440px; width: 100%; margin: 0 auto; animation: fadeInUp 0.5s ease; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .login-card { border-radius: 28px; padding: 2rem 1.5rem; box-shadow: 0 15px 40px rgba(0,0,0,0.2); text-align: center; }
-        .logo-container { margin-bottom: 28px; }
+        .logo-container { margin-bottom: 24px; }
         .logo-oval { background: linear-gradient(135deg, #1e5a8a 0%, #2a7ab5 100%); display: inline-flex; align-items: center; justify-content: center; padding: 12px 30px; border-radius: 100px; box-shadow: 0 6px 20px rgba(30,90,138,0.3); }
         .logo-text { font-size: 1.6rem; font-weight: 800; letter-spacing: 1.5px; color: white; }
         
@@ -82,7 +82,14 @@
         .login-btn { width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: none; border-radius: 16px; background: linear-gradient(135deg, #2a7ab5 0%, #1e5a8a 100%); color: white; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 18px rgba(30,90,138,0.3); margin-top: 6px; }
         .login-btn:active { transform: scale(0.98); }
         .login-btn:disabled { background: #a0b8cc; box-shadow: none; cursor: not-allowed; }
+        .reg-btn { width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: 2px solid #2a7ab5; border-radius: 16px; background: transparent; color: #2a7ab5; cursor: pointer; margin-top: 8px; }
+        body.dark-theme .reg-btn { color: #5ba0d0; border-color: #5ba0d0; }
+        .reg-btn:active { background: rgba(42,122,181,0.08); }
+        .divider-text { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: #8a9db5; font-size: 0.8rem; }
+        .divider-text::before, .divider-text::after { content: ''; flex: 1; height: 1px; background: #d9e2ec; }
+        body.dark-theme .divider-text::before, body.dark-theme .divider-text::after { background: #3d4555; }
         .error-msg { background: #ffe6e2; color: #b13e24; padding: 9px 14px; border-radius: 12px; margin-top: 12px; font-size: 0.82rem; display: none; animation: shake 0.4s ease; }
+        .success-msg { background: #e0f7ea; color: #1e6f3f; padding: 9px 14px; border-radius: 12px; margin-top: 12px; font-size: 0.82rem; display: none; }
         @keyframes shake { 0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)} }
         
         .dashboard { max-width: 100%; width: 100%; display: none; padding: 0.25rem; }
@@ -164,6 +171,13 @@
             <div class="input-group-login"><div class="input-label">🔒 Пароль</div><input type="password" id="loginPass" class="login-input" placeholder="Введите ваш пароль"></div>
             <button id="doLogin" class="login-btn">Войти в систему</button>
             <div id="loginError" class="error-msg"></div>
+            <div class="divider-text">или</div>
+            <div style="margin-bottom:12px;color:#5b7a99;font-size:0.85rem;text-align:center;">Впервые здесь? Зарегистрируйтесь</div>
+            <div class="input-group-login"><div class="input-label">👤 Логин</div><input type="text" id="regLogin" class="login-input" placeholder="Придумайте логин"></div>
+            <div class="input-group-login"><div class="input-label">🔒 Пароль</div><input type="password" id="regPass" class="login-input" placeholder="Придумайте пароль"></div>
+            <div class="input-group-login"><div class="input-label">📛 Ваше имя</div><input type="text" id="regName" class="login-input" placeholder="Как вас называть?"></div>
+            <button id="doRegister" class="reg-btn">📝 Зарегистрироваться</button>
+            <div id="regError" class="error-msg"></div>
         </div>
     </div>
 
@@ -258,6 +272,14 @@
             return { id: d.id, ...d.data() };
         }
         
+        async function registerUser(l, p, n) {
+            if (!l || !p || !n) return { success: false, error: 'Заполните все поля' };
+            const s = await db.collection('employees').where('login', '==', l).get();
+            if (!s.empty) return { success: false, error: 'Логин уже существует' };
+            await db.collection('employees').add({ login: l.trim(), password: p, name: n.trim(), role: 'user', active: true });
+            return { success: true };
+        }
+        
         function updateFilterEmployeeSelect() {
             const s = document.getElementById('adminFilterEmployee');
             if (!s) return;
@@ -294,6 +316,7 @@
         
         function logout() { currentUser = null; isAdmin = false; isSuperAdmin = false; clearSession(); document.getElementById('loginScreen').style.display = 'block'; document.getElementById('dashboard').classList.remove('active'); }
         
+        // Остальные функции без изменений (loadUserData, checkTodayAttendance, markAttendance, addLog, updateTotal, updateAllCounters, loadHistoryForDate, loadAdminLogs, loadAdminEmployees, addEmployee, updateReportEmployeeSelect, generateAdminReport, renderUserPanel, renderAdminPanel)
         async function loadUserData() { if (!currentUser) return; const s = await db.collection('user_totals').where('userId', '==', currentUser.id).get(); s.docs.forEach(d => { const dt = d.data(); if (dt.type === 'pushkino_accepted') counters.pushkinoAcceptedTotal = dt.total || 0; if (dt.type === 'pushkino_shipped') counters.pushkinoShippedTotal = dt.total || 0; if (dt.type === 'pushkino_unloaded') counters.pushkinoUnloadedTotal = dt.total || 0; if (dt.type === 'pushkino_reworked') counters.pushkinoReworkedTotal = dt.total || 0; if (dt.type === 'moscow_invoice') counters.moscowInvoiceTotal = dt.total || 0; }); updateAllCounters(); }
         async function checkTodayAttendance() { if (!currentUser) return; const t = getTodayStr(); const m = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Москва').where('date', '==', t).get(); const mE = document.getElementById('moscowWorkedToday'); mE.textContent = m.empty ? 'Не отмечено' : '✅ Отмечено'; mE.style.color = m.empty ? '#5e7180' : '#2a6b3c'; const p = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Пушкино').where('date', '==', t).get(); const pE = document.getElementById('pushkinoWorkedToday'); pE.textContent = p.empty ? 'Не отмечено' : '✅ Отмечено'; pE.style.color = p.empty ? '#5e7180' : '#2a6b3c'; }
         async function markAttendance(w) { if (!currentUser) return; const t = getTodayStr(); const s = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', w).where('date', '==', t).get(); if (!s.empty) { alert(`Уже отмечены на ${w}`); return; } await db.collection('attendance').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, date: t, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: '👷 Работал на складе', details: `Присутствие на складе ${w}`, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); await checkTodayAttendance(); if (formatDateForInput(currentHistoryDate) === t) await loadHistoryForDate(t); if (isAdmin) await loadAdminLogs(); }
@@ -385,6 +408,19 @@
             };
             document.getElementById("doLogin").onclick = dl;
             document.getElementById("loginPass")?.addEventListener("keypress", e => { if (e.key === "Enter") dl(); });
+            
+            document.getElementById("doRegister").onclick = async () => {
+                const rl = document.getElementById("regLogin").value.trim();
+                const rp = document.getElementById("regPass").value.trim();
+                const rn = document.getElementById("regName").value.trim();
+                const re = document.getElementById("regError");
+                const result = await registerUser(rl, rp, rn);
+                re.style.display = "block";
+                re.className = result.success ? "success-msg" : "error-msg";
+                re.innerText = result.success ? "✅ Регистрация успешна! Теперь войдите." : "❌ " + result.error;
+                if (result.success) { document.getElementById("regLogin").value = ""; document.getElementById("regPass").value = ""; document.getElementById("regName").value = ""; }
+                setTimeout(() => { re.style.display = "none"; }, 3000);
+            };
         }
         
         async function init() {
