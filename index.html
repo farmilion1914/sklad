@@ -233,6 +233,7 @@
             const i = [
                 { login: 'popov', password: 'admin0111', name: 'Попов А.', role: 'superadmin', active: true },
                 { login: 'sazonov', password: 'admin0111', name: 'Сазонов М.', role: 'admin', active: true },
+                { login: 'roman', password: '123', name: 'Роман', role: 'user', active: true },
                 { login: 'yakimov', password: '123', name: 'Якимов', role: 'user', active: true },
                 { login: 'varivcev', password: '123', name: 'Варивцев', role: 'user', active: true },
                 { login: 'goncharov', password: '123', name: 'Гончаров', role: 'user', active: true }
@@ -393,7 +394,6 @@
             if (session) { await completeLogin(session); }
             else { attachLoginEvents(); }
             
-            // Все обработчики событий
             document.querySelectorAll('.btn-set').forEach(b => { b.addEventListener('click', () => { const t = b.dataset.target, mi = b.dataset.manual, m = document.getElementById(mi); let v = parseInt(m.value); if (!isNaN(v) && v >= 0) { counters[t] = v; } else { counters[t] = 0; } m.value = ''; updateAllCounters(); }); });
             document.getElementById('prevDayBtn')?.addEventListener('click', () => { currentHistoryDate.setDate(currentHistoryDate.getDate() - 1); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
             document.getElementById('nextDayBtn')?.addEventListener('click', () => { currentHistoryDate.setDate(currentHistoryDate.getDate() + 1); const ds = formatDateForInput(currentHistoryDate); document.getElementById('historyDateInput').value = ds; loadHistoryForDate(ds); });
