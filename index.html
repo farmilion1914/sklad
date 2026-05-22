@@ -38,6 +38,7 @@
         body.dark-theme .login-input:focus { border-color: #5ba0d0; box-shadow: 0 0 20px rgba(91, 160, 208, 0.2); }
         body.dark-theme .pallet-group { background: #232837; border-color: #3d4555; }
         body.dark-theme .pallet-group .pallet-header { color: #c0ccda; }
+        body.dark-theme .ip-checkbox-label { background: #2d3345; border-color: #4a5265; color: #e4e9f2; }
         .theme-toggle-fixed { position: fixed; top: 10px; right: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; z-index: 100; backdrop-filter: blur(10px); -webkit-tap-highlight-color: transparent; }
         body.dark-theme .theme-toggle-fixed { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
         .login-screen { max-width: 440px; width: 100%; margin: 0 auto; animation: fadeInUp 0.5s ease; }
@@ -93,6 +94,11 @@
         .photo-slot.has-photo:hover .remove-photo { display: flex; }
         .photo-form-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
         .photo-form-row .input-field-wrap { flex: 1; min-width: 100px; }
+        .ip-checkboxes { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+        .ip-checkbox-label { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer; background: #f3f9ff; padding: 6px 12px; border-radius: 20px; border: 1px solid #cbdae6; transition: all 0.2s; user-select: none; }
+        .ip-checkbox-label:hover { background: #e8f0fe; }
+        .ip-checkbox-label:has(input:checked) { background: #c75d1e; color: white; border-color: #c75d1e; }
+        .ip-checkbox-label input { display: none; }
         .btn-photo { background: #c75d1e; border: none; color: white; font-weight: 700; font-size: 0.9rem; padding: 10px 20px; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 0 #8a3e14; width: 100%; margin-top: 4px; }
         .btn-photo:active { transform: translateY(2px); box-shadow: 0 1px 0 #8a3e14; }
         .btn-photo:disabled { background: #a0b8cc; box-shadow: none; cursor: not-allowed; transform: none; }
@@ -108,9 +114,6 @@
         .photo-modal-overlay img { max-width: 95%; max-height: 80vh; border-radius: 12px; object-fit: contain; }
         .photo-modal-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
         .photo-modal-info { color: white; text-align: center; margin-top: 12px; font-size: 0.9rem; }
-        .photo-modal-nav { position: absolute; bottom: 20px; display: flex; gap: 12px; }
-        .photo-modal-nav button { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 1rem; }
-        .photo-modal-nav button:disabled { opacity: 0.4; }
         .op-card { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 0.9rem; }
         .op-card h3 { font-weight: 600; font-size: 0.85rem; color: #1e3a5f; margin-bottom: 0.6rem; }
         .counter-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; background: #f3f9ff; padding: 4px 10px; border-radius: 20px; }
@@ -215,10 +218,9 @@ var counters = { moscowReceived: 0, moscowCollected: 0, moscowShipped: 0, moscow
 var moscowLastArticle = '—', currentHistoryDate = new Date();
 var photoSlots = [null, null, null, null];
 var photoPreviewUrls = [null, null, null, null];
-var photoBase64Data = [null, null, null, null];
 var MAX_PHOTOS = 4;
-var MAX_PHOTO_SIZE = 500 * 1024; // 500 КБ на фото
-var IP_LIST = ["КАА","КЮА","БМС","ДЕВ"];
+var MAX_PHOTO_SIZE = 500 * 1024;
+var IP_LIST = ["КЮА","КАА","БМС","ДЕВ"];
 
 var SESSION_KEY = "warehouse_session";
 function saveSession(u) { localStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
@@ -241,7 +243,7 @@ function initTheme() {
     });
 }
 
-// ============ Сжатие изображения перед сохранением ============
+// ============ Сжатие изображения ============
 function compressImage(file, maxSize) {
     return new Promise(function(resolve, reject) {
         var reader = new FileReader();
@@ -250,33 +252,21 @@ function compressImage(file, maxSize) {
             img.onload = function() {
                 var canvas = document.createElement('canvas');
                 var ctx = canvas.getContext('2d');
-                
-                // Максимальные размеры
-                var maxW = 1200;
-                var maxH = 1200;
-                var w = img.width;
-                var h = img.height;
-                
+                var maxW = 1200, maxH = 1200;
+                var w = img.width, h = img.height;
                 if (w > maxW || h > maxH) {
                     var ratio = Math.min(maxW/w, maxH/h);
                     w = Math.round(w * ratio);
                     h = Math.round(h * ratio);
                 }
-                
-                canvas.width = w;
-                canvas.height = h;
+                canvas.width = w; canvas.height = h;
                 ctx.drawImage(img, 0, 0, w, h);
-                
-                // Пробуем с качеством 0.6, если больше maxSize — уменьшаем
                 var quality = 0.6;
                 var result = canvas.toDataURL('image/jpeg', quality);
-                
-                // Грубая оценка размера base64
                 while (result.length > maxSize * 1.37 && quality > 0.2) {
                     quality -= 0.1;
                     result = canvas.toDataURL('image/jpeg', quality);
                 }
-                
                 resolve(result);
             };
             img.onerror = reject;
@@ -298,11 +288,8 @@ window.triggerPhotoCapture = function(slotIndex) {
         if (!file) return;
         if (file.size > 20 * 1024 * 1024) { alert('Фото слишком большое. Максимум 20 МБ.'); return; }
         if (photoPreviewUrls[slotIndex]) URL.revokeObjectURL(photoPreviewUrls[slotIndex]);
-        
-        // Показываем превью сразу
         photoSlots[slotIndex] = file;
         photoPreviewUrls[slotIndex] = URL.createObjectURL(file);
-        photoBase64Data[slotIndex] = null; // Будет сжато при сохранении
         updatePhotoSlotDisplay(slotIndex);
         updatePhotoCounter();
     };
@@ -313,7 +300,6 @@ window.removePhotoFromSlot = function(slotIndex) {
     if (photoPreviewUrls[slotIndex]) URL.revokeObjectURL(photoPreviewUrls[slotIndex]);
     photoSlots[slotIndex] = null;
     photoPreviewUrls[slotIndex] = null;
-    photoBase64Data[slotIndex] = null;
     updatePhotoSlotDisplay(slotIndex);
     updatePhotoCounter();
 };
@@ -338,19 +324,22 @@ function updatePhotoCounter() {
 
 window.savePhotos = async function() {
     var cityEl = document.getElementById('photoCity');
-    var ipEl = document.getElementById('photoIP');
     var qtyEl = document.getElementById('photoQty');
     var dateEl = document.getElementById('photoDate');
     var btn = document.getElementById('savePhotoBtn');
     var msg = document.getElementById('photoMsg');
     
     var city = cityEl ? cityEl.value.trim() : '';
-    var ip = ipEl ? ipEl.value : '';
     var quantity = qtyEl ? (parseInt(qtyEl.value) || 0) : 0;
     var date = dateEl ? dateEl.value : getTodayStr();
     
+    // Собираем выбранные ИП из чекбоксов
+    var selectedIPs = [];
+    var checkboxes = document.querySelectorAll('.photo-ip-checkbox:checked');
+    checkboxes.forEach(function(cb) { selectedIPs.push(cb.value); });
+    
     if (!city) { alert('Укажите город'); return; }
-    if (!ip) { alert('Выберите ИП'); return; }
+    if (selectedIPs.length === 0) { alert('Выберите хотя бы один ИП'); return; }
     if (!quantity || quantity <= 0) { alert('Укажите количество коробов'); return; }
     
     var filledSlots = [];
@@ -364,28 +353,22 @@ window.savePhotos = async function() {
     if (msg) msg.innerHTML = '';
     
     try {
-        // Сжимаем все фото в base64
         var photosData = [];
         for (var j = 0; j < filledSlots.length; j++) {
             var item = filledSlots[j];
             btn.textContent = '⏳ Обработка фото '+(j+1)+'/'+filledSlots.length+'...';
-            
             var base64 = await compressImage(item.file, MAX_PHOTO_SIZE);
-            photosData.push({
-                slot: item.slot + 1,
-                data: base64
-            });
+            photosData.push({ slot: item.slot + 1, data: base64 });
         }
         
-        // Сохраняем всё в Firestore
         btn.textContent = '⏳ Сохранение...';
         
-        // Создаём один документ с массивом фото
         await db.collection('pallet_photos').add({
             userId: currentUser.id,
             userName: currentUser.name,
             city: city,
-            ip: ip,
+            ip: selectedIPs,
+            ipDisplay: selectedIPs.join(', '),
             quantity: quantity,
             date: date,
             photoCount: photosData.length,
@@ -393,20 +376,23 @@ window.savePhotos = async function() {
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        // Очистка
         for (var k = 0; k < MAX_PHOTOS; k++) {
             if (photoPreviewUrls[k]) URL.revokeObjectURL(photoPreviewUrls[k]);
             photoSlots[k] = null;
             photoPreviewUrls[k] = null;
-            photoBase64Data[k] = null;
             updatePhotoSlotDisplay(k);
         }
         updatePhotoCounter();
         if (cityEl) cityEl.value = '';
-        if (ipEl) ipEl.value = '';
         if (qtyEl) qtyEl.value = '';
+        // Сбрасываем чекбоксы
+        document.querySelectorAll('.photo-ip-checkbox').forEach(function(cb) { cb.checked = false; });
+        // Сбрасываем стили лейблов
+        document.querySelectorAll('.ip-checkbox-label').forEach(function(lb) {
+            lb.style.background = ''; lb.style.color = ''; lb.style.borderColor = '';
+        });
         
-        if (msg) msg.innerHTML = '<div class="success-msg" style="display:block;">✅ Паллета сохранена! ('+photosData.length+' фото)</div>';
+        if (msg) msg.innerHTML = '<div class="success-msg" style="display:block;">✅ Паллета сохранена! ('+photosData.length+' фото, ИП: '+selectedIPs.join(', ')+')</div>';
         setTimeout(function() { if (msg) msg.innerHTML = ''; }, 3000);
         
     } catch (error) {
@@ -418,6 +404,24 @@ window.savePhotos = async function() {
     btn.textContent = '💾 Сохранить паллету';
 };
 
+// Переключение стиля чекбокса при клике на лейбл
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('photo-ip-checkbox')) {
+        var label = e.target.closest('.ip-checkbox-label');
+        if (label) {
+            if (e.target.checked) {
+                label.style.background = '#c75d1e';
+                label.style.color = 'white';
+                label.style.borderColor = '#c75d1e';
+            } else {
+                label.style.background = '';
+                label.style.color = '';
+                label.style.borderColor = '';
+            }
+        }
+    }
+});
+
 // ============ АДМИН: ФОТО ============
 async function loadPalletPhotos(filters) {
     filters = filters || {};
@@ -428,7 +432,7 @@ async function loadPalletPhotos(filters) {
     var query = db.collection('pallet_photos');
     if (filters.userId) query = query.where('userId', '==', filters.userId);
     if (filters.date) query = query.where('date', '==', filters.date);
-    if (filters.ip) query = query.where('ip', '==', filters.ip);
+    if (filters.ip) query = query.where('ip', 'array-contains', filters.ip);
     if (filters.city) query = query.where('city', '==', filters.city);
     
     try {
@@ -446,15 +450,15 @@ async function loadPalletPhotos(filters) {
             if (photos.length === 0) return;
             
             var cityEsc = escapeHtml(data.city || '—');
-            var ipEsc = escapeHtml(data.ip || '—');
+            var ipEsc = escapeHtml(data.ipDisplay || (Array.isArray(data.ip) ? data.ip.join(', ') : data.ip) || '—');
             var qty = data.quantity || 0;
             var userEsc = escapeHtml(data.userName || '—');
             var dateEsc = formatDateForDisplay(data.date);
             
             var photosHtml = '';
-            photos.forEach(function(photo, idx) {
+            photos.forEach(function(photo) {
                 var safeData = photo.data.replace(/'/g, "\\'");
-                photosHtml += '<img src="'+photo.data+'" alt="Фото '+(idx+1)+'" loading="lazy" onclick="window.showPhotoModalByData(\''+safeData+'\',\''+cityEsc.replace(/'/g,"\\'")+'\',\''+ipEsc.replace(/'/g,"\\'")+'\',\''+qty+' кор.\',\''+userEsc.replace(/'/g,"\\'")+'\',\''+dateEsc+'\')">';
+                photosHtml += '<img src="'+photo.data+'" alt="Фото паллеты" loading="lazy" onclick="window.showPhotoModalByData(\''+safeData+'\',\''+cityEsc.replace(/'/g,"\\'")+'\',\''+ipEsc.replace(/'/g,"\\'")+'\',\''+qty+' кор.\',\''+userEsc.replace(/'/g,"\\'")+'\',\''+dateEsc+'\')">';
             });
             
             html += '<div class="pallet-group">';
@@ -474,13 +478,11 @@ async function loadPalletPhotos(filters) {
 window.showPhotoModalByData = function(base64data, city, ip, qty, user, date) {
     var existing = document.querySelector('.photo-modal-overlay');
     if (existing) existing.remove();
-    
     var modal = document.createElement('div');
     modal.className = 'photo-modal-overlay';
     modal.innerHTML = '<button class="photo-modal-close">✕</button>' +
         '<img src="'+base64data+'" alt="Фото паллеты">' +
         '<div class="photo-modal-info">'+city+' — '+ip+' | '+qty+' | '+user+' | '+date+'</div>';
-    
     modal.addEventListener('click', function(e) {
         if (e.target === modal || e.target.classList.contains('photo-modal-close')) modal.remove();
     });
@@ -489,10 +491,8 @@ window.showPhotoModalByData = function(base64data, city, ip, qty, user, date) {
 
 window.deletePallet = async function(palletId) {
     if (!confirm('Удалить паллету и все фото?')) return;
-    try {
-        await db.collection('pallet_photos').doc(palletId).delete();
-        await loadPalletPhotos();
-    } catch (error) { alert('Ошибка удаления'); }
+    try { await db.collection('pallet_photos').doc(palletId).delete(); await loadPalletPhotos(); }
+    catch (error) { alert('Ошибка удаления'); }
 };
 
 // ============ ОСТАЛЬНЫЕ ФУНКЦИИ ============
@@ -512,8 +512,7 @@ async function getEmployees() {
     var s = await db.collection('employees').orderBy('name').get();
     var e = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; });
     if (e.length === 0) { await createInitialEmployees(); var s2 = await db.collection('employees').orderBy('name').get(); e = s2.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; }); }
-    employees = e;
-    return e;
+    employees = e; return e;
 }
 
 async function loginUser(l, p) {
@@ -763,7 +762,12 @@ async function renderUserPanel() {
     for (var i = 0; i < MAX_PHOTOS; i++) {
         slotsHtml += '<div class="photo-slot" id="photoSlot'+i+'" onclick="window.triggerPhotoCapture('+i+')"><span class="slot-number">'+(i+1)+'</span></div>';
     }
-    var ipOptions = IP_LIST.map(function(ip){return '<option value="'+ip+'">'+ip+'</option>';}).join('');
+    
+    var ipCheckboxesHtml = '<div class="ip-checkboxes">';
+    IP_LIST.forEach(function(ip) {
+        ipCheckboxesHtml += '<label class="ip-checkbox-label"><input type="checkbox" class="photo-ip-checkbox" value="'+ip+'"> '+ip+'</label>';
+    });
+    ipCheckboxesHtml += '</div>';
     
     return '<div id="moscowContainer" class="warehouse-container active">' +
         '<div class="warehouse-title">🏢 Склад Москва</div>' +
@@ -781,10 +785,11 @@ async function renderUserPanel() {
             '<div class="photo-counter" id="photoCounter">Заполнено: 0 / '+MAX_PHOTOS+'</div>' +
             '<div class="photo-form-row">' +
                 '<div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" style="margin-bottom:0;"></div>' +
-                '<div class="input-field-wrap"><select id="photoIP" class="input-field" style="margin-bottom:0;"><option value="">-- ИП --</option>'+ipOptions+'</select></div>' +
                 '<div class="input-field-wrap"><input type="number" id="photoQty" class="input-field" placeholder="Кол-во кор." min="1" style="margin-bottom:0;"></div>' +
                 '<div class="input-field-wrap"><input type="date" id="photoDate" class="input-field" value="'+getTodayStr()+'" style="margin-bottom:0;"></div>' +
             '</div>' +
+            '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#5b6f86;margin-bottom:4px;">ИП на паллете</div>' +
+            ipCheckboxesHtml +
             '<button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">💾 Сохранить паллету</button>' +
             '<div id="photoMsg"></div>' +
         '</div>' +
@@ -875,7 +880,6 @@ async function completeLogin(u) {
         document.getElementById('userView').innerHTML = await renderUserPanel();
         photoSlots = [null,null,null,null];
         photoPreviewUrls = [null,null,null,null];
-        photoBase64Data = [null,null,null,null];
         await loadUserData();
         await checkTodayAttendance();
         currentHistoryDate = new Date();
@@ -889,7 +893,6 @@ function logout() {
     for (var i=0; i<MAX_PHOTOS; i++) { if(photoPreviewUrls[i]) URL.revokeObjectURL(photoPreviewUrls[i]); }
     photoSlots = [null,null,null,null];
     photoPreviewUrls = [null,null,null,null];
-    photoBase64Data = [null,null,null,null];
     clearSession();
     document.getElementById('loginScreen').style.display = 'block';
     document.getElementById('dashboard').classList.remove('active');
