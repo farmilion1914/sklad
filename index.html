@@ -26,11 +26,7 @@
         body.dark-theme { background: linear-gradient(135deg, #0d1b2a 0%, #1a2740 50%, #0f1f35 100%); }
         
         .warehouse-app {
-            width: 100%;
-            max-width: 100%;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            width: 100%; max-width: 100%; flex: 1; display: flex; flex-direction: column;
         }
         
         .op-card, .history-section, .admin-panel, .login-card, .photo-card {
@@ -126,12 +122,9 @@
         .warehouse-selector { display: flex; gap: 3px; background: rgba(255,255,255,0.08); padding: 2px; border-radius: 20px; }
         .wh-btn { background: transparent; border: none; color: rgba(255,255,255,0.7); padding: 5px 10px; border-radius: 18px; font-weight: 600; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
         .wh-btn.active { background: white; color: #1e3a5f; }
-        .user-view { display: none; width: 100%; } 
-        .user-view.active { display: block; }
-        .admin-view { display: none; width: 100%; } 
-        .admin-view.active { display: block; }
-        .warehouse-container { display: none; } 
-        .warehouse-container.active { display: block; }
+        .user-view { display: none; width: 100%; } .user-view.active { display: block; }
+        .admin-view { display: none; width: 100%; } .admin-view.active { display: block; }
+        .warehouse-container { display: none; } .warehouse-container.active { display: block; }
         .warehouse-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.6rem; color: white; }
         .work-day-card { background: rgba(255,255,255,0.95); border-radius: 14px; padding: 0.7rem 0.9rem; margin-bottom: 12px; border: 2px solid #2a6f97; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
         .btn-work { background: #2a6b3c; border: none; color: white; font-weight: 700; font-size: 1rem; padding: 8px 18px; border-radius: 25px; cursor: pointer; box-shadow: 0 4px 0 #1a4627; }
@@ -140,6 +133,7 @@
         @media (min-width: 768px) { .operations-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 1024px) { .operations-grid { grid-template-columns: repeat(4, 1fr); } }
         
+        /* Фото паллет */
         .photo-card {
             background: rgba(255,255,255,0.95); border-radius: 16px; padding: 0.9rem;
             border: 2px solid #c75d1e; margin-bottom: 12px;
@@ -148,18 +142,36 @@
             font-weight: 600; font-size: 1rem; color: #c75d1e; margin-bottom: 0.8rem;
             display: flex; align-items: center; gap: 6px;
         }
-        .photo-preview {
-            width: 100%; min-height: 120px; max-height: 300px;
-            border: 2px dashed #c75d1e; border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 12px; overflow: hidden;
-            cursor: pointer; background: #faf5f0;
-            transition: all 0.3s;
+        .photo-slots {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+            margin-bottom: 12px;
         }
-        .photo-preview:hover { border-color: #a0401a; background: #f5ede4; }
-        .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-preview .placeholder-text { color: #c75d1e; font-size: 1.5rem; font-weight: 700; text-align: center; }
-        .photo-preview .placeholder-text small { display: block; font-size: 0.7rem; font-weight: 400; margin-top: 4px; }
+        @media (min-width: 480px) { .photo-slots { grid-template-columns: repeat(4, 1fr); } }
+        .photo-slot {
+            aspect-ratio: 1; border: 2px dashed #c75d1e; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; background: #faf5f0; overflow: hidden;
+            transition: all 0.2s; position: relative; min-height: 80px;
+        }
+        .photo-slot:hover { border-color: #a0401a; background: #f5ede4; }
+        .photo-slot.has-photo { border-style: solid; border-color: #2a6b3c; }
+        .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-slot .slot-number { font-size: 2rem; color: #c75d1e; font-weight: 700; }
+        .photo-slot .remove-photo {
+            position: absolute; top: 4px; right: 4px;
+            background: rgba(0,0,0,0.6); color: white; border: none;
+            width: 24px; height: 24px; border-radius: 50%; font-size: 0.7rem;
+            cursor: pointer; display: none; align-items: center; justify-content: center;
+        }
+        .photo-slot.has-photo:hover .remove-photo { display: flex; }
+        .upload-progress {
+            width: 100%; height: 4px; background: #ddd; border-radius: 2px;
+            margin-bottom: 8px; display: none;
+        }
+        .upload-progress .progress-bar {
+            height: 100%; background: #2a6b3c; border-radius: 2px;
+            transition: width 0.3s; width: 0%;
+        }
         .photo-form-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
         .photo-form-row .input-field-wrap { flex: 1; min-width: 100px; }
         .btn-photo { 
@@ -169,34 +181,31 @@
         }
         .btn-photo:active { transform: translateY(2px); box-shadow: 0 1px 0 #8a3e14; }
         .btn-photo:disabled { background: #a0b8cc; box-shadow: none; cursor: not-allowed; transform: none; }
-        .btn-camera { 
-            background: #2a6b3c; border: none; color: white; font-weight: 700; font-size: 0.9rem;
-            padding: 10px 20px; border-radius: 20px; cursor: pointer; width: auto;
-        }
+        .photo-counter { text-align: center; font-size: 0.75rem; color: #5e7180; margin-top: 4px; }
         
-        .photo-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-            margin-top: 12px;
+        /* Галерея в админке */
+        .photo-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 12px; }
+        @media (max-width: 480px) { .photo-gallery { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+        .pallet-group {
+            background: white; border-radius: 14px; overflow: hidden;
+            border: 1px solid #d9e2ec; padding: 10px;
         }
-        @media (max-width: 480px) {
-            .photo-gallery { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+        .pallet-group .pallet-header {
+            font-weight: 600; font-size: 0.8rem; color: #1e3a5f; margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .photo-thumb {
-            background: white; border-radius: 12px; overflow: hidden;
-            border: 1px solid #d9e2ec; cursor: pointer; transition: transform 0.2s;
+        .pallet-group .photo-strip {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;
         }
-        .photo-thumb:hover { transform: scale(1.02); }
-        .photo-thumb img { width: 100%; height: 160px; object-fit: cover; }
-        .photo-thumb .photo-info {
-            padding: 8px 10px; font-size: 0.7rem; color: #5e7180;
+        .pallet-group .photo-strip img {
+            width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px;
+            cursor: pointer; transition: transform 0.2s;
         }
-        .photo-thumb .photo-info strong { display: block; font-size: 0.8rem; color: #1e3a5f; }
+        .pallet-group .photo-strip img:hover { transform: scale(1.05); }
         
         .photo-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 1002;
+            background: rgba(0,0,0,0.95); z-index: 1002;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 16px; cursor: pointer;
         }
@@ -209,8 +218,13 @@
             width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem;
             cursor: pointer;
         }
-        .photo-modal-info {
-            color: white; text-align: center; margin-top: 12px; font-size: 0.9rem;
+        .photo-modal-info { color: white; text-align: center; margin-top: 12px; font-size: 0.9rem; }
+        .photo-modal-nav {
+            position: absolute; bottom: 20px; display: flex; gap: 12px;
+        }
+        .photo-modal-nav button {
+            background: rgba(255,255,255,0.2); border: none; color: white;
+            padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 1rem;
         }
         
         .op-card { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 0.9rem; }
@@ -320,7 +334,11 @@
         let currentUser = null, isAdmin = false, isSuperAdmin = false, currentWarehouse = 'Москва', employees = [];
         let counters = { moscowReceived: 0, moscowCollected: 0, moscowShipped: 0, moscowInvoiceTotal: 0, pushkinoAccepted: 0, pushkinoAcceptedTotal: 0, pushkinoShipped: 0, pushkinoShippedTotal: 0, pushkinoUnloaded: 0, pushkinoUnloadedTotal: 0, pushkinoReworked: 0, pushkinoReworkedTotal: 0 };
         let moscowLastArticle = '—', currentHistoryDate = new Date();
-        let photoFile = null, photoPreviewUrl = null;
+        
+        // Для фото: массив из 4 слотов, каждый содержит File или null
+        let photoSlots = [null, null, null, null];
+        let photoPreviewUrls = [null, null, null, null];
+        const MAX_PHOTOS = 4;
         const IP_LIST = ["КАА","КЮА","БМС","ДЕВ"];
         
         // ============ Утилиты ============
@@ -332,6 +350,7 @@
         function formatDateForInput(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
         function formatDateForDisplay(s) { if(!s) return '—'; const p = s.split('-'); return `${p[2]}.${p[1]}.${p[0]}`; }
         function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
+        function escapeJs(s) { if(!s) return ''; return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/\n/g,'\\n'); }
         
         // ============ Тема ============
         function initTheme() {
@@ -346,7 +365,316 @@
             });
         }
         
-        // ============ Сотрудники ============
+        // ============ Фото паллет ============
+        window.triggerPhotoCapture = function(slotIndex) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Фото слишком большое. Максимум 10 МБ.');
+                    return;
+                }
+                
+                // Сохраняем в слот
+                if (photoPreviewUrls[slotIndex]) {
+                    URL.revokeObjectURL(photoPreviewUrls[slotIndex]);
+                }
+                photoSlots[slotIndex] = file;
+                photoPreviewUrls[slotIndex] = URL.createObjectURL(file);
+                
+                updatePhotoSlotDisplay(slotIndex);
+                updatePhotoCounter();
+            };
+            input.click();
+        };
+        
+        window.removePhotoFromSlot = function(slotIndex) {
+            if (photoPreviewUrls[slotIndex]) {
+                URL.revokeObjectURL(photoPreviewUrls[slotIndex]);
+            }
+            photoSlots[slotIndex] = null;
+            photoPreviewUrls[slotIndex] = null;
+            updatePhotoSlotDisplay(slotIndex);
+            updatePhotoCounter();
+        };
+        
+        function updatePhotoSlotDisplay(slotIndex) {
+            const slot = document.getElementById('photoSlot' + slotIndex);
+            if (!slot) return;
+            
+            if (photoSlots[slotIndex]) {
+                slot.classList.add('has-photo');
+                slot.innerHTML = `
+                    <img src="${photoPreviewUrls[slotIndex]}" alt="Фото ${slotIndex + 1}">
+                    <button class="remove-photo" onclick="event.stopPropagation(); window.removePhotoFromSlot(${slotIndex})">✕</button>
+                `;
+            } else {
+                slot.classList.remove('has-photo');
+                slot.innerHTML = `<span class="slot-number">${slotIndex + 1}</span>`;
+            }
+        }
+        
+        function updatePhotoCounter() {
+            const filled = photoSlots.filter(f => f !== null).length;
+            const counter = document.getElementById('photoCounter');
+            if (counter) {
+                counter.textContent = `Заполнено: ${filled} / ${MAX_PHOTOS}`;
+            }
+        }
+        
+        window.savePhotos = async function() {
+            const city = document.getElementById('photoCity')?.value.trim();
+            const ip = document.getElementById('photoIP')?.value;
+            const quantity = parseInt(document.getElementById('photoQty')?.value) || 0;
+            const date = document.getElementById('photoDate')?.value || getTodayStr();
+            
+            if (!city) { alert('Укажите город'); return; }
+            if (!ip) { alert('Выберите ИП'); return; }
+            if (!quantity || quantity <= 0) { alert('Укажите количество коробов'); return; }
+            
+            const filledSlots = photoSlots.filter(f => f !== null);
+            if (filledSlots.length === 0) { alert('Сделайте хотя бы одно фото'); return; }
+            
+            const btn = document.getElementById('savePhotoBtn');
+            const progressBar = document.getElementById('uploadProgressBar');
+            const progressContainer = document.getElementById('uploadProgress');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Загрузка...';
+            if (progressContainer) progressContainer.style.display = 'block';
+            
+            try {
+                // Создаём запись паллеты в Firestore
+                const palletRef = await db.collection('pallet_photos').add({
+                    userId: currentUser.id,
+                    userName: currentUser.name,
+                    city: city,
+                    ip: ip,
+                    quantity: quantity,
+                    date: date,
+                    photoCount: filledSlots.length,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: new Date().toISOString()
+                });
+                
+                // Загружаем каждое фото в Storage
+                for (let i = 0; i < filledSlots.length; i++) {
+                    const file = filledSlots[i];
+                    const slotNumber = photoSlots.indexOf(file); // реальный индекс слота
+                    const fileName = `pallets/${currentUser.id}/${palletRef.id}_${slotNumber + 1}_${Date.now()}.jpg`;
+                    const storageRef = storage.ref(fileName);
+                    
+                    // Загружаем с отслеживанием прогресса
+                    const uploadTask = storageRef.put(file);
+                    
+                    uploadTask.on('state_changed', 
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            if (progressBar) progressBar.style.width = progress + '%';
+                        },
+                        (error) => {
+                            console.error('Upload error for slot ' + slotNumber, error);
+                        }
+                    );
+                    
+                    await uploadTask;
+                    const downloadUrl = await uploadTask.snapshot.ref.getDownloadURL();
+                    
+                    // Добавляем URL фото в подколлекцию
+                    await palletRef.collection('photos').add({
+                        slot: slotNumber + 1,
+                        photoUrl: downloadUrl,
+                        storagePath: fileName,
+                        order: i
+                    });
+                }
+                
+                // Очистка формы
+                for (let i = 0; i < MAX_PHOTOS; i++) {
+                    if (photoPreviewUrls[i]) URL.revokeObjectURL(photoPreviewUrls[i]);
+                    photoSlots[i] = null;
+                    photoPreviewUrls[i] = null;
+                    updatePhotoSlotDisplay(i);
+                }
+                updatePhotoCounter();
+                document.getElementById('photoCity').value = '';
+                document.getElementById('photoIP').value = '';
+                document.getElementById('photoQty').value = '';
+                
+                const msg = document.getElementById('photoMsg');
+                if (msg) { msg.innerHTML = '<div class="success-msg" style="display:block;">✅ Паллета сохранена! (' + filledSlots.length + ' фото)</div>'; }
+                setTimeout(() => { if (msg) msg.innerHTML = ''; }, 3000);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Ошибка загрузки: ' + error.message);
+                
+                // Удаляем запись паллеты если была создана
+                if (typeof palletRef !== 'undefined') {
+                    try { await palletRef.delete(); } catch(e) {}
+                }
+            }
+            
+            btn.disabled = false;
+            btn.textContent = '💾 Сохранить паллету';
+            if (progressBar) progressBar.style.width = '0%';
+            if (progressContainer) progressContainer.style.display = 'none';
+        };
+        
+        // ============ Админ: загрузка фото ============
+        async function loadPalletPhotos(filters = {}) {
+            const container = document.getElementById('palletPhotosContainer');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading">Загрузка фото...</div>';
+            
+            let query = db.collection('pallet_photos');
+            if (filters.userId) query = query.where('userId', '==', filters.userId);
+            if (filters.date) query = query.where('date', '==', filters.date);
+            if (filters.ip) query = query.where('ip', '==', filters.ip);
+            if (filters.city) query = query.where('city', '==', filters.city);
+            
+            try {
+                const snapshot = await query.orderBy('timestamp', 'desc').limit(100).get();
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<div style="text-align:center;padding:30px;color:#5e7180;">📭 Фото не найдены</div>';
+                    return;
+                }
+                
+                // Для каждой паллеты загружаем её фото
+                let html = '<div class="photo-gallery">';
+                
+                for (const doc of snapshot.docs) {
+                    const data = doc.data();
+                    const photosSnap = await doc.ref.collection('photos').orderBy('order').get();
+                    
+                    if (photosSnap.empty) continue; // Пропускаем паллеты без фото
+                    
+                    const photos = photosSnap.docs.map(p => p.data().photoUrl);
+                    const cityEsc = escapeHtml(data.city || '—');
+                    const ipEsc = escapeHtml(data.ip || '—');
+                    const qty = data.quantity || 0;
+                    const userEsc = escapeHtml(data.userName || '—');
+                    const dateEsc = formatDateForDisplay(data.date);
+                    
+                    let photosHtml = '';
+                    photos.forEach((url, idx) => {
+                        photosHtml += `<img src="${url}" alt="Фото ${idx + 1}" loading="lazy" onclick="window.showPhotoModal('${escapeJs(url)}', '${escapeJs(cityEsc)}', '${escapeJs(ipEsc)}', '${qty} кор.', '${escapeJs(userEsc)}', '${escapeJs(dateEsc)}', ${idx}, ${JSON.stringify(photos).replace(/"/g, '&quot;')})">`;
+                    });
+                    
+                    html += `
+                        <div class="pallet-group">
+                            <div class="pallet-header">
+                                <span>${cityEsc} — ${ipEsc} | ${qty} кор.</span>
+                                <span style="font-size:0.65rem;color:#5e7180;">${userEsc} | ${dateEsc}</span>
+                            </div>
+                            <div class="photo-strip">${photosHtml}</div>
+                            <button class="delete-log-btn" onclick="window.deletePallet('${doc.id}')" style="margin-top:6px;width:100%;">🗑️ Удалить паллету</button>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+                container.innerHTML = html || '<div style="text-align:center;padding:30px;color:#5e7180;">📭 Фото не найдены</div>';
+                
+            } catch (error) {
+                console.error('Error loading photos:', error);
+                container.innerHTML = '<div style="text-align:center;padding:20px;color:#b13e24;">Ошибка загрузки: ' + error.message + '</div>';
+            }
+        }
+        
+        window.showPhotoModal = function(url, city, ip, qty, user, date, currentIndex, allPhotos) {
+            const existing = document.querySelector('.photo-modal-overlay');
+            if (existing) existing.remove();
+            
+            // Если allPhotos - строка, парсим обратно в массив
+            if (typeof allPhotos === 'string') {
+                try { allPhotos = JSON.parse(allPhotos); } catch(e) { allPhotos = [url]; }
+            }
+            
+            const modal = document.createElement('div');
+            modal.className = 'photo-modal-overlay';
+            modal.innerHTML = `
+                <button class="photo-modal-close">✕</button>
+                <img src="${url}" alt="Фото паллеты" id="modalPhoto">
+                <div class="photo-modal-info">${city} — ${ip} | ${qty} | ${user} | ${date} | Фото ${currentIndex + 1}/${allPhotos.length}</div>
+                <div class="photo-modal-nav">
+                    <button id="modalPrev" ${currentIndex === 0 ? 'disabled' : ''}>← Назад</button>
+                    <button id="modalNext" ${currentIndex >= allPhotos.length - 1 ? 'disabled' : ''}>Вперёд →</button>
+                </div>
+            `;
+            
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal || e.target.classList.contains('photo-modal-close')) {
+                    modal.remove();
+                }
+            });
+            
+            document.body.appendChild(modal);
+            
+            // Навигация по фото
+            document.getElementById('modalPrev')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentIndex > 0) {
+                    modal.remove();
+                    window.showPhotoModal(allPhotos[currentIndex - 1], city, ip, qty, user, date, currentIndex - 1, allPhotos);
+                }
+            });
+            
+            document.getElementById('modalNext')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentIndex < allPhotos.length - 1) {
+                    modal.remove();
+                    window.showPhotoModal(allPhotos[currentIndex + 1], city, ip, qty, user, date, currentIndex + 1, allPhotos);
+                }
+            });
+            
+            // Стрелки клавиатуры
+            const keyHandler = (e) => {
+                if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                    modal.remove();
+                    window.showPhotoModal(allPhotos[currentIndex - 1], city, ip, qty, user, date, currentIndex - 1, allPhotos);
+                }
+                if (e.key === 'ArrowRight' && currentIndex < allPhotos.length - 1) {
+                    modal.remove();
+                    window.showPhotoModal(allPhotos[currentIndex + 1], city, ip, qty, user, date, currentIndex + 1, allPhotos);
+                }
+                if (e.key === 'Escape') {
+                    modal.remove();
+                }
+            };
+            document.addEventListener('keydown', keyHandler, { once: true });
+        };
+        
+        window.deletePallet = async function(palletId) {
+            if (!confirm('Удалить паллету и все её фото?')) return;
+            
+            try {
+                // Удаляем все фото из Storage
+                const photosSnap = await db.collection('pallet_photos').doc(palletId).collection('photos').get();
+                for (const photoDoc of photosSnap.docs) {
+                    const photoData = photoDoc.data();
+                    if (photoData.storagePath) {
+                        await storage.ref(photoData.storagePath).delete().catch(() => {});
+                    }
+                }
+                
+                // Удаляем документ паллеты (подколлекция photos удалится автоматически)
+                await db.collection('pallet_photos').doc(palletId).delete();
+                
+                await loadPalletPhotos();
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('Ошибка удаления: ' + error.message);
+            }
+        };
+        
+        // ============ Существующие функции без изменений ============
         async function createInitialEmployees() {
             const i = [
                 { login: 'popov', password: 'admin0111', name: 'Попов А.', role: 'superadmin', active: true },
@@ -384,174 +712,6 @@
             return { success: true };
         }
         
-        // ============ Фото паллет ============
-        window.triggerPhotoCapture = function() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.capture = 'environment';
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                if (file.size > 10 * 1024 * 1024) {
-                    alert('Фото слишком большое. Максимум 10 МБ.');
-                    return;
-                }
-                photoFile = file;
-                photoPreviewUrl = URL.createObjectURL(file);
-                const preview = document.getElementById('photoPreview');
-                if (preview) {
-                    preview.innerHTML = `<img src="${photoPreviewUrl}" alt="Фото паллеты">`;
-                }
-            };
-            input.click();
-        };
-        
-        window.savePhoto = async function() {
-            const city = document.getElementById('photoCity')?.value.trim();
-            const ip = document.getElementById('photoIP')?.value;
-            const quantity = parseInt(document.getElementById('photoQty')?.value) || 0;
-            const date = document.getElementById('photoDate')?.value || getTodayStr();
-            
-            if (!photoFile) { alert('Сделайте фото паллеты'); return; }
-            if (!city) { alert('Укажите город'); return; }
-            if (!ip) { alert('Выберите ИП'); return; }
-            if (!quantity || quantity <= 0) { alert('Укажите количество коробов'); return; }
-            
-            const btn = document.getElementById('savePhotoBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳ Загрузка...';
-            
-            try {
-                const timestamp = Date.now();
-                const fileName = `pallets/${currentUser.id}_${timestamp}_${photoFile.name}`;
-                const storageRef = storage.ref(fileName);
-                
-                await storageRef.put(photoFile);
-                const downloadUrl = await storageRef.getDownloadURL();
-                
-                await db.collection('pallet_photos').add({
-                    userId: currentUser.id,
-                    userName: currentUser.name,
-                    city: city,
-                    ip: ip,
-                    quantity: quantity,
-                    date: date,
-                    photoUrl: downloadUrl,
-                    storagePath: fileName,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdAt: new Date().toISOString()
-                });
-                
-                photoFile = null;
-                photoPreviewUrl = null;
-                const preview = document.getElementById('photoPreview');
-                if (preview) {
-                    preview.innerHTML = '<div class="placeholder-text">📸<small>Нажмите, чтобы сделать фото</small></div>';
-                }
-                document.getElementById('photoCity').value = '';
-                document.getElementById('photoIP').value = '';
-                document.getElementById('photoQty').value = '';
-                
-                const msg = document.getElementById('photoMsg');
-                if (msg) { msg.innerHTML = '<div class="success-msg" style="display:block;">✅ Фото сохранено!</div>'; }
-                setTimeout(() => { if (msg) msg.innerHTML = ''; }, 3000);
-            } catch (error) {
-                console.error('Upload error:', error);
-                alert('Ошибка загрузки фото: ' + error.message);
-            }
-            
-            btn.disabled = false;
-            btn.textContent = '💾 Сохранить фото';
-        };
-        
-        window.showPhotoModal = function(url, city, ip, qty, user, date) {
-            const existing = document.querySelector('.photo-modal-overlay');
-            if (existing) existing.remove();
-            
-            const modal = document.createElement('div');
-            modal.className = 'photo-modal-overlay';
-            modal.innerHTML = `
-                <button class="photo-modal-close">✕</button>
-                <img src="${url}" alt="Фото паллеты">
-                <div class="photo-modal-info">${city} — ${ip} | ${qty} | ${user} | ${date}</div>
-            `;
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal || e.target.classList.contains('photo-modal-close')) {
-                    modal.remove();
-                }
-            });
-            document.body.appendChild(modal);
-        };
-        
-        window.deletePalletPhoto = async function(photoId) {
-            if (!confirm('Удалить фото?')) return;
-            try {
-                const doc = await db.collection('pallet_photos').doc(photoId).get();
-                if (doc.exists) {
-                    const data = doc.data();
-                    if (data.storagePath) {
-                        await storage.ref(data.storagePath).delete().catch(() => {});
-                    }
-                    await db.collection('pallet_photos').doc(photoId).delete();
-                }
-                await loadPalletPhotos();
-            } catch (error) {
-                console.error('Delete error:', error);
-                alert('Ошибка удаления');
-            }
-        };
-        
-        async function loadPalletPhotos(filters = {}) {
-            const container = document.getElementById('palletPhotosContainer');
-            if (!container) return;
-            
-            container.innerHTML = '<div class="loading">Загрузка фото...</div>';
-            
-            let query = db.collection('pallet_photos');
-            if (filters.userId) query = query.where('userId', '==', filters.userId);
-            if (filters.date) query = query.where('date', '==', filters.date);
-            if (filters.ip) query = query.where('ip', '==', filters.ip);
-            if (filters.city) query = query.where('city', '==', filters.city);
-            
-            try {
-                const snapshot = await query.orderBy('timestamp', 'desc').limit(100).get();
-                
-                if (snapshot.empty) {
-                    container.innerHTML = '<div style="text-align:center;padding:30px;color:#5e7180;">📭 Фото не найдены</div>';
-                    return;
-                }
-                
-                let html = '<div class="photo-gallery">';
-                snapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    const cityEsc = escapeHtml(data.city || '—');
-                    const ipEsc = escapeHtml(data.ip || '—');
-                    const qtyEsc = data.quantity || 0;
-                    const userEsc = escapeHtml(data.userName || '—');
-                    const dateEsc = formatDateForDisplay(data.date);
-                    
-                    html += `
-                        <div class="photo-thumb" onclick="window.showPhotoModal('${data.photoUrl.replace(/'/g, "\\'")}', '${cityEsc.replace(/'/g, "\\'")}', '${ipEsc.replace(/'/g, "\\'")}', '${qtyEsc} кор.', '${userEsc.replace(/'/g, "\\'")}', '${dateEsc}')">
-                            <img src="${data.photoUrl}" alt="Фото паллеты" loading="lazy">
-                            <div class="photo-info">
-                                <strong>${cityEsc} — ${ipEsc}</strong>
-                                ${qtyEsc} кор. | ${userEsc}<br>
-                                ${dateEsc}
-                                <button class="delete-log-btn" onclick="event.stopPropagation(); window.deletePalletPhoto('${doc.id}')" style="float:right;">🗑️</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-                container.innerHTML = html;
-            } catch (error) {
-                console.error('Error loading photos:', error);
-                container.innerHTML = '<div style="text-align:center;padding:20px;color:#b13e24;">Ошибка загрузки</div>';
-            }
-        }
-        
-        // ============ Складские операции ============
         async function loadUserData() { 
             if (!currentUser) return; 
             const s = await db.collection('user_totals').where('userId', '==', currentUser.id).get(); 
@@ -766,12 +926,18 @@
         
         // ============ Рендеринг ============
         async function renderUserPanel() {
+            // Генерируем 4 слота для фото
+            let slotsHtml = '';
+            for (let i = 0; i < MAX_PHOTOS; i++) {
+                slotsHtml += `<div class="photo-slot" id="photoSlot${i}" onclick="window.triggerPhotoCapture(${i})"><span class="slot-number">${i + 1}</span></div>`;
+            }
+            
             const photoCardHTML = `
                 <div class="photo-card">
-                    <div class="photo-title">📸 Фото паллет</div>
-                    <div class="photo-preview" id="photoPreview" onclick="window.triggerPhotoCapture()">
-                        <div class="placeholder-text">📸<small>Нажмите, чтобы сделать фото</small></div>
-                    </div>
+                    <div class="photo-title">📸 Фото паллет (до 4 фото)</div>
+                    <div class="photo-slots">${slotsHtml}</div>
+                    <div class="photo-counter" id="photoCounter">Заполнено: 0 / ${MAX_PHOTOS}</div>
+                    <div class="upload-progress" id="uploadProgress"><div class="progress-bar" id="uploadProgressBar"></div></div>
                     <div class="photo-form-row">
                         <div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" style="margin-bottom:0;"></div>
                         <div class="input-field-wrap">
@@ -783,7 +949,7 @@
                         <div class="input-field-wrap"><input type="number" id="photoQty" class="input-field" placeholder="Кол-во кор." min="1" style="margin-bottom:0;"></div>
                         <div class="input-field-wrap"><input type="date" id="photoDate" class="input-field" value="${getTodayStr()}" style="margin-bottom:0;"></div>
                     </div>
-                    <button class="btn-photo" id="savePhotoBtn" onclick="window.savePhoto()">💾 Сохранить фото</button>
+                    <button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">💾 Сохранить паллету</button>
                     <div id="photoMsg"></div>
                 </div>`;
             
@@ -905,6 +1071,9 @@
                 document.getElementById('adminView').classList.remove('active');
                 document.getElementById('warehouseSelector').style.display = 'flex';
                 document.getElementById('userView').innerHTML = await renderUserPanel();
+                // Сброс слотов фото
+                photoSlots = [null, null, null, null];
+                photoPreviewUrls = [null, null, null, null];
                 await loadUserData(); 
                 await checkTodayAttendance();
                 currentHistoryDate = new Date(); 
@@ -915,6 +1084,12 @@
         
         function logout() { 
             currentUser = null; isAdmin = false; isSuperAdmin = false; 
+            // Очистка фото при выходе
+            for (let i = 0; i < MAX_PHOTOS; i++) {
+                if (photoPreviewUrls[i]) URL.revokeObjectURL(photoPreviewUrls[i]);
+            }
+            photoSlots = [null, null, null, null];
+            photoPreviewUrls = [null, null, null, null];
             clearSession(); 
             document.getElementById('loginScreen').style.display = 'block'; 
             document.getElementById('dashboard').classList.remove('active'); 
@@ -994,16 +1169,10 @@
                 attachLoginEvents(); 
             }
             
-            // Привязка событий (делегирование через document)
+            // Делегирование событий
             document.addEventListener('click', function(e) {
                 const target = e.target;
                 
-                // Кнопки периода
-                if (target.classList.contains('period-btn')) {
-                    // уже обрабатывается в init
-                }
-                
-                // Кнопки установки значения
                 if (target.classList.contains('btn-set')) {
                     const t = target.dataset.target;
                     const mi = target.dataset.manual;
@@ -1016,7 +1185,6 @@
                     }
                 }
                 
-                // Кнопки +/- 
                 if (target.classList.contains('btn-adjust')) {
                     const t = target.dataset.target;
                     const d = parseInt(target.dataset.delta);
@@ -1024,19 +1192,16 @@
                     updateAllCounters();
                 }
                 
-                // Кнопки сброса
                 if (target.hasAttribute('data-reset')) {
                     counters[target.dataset.reset] = 0;
                     updateAllCounters();
                 }
                 
-                // Кнопки действий (ОК)
                 if (target.hasAttribute('data-action')) {
                     const a = target.dataset.action;
                     handleAction(a);
                 }
                 
-                // Кнопки склада
                 if (target.classList.contains('wh-btn')) {
                     document.querySelectorAll('.wh-btn').forEach(x => x.classList.remove('active'));
                     target.classList.add('active');
@@ -1047,7 +1212,6 @@
                     if (pc) pc.classList.toggle('active', currentWarehouse === 'Пушкино');
                 }
                 
-                // Вкладки админа
                 if (target.classList.contains('admin-tab')) {
                     document.querySelectorAll('.admin-tab').forEach(x => x.classList.remove('active'));
                     target.classList.add('active');
@@ -1060,7 +1224,7 @@
                 }
             });
             
-            // Обработчики кнопок по ID (те, что требуют ID)
+            // Обработчики по ID
             document.getElementById('logoutBtn')?.addEventListener('click', logout);
             document.getElementById('moscowWorkBtn')?.addEventListener('click', () => markAttendance('Москва'));
             document.getElementById('pushkinoWorkBtn')?.addEventListener('click', () => markAttendance('Пушкино'));
@@ -1103,7 +1267,6 @@
             });
             document.getElementById('generateAdminReportBtn')?.addEventListener('click', generateAdminReport);
             
-            // Фильтры фото
             document.getElementById('applyPhotoFilterBtn')?.addEventListener('click', () => {
                 const filters = {};
                 const emp = document.getElementById('photoFilterEmployee')?.value;
@@ -1129,7 +1292,6 @@
                 loadPalletPhotos();
             });
             
-            // Даты для отчётов
             const today = new Date(), weekAgo = new Date(today); 
             weekAgo.setDate(today.getDate() - 7);
             const rs = document.getElementById('reportStartDate');
@@ -1137,7 +1299,6 @@
             if (rs) rs.value = weekAgo.toISOString().split('T')[0];
             if (re) re.value = today.toISOString().split('T')[0];
             
-            // Индикатор сети
             window.addEventListener('online', () => { 
                 const el = document.querySelector('#syncStatus'); 
                 if (el) el.innerHTML = '<span class="online-indicator"></span> Онлайн'; 
@@ -1147,7 +1308,6 @@
                 if (el) el.innerHTML = '<span class="online-indicator offline-indicator"></span> Офлайн'; 
             });
             
-            // Закрытие модального окна фото по Escape
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     const modal = document.querySelector('.photo-modal-overlay');
