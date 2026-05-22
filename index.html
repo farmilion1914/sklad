@@ -13,109 +13,58 @@
     
     <style>
         * { box-sizing: border-box; margin: 0; font-family: 'Segoe UI', -apple-system, Roboto, sans-serif; }
-        
-        body { 
-            background: linear-gradient(135deg, #1e3c5c 0%, #2a5599 50%, #1e5a8a 100%);
-            min-height: 100vh; min-height: 100dvh;
-            display: flex; flex-direction: column; align-items: center; 
-            padding: 0.75rem; -webkit-tap-highlight-color: transparent;
-            transition: background 0.5s ease;
-            width: 100%;
-        }
-        
+        body { background: linear-gradient(135deg, #1e3c5c 0%, #2a5599 50%, #1e5a8a 100%); min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; padding: 0.75rem; -webkit-tap-highlight-color: transparent; transition: background 0.5s ease; width: 100%; }
         body.dark-theme { background: linear-gradient(135deg, #0d1b2a 0%, #1a2740 50%, #0f1f35 100%); }
-        
-        .warehouse-app {
-            width: 100%; max-width: 100%; flex: 1; display: flex; flex-direction: column;
-        }
-        
-        .op-card, .history-section, .admin-panel, .login-card, .photo-card {
-            background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(2px);
-            border: 1px solid #d9e2ec; transition: all 0.3s ease;
-        }
-        body.dark-theme .op-card, body.dark-theme .history-section, body.dark-theme .admin-panel, 
-        body.dark-theme .login-card, body.dark-theme .photo-card { 
-            background: rgba(35, 40, 55, 0.95); border-color: #3d4555; 
-        }
-        body.dark-theme .warehouse-title, body.dark-theme .op-card h3, 
-        body.dark-theme .admin-title, body.dark-theme .history-section h3, 
-        body.dark-theme .photo-title { color: #e4e9f2; }
-        body.dark-theme .counter-row { background: #2d3345; }
-        body.dark-theme .counter-value { color: #e4e9f2; }
+        .op-card, .history-section, .admin-panel, .login-card, .photo-card { background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(2px); border: 1px solid #d9e2ec; transition: all 0.3s ease; }
+        body.dark-theme .op-card, body.dark-theme .history-section, body.dark-theme .admin-panel, body.dark-theme .login-card, body.dark-theme .photo-card { background: rgba(35, 40, 55, 0.95); border-color: #3d4555; }
+        body.dark-theme .warehouse-title, body.dark-theme .op-card h3, body.dark-theme .admin-title, body.dark-theme .history-section h3, body.dark-theme .photo-title { color: #e4e9f2; }
+        body.dark-theme .counter-row { background: #2d3345; } body.dark-theme .counter-value { color: #e4e9f2; }
         body.dark-theme .btn-adjust { background: #3d4555; border-color: #555d70; color: #e4e9f2; }
         body.dark-theme .input-field { background: #2d3345; border-color: #4a5265; color: #e4e9f2; }
         body.dark-theme .input-field::placeholder { color: #78849e; }
         body.dark-theme .work-day-card { background: linear-gradient(135deg, #2a3345, #1e3a5f); border-color: #3d6b9c; }
-        body.dark-theme th { background: #2d3345; color: #c0ccda; }
-        body.dark-theme td { color: #b0bdd0; border-bottom-color: #3d4555; }
-        body.dark-theme .admin-tab { background: #3d4555; color: #c0ccda; }
-        body.dark-theme .admin-tab.active { background: #1e4a7a; color: white; }
-        body.dark-theme .date-selector { background: #2d3345; }
-        body.dark-theme .date-selector input { color: #e4e9f2; }
+        body.dark-theme th { background: #2d3345; color: #c0ccda; } body.dark-theme td { color: #b0bdd0; border-bottom-color: #3d4555; }
+        body.dark-theme .admin-tab { background: #3d4555; color: #c0ccda; } body.dark-theme .admin-tab.active { background: #1e4a7a; color: white; }
+        body.dark-theme .date-selector { background: #2d3345; } body.dark-theme .date-selector input { color: #e4e9f2; }
         body.dark-theme .date-nav-btn { background: #3d4555; color: #e4e9f2; }
         body.dark-theme .admin-filters { background: #2d3345; }
-        body.dark-theme .admin-filter-select, body.dark-theme .admin-filter-date { 
-            background: #232837; border-color: #4a5265; color: #e4e9f2; 
-        }
+        body.dark-theme .admin-filter-select, body.dark-theme .admin-filter-date { background: #232837; border-color: #4a5265; color: #e4e9f2; }
         body.dark-theme .admin-filter-clear { background: #3d4555; color: #e4e9f2; }
-        body.dark-theme .stat-item { background: #232837; }
-        body.dark-theme .stat-value { color: #e4e9f2; }
-        body.dark-theme .stat-label { color: #a0adc0; }
+        body.dark-theme .stat-item { background: #232837; } body.dark-theme .stat-value { color: #e4e9f2; } body.dark-theme .stat-label { color: #a0adc0; }
         body.dark-theme .reset-btn { color: #a0adc0; border-color: #4a5265; }
         body.dark-theme .delete-log-btn { background: #4a3030; border-color: #7a4a4a; color: #e4a0a0; }
-        body.dark-theme .loading { color: #a0adc0; }
-        body.dark-theme select, body.dark-theme input[type="date"] { color-scheme: dark; }
+        body.dark-theme .loading { color: #a0adc0; } body.dark-theme select, body.dark-theme input[type="date"] { color-scheme: dark; }
         body.dark-theme .login-input { background: #2d3345; border-color: #4a5265; color: #e4e9f2; }
         body.dark-theme .login-input::placeholder { color: #78849e; }
         body.dark-theme .login-input:focus { border-color: #5ba0d0; box-shadow: 0 0 20px rgba(91, 160, 208, 0.2); }
-        body.dark-theme .photo-thumb { border-color: #3d4555; }
-        body.dark-theme .photo-info { color: #c0ccda; }
-        
-        .theme-toggle-fixed {
-            position: fixed; top: 10px; right: 10px;
-            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
-            color: white; width: 38px; height: 38px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 1.1rem; z-index: 100;
-            backdrop-filter: blur(10px); -webkit-tap-highlight-color: transparent;
-        }
+        body.dark-theme .pallet-group { background: #232837; border-color: #3d4555; }
+        body.dark-theme .pallet-group .pallet-header { color: #c0ccda; }
+        .theme-toggle-fixed { position: fixed; top: 10px; right: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; z-index: 100; backdrop-filter: blur(10px); -webkit-tap-highlight-color: transparent; }
         body.dark-theme .theme-toggle-fixed { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
-        
         .login-screen { max-width: 440px; width: 100%; margin: 0 auto; animation: fadeInUp 0.5s ease; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .login-card { border-radius: 28px; padding: 2rem 1.5rem; box-shadow: 0 15px 40px rgba(0,0,0,0.2); text-align: center; }
-        .logo-container { margin-bottom: 24px; }
-        .logo-oval { background: linear-gradient(135deg, #1e5a8a 0%, #2a7ab5 100%); display: inline-flex; align-items: center; justify-content: center; padding: 12px 30px; border-radius: 100px; box-shadow: 0 6px 20px rgba(30,90,138,0.3); }
-        .logo-text { font-size: 1.6rem; font-weight: 800; letter-spacing: 1.5px; color: white; }
-        
-        .input-group-login { margin-bottom: 16px; text-align: left; }
-        .input-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #5b7a99; margin-bottom: 5px; }
+        .logo-container { margin-bottom: 24px; } .logo-oval { background: linear-gradient(135deg, #1e5a8a 0%, #2a7ab5 100%); display: inline-flex; align-items: center; justify-content: center; padding: 12px 30px; border-radius: 100px; box-shadow: 0 6px 20px rgba(30,90,138,0.3); } .logo-text { font-size: 1.6rem; font-weight: 800; letter-spacing: 1.5px; color: white; }
+        .input-group-login { margin-bottom: 16px; text-align: left; } .input-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #5b7a99; margin-bottom: 5px; }
         .login-input { width: 100%; padding: 13px 16px; font-size: 1rem; border: 2px solid #e0e8f0; border-radius: 16px; background: #f8fafd; transition: all 0.3s; outline: none; color: #1e3a5f; -webkit-appearance: none; }
-        .login-input:focus { border-color: #2a7ab5; box-shadow: 0 0 15px rgba(42,122,181,0.12); background: white; }
-        .login-input::placeholder { color: #a0b5c9; }
+        .login-input:focus { border-color: #2a7ab5; box-shadow: 0 0 15px rgba(42,122,181,0.12); background: white; } .login-input::placeholder { color: #a0b5c9; }
         .login-btn { width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: none; border-radius: 16px; background: linear-gradient(135deg, #2a7ab5 0%, #1e5a8a 100%); color: white; cursor: pointer; transition: all 0.3s; box-shadow: 0 5px 18px rgba(30,90,138,0.3); margin-top: 6px; }
-        .login-btn:active { transform: scale(0.98); }
-        .login-btn:disabled { background: #a0b8cc; box-shadow: none; cursor: not-allowed; }
+        .login-btn:active { transform: scale(0.98); } .login-btn:disabled { background: #a0b8cc; box-shadow: none; cursor: not-allowed; }
         .reg-btn { width: 100%; padding: 14px; font-size: 1.05rem; font-weight: 700; border: 2px solid #2a7ab5; border-radius: 16px; background: transparent; color: #2a7ab5; cursor: pointer; margin-top: 8px; }
-        body.dark-theme .reg-btn { color: #5ba0d0; border-color: #5ba0d0; }
-        .reg-btn:active { background: rgba(42,122,181,0.08); }
+        body.dark-theme .reg-btn { color: #5ba0d0; border-color: #5ba0d0; } .reg-btn:active { background: rgba(42,122,181,0.08); }
         .divider-text { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: #8a9db5; font-size: 0.8rem; }
         .divider-text::before, .divider-text::after { content: ''; flex: 1; height: 1px; background: #d9e2ec; }
         body.dark-theme .divider-text::before, body.dark-theme .divider-text::after { background: #3d4555; }
-        .error-msg { background: #ffe6e2; color: #b13e24; padding: 9px 14px; border-radius: 12px; margin-top: 12px; font-size: 0.82rem; display: none; animation: shake 0.4s ease; }
+        .error-msg { background: #ffe6e2; color: #b13e24; padding: 9px 14px; border-radius: 12px; margin-top: 12px; font-size: 0.82rem; display: none; }
         .success-msg { background: #e0f7ea; color: #1e6f3f; padding: 9px 14px; border-radius: 12px; margin-top: 12px; font-size: 0.82rem; display: none; }
-        @keyframes shake { 0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)} }
-        
-        .dashboard { width: 100%; display: none; padding: 0.25rem; }
-        .dashboard.active { display: block; }
+        .dashboard { width: 100%; display: none; padding: 0.25rem; } .dashboard.active { display: block; }
         .employee-header { background: linear-gradient(135deg, #1e3c5c 0%, #2a5599 100%); color: white; padding: 0.6rem 0.8rem; border-radius: 16px; margin-bottom: 0.8rem; }
         .header-top-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
         .user-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
         .user-avatar { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
         .user-name { font-size: 1rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .admin-tag, .superadmin-tag { padding: 2px 8px; border-radius: 15px; font-size: 0.6rem; font-weight: 700; flex-shrink: 0; white-space: nowrap; }
-        .admin-tag { background: #ffd700; color: #1e3a5f; }
-        .superadmin-tag { background: #ff6b6b; color: white; }
+        .admin-tag { background: #ffd700; color: #1e3a5f; } .superadmin-tag { background: #ff6b6b; color: white; }
         .logout-btn { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 6px 12px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; }
         .header-bottom-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .sync-status { font-size: 0.6rem; color: #a0c4e0; display: flex; align-items: center; gap: 3px; }
@@ -132,7 +81,6 @@
         @media (min-width: 480px) { .operations-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (min-width: 768px) { .operations-grid { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 1024px) { .operations-grid { grid-template-columns: repeat(4, 1fr); } }
-        
         .photo-card { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 0.9rem; border: 2px solid #c75d1e; margin-bottom: 12px; }
         .photo-card .photo-title { font-weight: 600; font-size: 1rem; color: #c75d1e; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; }
         .photo-slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
@@ -150,17 +98,13 @@
         .btn-photo:active { transform: translateY(2px); box-shadow: 0 1px 0 #8a3e14; }
         .btn-photo:disabled { background: #a0b8cc; box-shadow: none; cursor: not-allowed; transform: none; }
         .photo-counter { text-align: center; font-size: 0.75rem; color: #5e7180; margin-top: 4px; }
-        
         .photo-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 12px; }
         @media (max-width: 480px) { .photo-gallery { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
         .pallet-group { background: white; border-radius: 14px; overflow: hidden; border: 1px solid #d9e2ec; padding: 10px; }
-        body.dark-theme .pallet-group { background: #232837; border-color: #3d4555; }
         .pallet-group .pallet-header { font-weight: 600; font-size: 0.8rem; color: #1e3a5f; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        body.dark-theme .pallet-group .pallet-header { color: #c0ccda; }
         .pallet-group .photo-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
         .pallet-group .photo-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; cursor: pointer; transition: transform 0.2s; }
         .pallet-group .photo-strip img:hover { transform: scale(1.05); }
-        
         .photo-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1002; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; cursor: pointer; }
         .photo-modal-overlay img { max-width: 95%; max-height: 80vh; border-radius: 12px; object-fit: contain; }
         .photo-modal-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
@@ -168,7 +112,6 @@
         .photo-modal-nav { position: absolute; bottom: 20px; display: flex; gap: 12px; }
         .photo-modal-nav button { background: rgba(255,255,255,0.2); border: none; color: white; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 1rem; }
         .photo-modal-nav button:disabled { opacity: 0.4; }
-        
         .op-card { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 0.9rem; }
         .op-card h3 { font-weight: 600; font-size: 0.85rem; color: #1e3a5f; margin-bottom: 0.6rem; }
         .counter-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; background: #f3f9ff; padding: 4px 10px; border-radius: 20px; }
@@ -188,8 +131,7 @@
         .history-header h3 { font-size: 1rem; color: #1e3a5f; }
         .date-selector { display: flex; align-items: center; gap: 4px; background: #f3f9ff; padding: 3px 8px; border-radius: 20px; }
         .date-selector input { border: none; background: transparent; font-size: 0.8rem; padding: 5px; outline: none; width: 100px; }
-        .date-nav { display: flex; gap: 2px; }
-        .date-nav-btn { background: #e0e9f2; border: none; padding: 5px 10px; border-radius: 15px; font-weight: 600; cursor: pointer; font-size: 0.75rem; }
+        .date-nav { display: flex; gap: 2px; } .date-nav-btn { background: #e0e9f2; border: none; padding: 5px 10px; border-radius: 15px; font-weight: 600; cursor: pointer; font-size: 0.75rem; }
         .admin-panel { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 0.9rem; margin: 12px 0; border: 2px solid #ffd700; }
         .admin-title { font-size: 1.1rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.6rem; }
         .admin-tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -208,8 +150,7 @@
         .online-indicator { width: 6px; height: 6px; background: #4caf50; border-radius: 50%; display: inline-block; margin-right: 2px; }
         .offline-indicator { background: #f44336; }
         .stat-item { text-align: center; padding: 6px; background: #f3f9ff; border-radius: 12px; }
-        .stat-value { font-size: 1.3rem; font-weight: 800; color: #1e3a5f; }
-        .stat-label { color: #5e7180; font-size: 0.65rem; }
+        .stat-value { font-size: 1.3rem; font-weight: 800; color: #1e3a5f; } .stat-label { color: #5e7180; font-size: 0.65rem; }
     </style>
 </head>
 <body>
@@ -271,15 +212,15 @@ const db = firebase.firestore();
 const storage = firebase.storage();
 db.enablePersistence().catch(function(){});
 
-let currentUser = null, isAdmin = false, isSuperAdmin = false, currentWarehouse = 'Москва', employees = [];
-let counters = { moscowReceived: 0, moscowCollected: 0, moscowShipped: 0, moscowInvoiceTotal: 0, pushkinoAccepted: 0, pushkinoAcceptedTotal: 0, pushkinoShipped: 0, pushkinoShippedTotal: 0, pushkinoUnloaded: 0, pushkinoUnloadedTotal: 0, pushkinoReworked: 0, pushkinoReworkedTotal: 0 };
-let moscowLastArticle = '—', currentHistoryDate = new Date();
-let photoSlots = [null, null, null, null];
-let photoPreviewUrls = [null, null, null, null];
-const MAX_PHOTOS = 4;
-const IP_LIST = ["КАА","КЮА","БМС","ДЕВ"];
+var currentUser = null, isAdmin = false, isSuperAdmin = false, currentWarehouse = 'Москва', employees = [];
+var counters = { moscowReceived: 0, moscowCollected: 0, moscowShipped: 0, moscowInvoiceTotal: 0, pushkinoAccepted: 0, pushkinoAcceptedTotal: 0, pushkinoShipped: 0, pushkinoShippedTotal: 0, pushkinoUnloaded: 0, pushkinoUnloadedTotal: 0, pushkinoReworked: 0, pushkinoReworkedTotal: 0 };
+var moscowLastArticle = '—', currentHistoryDate = new Date();
+var photoSlots = [null, null, null, null];
+var photoPreviewUrls = [null, null, null, null];
+var MAX_PHOTOS = 4;
+var IP_LIST = ["КАА","КЮА","БМС","ДЕВ"];
 
-const SESSION_KEY = "warehouse_session";
+var SESSION_KEY = "warehouse_session";
 function saveSession(u) { localStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
 function getSession() { var r = localStorage.getItem(SESSION_KEY); return r ? JSON.parse(r) : null; }
 function clearSession() { localStorage.removeItem(SESSION_KEY); }
@@ -372,9 +313,11 @@ window.savePhotos = async function() {
     btn.textContent = '⏳ Сохранение...';
     if (msg) msg.innerHTML = '';
     
+    var palletRef = null;
+    
     try {
-        // 1. Создаём запись паллеты
-        var palletRef = await db.collection('pallet_photos').add({
+        // Шаг 1: Создаём запись паллеты
+        palletRef = await db.collection('pallet_photos').add({
             userId: currentUser.id,
             userName: currentUser.name,
             city: city,
@@ -385,29 +328,34 @@ window.savePhotos = async function() {
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        // 2. Загружаем фото по одному
+        // Шаг 2: Загружаем фото
         for (var j = 0; j < filledSlots.length; j++) {
             var item = filledSlots[j];
             var file = item.file;
             var slotNum = item.slot + 1;
-            var fileName = 'pallets/'+currentUser.id+'/'+palletRef.id+'_'+slotNum+'_'+Date.now()+'.jpg';
-            var storageRef = storage.ref(fileName);
             
             btn.textContent = '⏳ Фото '+(j+1)+'/'+filledSlots.length+'...';
             
-            // Простая загрузка без on()
-            var snapshot = await storageRef.put(file);
-            var downloadUrl = await snapshot.ref.getDownloadURL();
+            var fileName = 'pallets/'+currentUser.id+'/'+palletRef.id+'_'+slotNum+'.jpg';
+            var storageRef = storage.ref(fileName);
             
-            await palletRef.collection('photos').add({
-                slot: slotNum,
-                photoUrl: downloadUrl,
-                storagePath: fileName,
-                order: j
+            // Загрузка через Promise
+            await new Promise(function(resolve, reject) {
+                var uploadTask = storageRef.put(file);
+                uploadTask.then(function(snapshot) {
+                    snapshot.ref.getDownloadURL().then(function(url) {
+                        palletRef.collection('photos').add({
+                            slot: slotNum,
+                            photoUrl: url,
+                            storagePath: fileName,
+                            order: j
+                        }).then(resolve, reject);
+                    }, reject);
+                }, reject);
             });
         }
         
-        // 3. Очистка
+        // Шаг 3: Очистка
         for (var k = 0; k < MAX_PHOTOS; k++) {
             if (photoPreviewUrls[k]) URL.revokeObjectURL(photoPreviewUrls[k]);
             photoSlots[k] = null;
@@ -424,9 +372,8 @@ window.savePhotos = async function() {
         
     } catch (error) {
         console.error('Save error:', error);
-        alert('Ошибка: '+error.message);
-        // Пробуем удалить запись если создана
-        if (typeof palletRef !== 'undefined') {
+        alert('Ошибка загрузки: ' + (error.message || 'Неизвестная ошибка'));
+        if (palletRef) {
             try { await palletRef.delete(); } catch(e) {}
         }
     }
@@ -474,7 +421,12 @@ async function loadPalletPhotos(filters) {
             
             var photosHtml = '';
             photos.forEach(function(url, idx) {
-                photosHtml += '<img src="'+url+'" alt="Фото '+(idx+1)+'" loading="lazy" onclick="window.showPhotoModal(\''+url.replace(/'/g,"\\'")+'\',\''+cityEsc.replace(/'/g,"\\'")+'\',\''+ipEsc.replace(/'/g,"\\'")+'\',\''+qty+' кор.\',\''+userEsc.replace(/'/g,"\\'")+'\',\''+dateEsc+'\','+idx+','+JSON.stringify(photos).replace(/"/g,'&quot;')+')">';
+                var safeUrl = url.replace(/'/g, "\\'");
+                var safeCity = cityEsc.replace(/'/g, "\\'");
+                var safeIp = ipEsc.replace(/'/g, "\\'");
+                var safeUser = userEsc.replace(/'/g, "\\'");
+                var safeDate = dateEsc.replace(/'/g, "\\'");
+                photosHtml += '<img src="'+url+'" alt="Фото '+(idx+1)+'" loading="lazy" onclick="window.showPhotoModal(\''+safeUrl+'\',\''+safeCity+'\',\''+safeIp+'\',\''+qty+' кор.\',\''+safeUser+'\',\''+safeDate+'\','+idx+','+JSON.stringify(photos).replace(/"/g,'&quot;')+')">';
             });
             
             html += '<div class="pallet-group">';
@@ -511,11 +463,13 @@ window.showPhotoModal = function(url, city, ip, qty, user, date, currentIndex, a
     });
     document.body.appendChild(modal);
     
-    document.getElementById('modalPrev')?.addEventListener('click', function(e) {
+    var prevBtn = document.getElementById('modalPrev');
+    var nextBtn = document.getElementById('modalNext');
+    if (prevBtn) prevBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         if (currentIndex > 0) { modal.remove(); window.showPhotoModal(allPhotos[currentIndex-1], city, ip, qty, user, date, currentIndex-1, allPhotos); }
     });
-    document.getElementById('modalNext')?.addEventListener('click', function(e) {
+    if (nextBtn) nextBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         if (currentIndex < allPhotos.length-1) { modal.remove(); window.showPhotoModal(allPhotos[currentIndex+1], city, ip, qty, user, date, currentIndex+1, allPhotos); }
     });
@@ -802,18 +756,7 @@ async function renderUserPanel() {
     for (var i = 0; i < MAX_PHOTOS; i++) {
         slotsHtml += '<div class="photo-slot" id="photoSlot'+i+'" onclick="window.triggerPhotoCapture('+i+')"><span class="slot-number">'+(i+1)+'</span></div>';
     }
-    var photoCardHTML = '<div class="photo-card">' +
-        '<div class="photo-title">📸 Фото паллет (до 4 фото)</div>' +
-        '<div class="photo-slots">'+slotsHtml+'</div>' +
-        '<div class="photo-counter" id="photoCounter">Заполнено: 0 / '+MAX_PHOTOS+'</div>' +
-        '<div class="photo-form-row">' +
-            '<div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" style="margin-bottom:0;"></div>' +
-            '<div class="input-field-wrap"><select id="photoIP" class="input-field" style="margin-bottom:0;"><option value="">-- ИП --</option>'+IP_LIST.map(function(ip){return '<option value="'+ip+'">'+ip+'</option>';}).join('')+'</select></div>' +
-            '<div class="input-field-wrap"><input type="number" id="photoQty" class="input-field" placeholder="Кол-во кор." min="1" style="margin-bottom:0;"></div>' +
-            '<div class="input-field-wrap"><input type="date" id="photoDate" class="input-field" value="'+getTodayStr()+'" style="margin-bottom:0;"></div>' +
-        '</div>' +
-        '<button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">💾 Сохранить паллету</button>' +
-        '<div id="photoMsg"></div></div>';
+    var ipOptions = IP_LIST.map(function(ip){return '<option value="'+ip+'">'+ip+'</option>';}).join('');
     
     return '<div id="moscowContainer" class="warehouse-container active">' +
         '<div class="warehouse-title">🏢 Склад Москва</div>' +
@@ -825,7 +768,19 @@ async function renderUserPanel() {
             '<div class="op-card"><h3>📋 ВЫЛОЖИЛ товар</h3><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" value="1" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:4px;font-size:0.7rem;">Последний: <span id="moscowLastArticle">—</span></div></div>' +
             '<div class="op-card"><h3>📑 СБОРКА по накл.</h3><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" value="1" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:4px;font-size:0.7rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div>' +
         '</div>' +
-        photoCardHTML +
+        '<div class="photo-card">' +
+            '<div class="photo-title">📸 Фото паллет (до 4 фото)</div>' +
+            '<div class="photo-slots">'+slotsHtml+'</div>' +
+            '<div class="photo-counter" id="photoCounter">Заполнено: 0 / '+MAX_PHOTOS+'</div>' +
+            '<div class="photo-form-row">' +
+                '<div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" style="margin-bottom:0;"></div>' +
+                '<div class="input-field-wrap"><select id="photoIP" class="input-field" style="margin-bottom:0;"><option value="">-- ИП --</option>'+ipOptions+'</select></div>' +
+                '<div class="input-field-wrap"><input type="number" id="photoQty" class="input-field" placeholder="Кол-во кор." min="1" style="margin-bottom:0;"></div>' +
+                '<div class="input-field-wrap"><input type="date" id="photoDate" class="input-field" value="'+getTodayStr()+'" style="margin-bottom:0;"></div>' +
+            '</div>' +
+            '<button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">💾 Сохранить паллету</button>' +
+            '<div id="photoMsg"></div>' +
+        '</div>' +
         '</div>' +
         '<div id="pushkinoContainer" class="warehouse-container">' +
         '<div class="warehouse-title">🏭 Склад Пушкино</div>' +
@@ -843,6 +798,7 @@ async function renderUserPanel() {
 }
 
 async function renderAdminPanel() {
+    var ipOptions = IP_LIST.map(function(ip){return '<option value="'+ip+'">'+ip+'</option>';}).join('');
     return '<div class="admin-panel">' +
         '<div class="admin-title">👑 Панель администратора</div>' +
         '<div class="admin-tabs">' +
@@ -872,7 +828,7 @@ async function renderAdminPanel() {
             '<div class="admin-filters">' +
                 '<select id="photoFilterEmployee" class="admin-filter-select"><option value="">Все сотрудники</option></select>' +
                 '<input type="date" id="photoFilterDate" class="admin-filter-date" placeholder="Дата">' +
-                '<select id="photoFilterIP" class="admin-filter-select"><option value="">Все ИП</option>'+IP_LIST.map(function(ip){return '<option value="'+ip+'">'+ip+'</option>';}).join('')+'</select>' +
+                '<select id="photoFilterIP" class="admin-filter-select"><option value="">Все ИП</option>'+ipOptions+'</select>' +
                 '<input type="text" id="photoFilterCityInput" class="admin-filter-select" placeholder="Город" style="width:100px;">' +
                 '<button class="admin-filter-btn" id="applyPhotoFilterBtn">🔍</button>' +
                 '<button class="admin-filter-clear" id="clearPhotoFilterBtn">🗑️</button>' +
