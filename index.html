@@ -48,7 +48,6 @@
         body.dark-theme .ip-row .ip-qty-input { background: #2d3345; border-color: #4a5265; color: #e4e9f2; }
         body.dark-theme .date-value { background: #2d3345; border-color: #4a5265; color: #e4e9f2; }
         body.dark-theme .install-banner { background: #1e4a7a; }
-        body.dark-theme .btn-clean { background: #4a3030; border-color: #7a4a4a; color: #e4a0a0; }
         .theme-toggle-fixed { position: fixed; top: 10px; right: 10px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; z-index: 100; backdrop-filter: blur(10px); -webkit-tap-highlight-color: transparent; }
         body.dark-theme .theme-toggle-fixed { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.2); }
         .login-screen { max-width: 440px; width: 100%; margin: 0 auto; animation: fadeInUp 0.5s ease; }
@@ -118,8 +117,8 @@
         .btn-photo { background: #c75d1e; border: none; color: white; font-weight: 700; font-size: 0.9rem; padding: 10px 20px; border-radius: 20px; cursor: pointer; box-shadow: 0 3px 0 #8a3e14; width: 100%; margin-top: 4px; }
         .btn-photo:active { transform: translateY(2px); box-shadow: 0 1px 0 #8a3e14; }
         .btn-photo:disabled { background: #a0b8cc; box-shadow: none; cursor: not-allowed; transform: none; }
-        .btn-clean { background: #f1e6e6; border: 1px solid #cfb2b2; color: #934a4a; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 600; margin-left: 8px; }
-        .btn-clean:hover { background: #e6d0d0; }
+        .btn-archive { background: #e67e22; border: none; color: white; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 600; width: auto; }
+        .btn-archive:hover { background: #d35400; }
         .photo-counter { text-align: center; font-size: 0.75rem; color: #5e7180; margin-top: 4px; }
         .photo-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 12px; }
         @media (max-width: 480px) { .photo-gallery { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
@@ -225,7 +224,7 @@
 
 <script>
 if ('serviceWorker' in navigator) {
-    var swCode = "const CACHE_NAME='gqbox-warehouse-v2';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
+    var swCode = "const CACHE_NAME='gqbox-warehouse-v4';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
     var swBlob = new Blob([swCode], { type: 'application/javascript' });
     var swUrl = URL.createObjectURL(swBlob);
     navigator.serviceWorker.register(swUrl).then(function() {}).catch(function() {});
@@ -256,7 +255,7 @@ var currentUser = null, isAdmin = false, isSuperAdmin = false, currentWarehouse 
 var counters = { moscowReceived: 0, moscowCollected: 0, moscowShipped: 0, moscowInvoiceTotal: 0, pushkinoAccepted: 0, pushkinoAcceptedTotal: 0, pushkinoShipped: 0, pushkinoShippedTotal: 0, pushkinoUnloaded: 0, pushkinoUnloadedTotal: 0, pushkinoReworked: 0, pushkinoReworkedTotal: 0 };
 var moscowLastArticle = '—', currentHistoryDate = new Date();
 var photoSlots = [null, null, null, null], photoPreviewUrls = [null, null, null, null];
-var MAX_PHOTOS = 4, MAX_PHOTO_SIZE = 500 * 1024;
+var MAX_PHOTOS = 4, MAX_PHOTO_SIZE = 400 * 1024;
 var IP_LIST = ["КЮА","КАА","БМС","ДЕВ"];
 
 var SESSION_KEY = "warehouse_session";
@@ -278,7 +277,7 @@ function initTheme() {
 
 document.addEventListener('change', function(e) { if (e.target.id === 'photoDate') { var dateVal = document.getElementById('dateDisplayValue'); if (dateVal) dateVal.textContent = formatDateForDisplay(e.target.value); } });
 
-function compressImage(file, maxSize) { return new Promise(function(resolve, reject) { var reader = new FileReader(); reader.onload = function(e) { var img = new Image(); img.onload = function() { var canvas = document.createElement('canvas'); var ctx = canvas.getContext('2d'); var maxW = 1200, maxH = 1200; var w = img.width, h = img.height; if (w > maxW || h > maxH) { var ratio = Math.min(maxW/w, maxH/h); w = Math.round(w * ratio); h = Math.round(h * ratio); } canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h); var quality = 0.6; var result = canvas.toDataURL('image/jpeg', quality); while (result.length > maxSize * 1.37 && quality > 0.2) { quality -= 0.1; result = canvas.toDataURL('image/jpeg', quality); } resolve(result); }; img.onerror = reject; img.src = e.target.result; }; reader.onerror = reject; reader.readAsDataURL(file); }); }
+function compressImage(file, maxSize) { return new Promise(function(resolve, reject) { var reader = new FileReader(); reader.onload = function(e) { var img = new Image(); img.onload = function() { var canvas = document.createElement('canvas'); var ctx = canvas.getContext('2d'); var maxW = 900, maxH = 900; var w = img.width, h = img.height; if (w > maxW || h > maxH) { var ratio = Math.min(maxW/w, maxH/h); w = Math.round(w * ratio); h = Math.round(h * ratio); } canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h); var quality = 0.55; var result = canvas.toDataURL('image/jpeg', quality); while (result.length > maxSize * 1.37 && quality > 0.2) { quality -= 0.1; result = canvas.toDataURL('image/jpeg', quality); } resolve(result); }; img.onerror = reject; img.src = e.target.result; }; reader.onerror = reject; reader.readAsDataURL(file); }); }
 
 window.triggerPhotoCapture = function(slotIndex) { var input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'environment'; input.onchange = function(e) { var file = e.target.files[0]; if (!file) return; if (file.size > 20 * 1024 * 1024) { alert('Фото слишком большое. Максимум 20 МБ.'); return; } if (photoPreviewUrls[slotIndex]) URL.revokeObjectURL(photoPreviewUrls[slotIndex]); photoSlots[slotIndex] = file; photoPreviewUrls[slotIndex] = URL.createObjectURL(file); updatePhotoSlotDisplay(slotIndex); updatePhotoCounter(); }; input.click(); };
 window.removePhotoFromSlot = function(slotIndex) { if (photoPreviewUrls[slotIndex]) URL.revokeObjectURL(photoPreviewUrls[slotIndex]); photoSlots[slotIndex] = null; photoPreviewUrls[slotIndex] = null; updatePhotoSlotDisplay(slotIndex); updatePhotoCounter(); };
@@ -290,6 +289,41 @@ window.savePhotos = async function() { var cityEl = document.getElementById('pho
 async function loadPalletPhotos(filters) { filters = filters || {}; var container = document.getElementById('palletPhotosContainer'); if (!container) return; container.innerHTML = '<div class="loading">Загрузка фото...</div>'; var query = db.collection('pallet_photos'); if (filters.userId) query = query.where('userId', '==', filters.userId); if (filters.date) query = query.where('date', '==', filters.date); if (filters.city) query = query.where('city', '==', filters.city); try { var snapshot; if (filters.ip) { var baseQuery = db.collection('pallet_photos'); if (filters.userId) baseQuery = baseQuery.where('userId', '==', filters.userId); if (filters.date) baseQuery = baseQuery.where('date', '==', filters.date); if (filters.city) baseQuery = baseQuery.where('city', '==', filters.city); snapshot = await baseQuery.orderBy('timestamp', 'desc').limit(100).get(); } else { snapshot = await query.orderBy('timestamp', 'desc').limit(50).get(); } var docs = snapshot.docs; if (filters.ip) { docs = docs.filter(function(doc) { var ipData = doc.data().ipData || []; return ipData.some(function(item) { return item.ip === filters.ip; }); }); } if (docs.length === 0) { container.innerHTML = '<div style="text-align:center;padding:30px;">📭 Фото не найдены</div>'; return; } var html = '<div class="photo-gallery">'; docs.forEach(function(doc) { var data = doc.data(); if (!data.photos || data.photos.length === 0) return; var cityEsc = escapeHtml(data.city || '—'), ipEsc = escapeHtml(data.ipDisplay || '—'); var qty = data.totalQuantity || 0, userEsc = escapeHtml(data.userName || '—'), dateEsc = formatDateForDisplay(data.date); var photosHtml = ''; data.photos.forEach(function(photo) { var safeData = photo.data.replace(/'/g, "\\'"); photosHtml += '<img src="'+photo.data+'" alt="Фото паллеты" loading="lazy" onclick="window.showPhotoModalByData(\''+safeData+'\',\''+cityEsc.replace(/'/g,"\\'")+'\',\''+ipEsc.replace(/'/g,"\\'")+'\',\''+qty+' кор.\',\''+userEsc.replace(/'/g,"\\'")+'\',\''+dateEsc+'\')">'; }); html += '<div class="pallet-group"><div class="pallet-header"><span>'+cityEsc+'</span><span style="font-size:0.65rem;">'+userEsc+' | '+dateEsc+'</span></div><div style="font-size:0.75rem;color:#5e7180;margin-bottom:6px;">'+ipEsc+'</div><div class="photo-strip">'+photosHtml+'</div><button class="delete-log-btn" onclick="window.deletePallet(\''+doc.id+'\')" style="margin-top:6px;width:100%;">🗑️ Удалить паллету</button></div>'; }); html += '</div>'; container.innerHTML = html; } catch (error) { console.error('Load photos error:', error); container.innerHTML = '<div style="text-align:center;padding:20px;color:#b13e24;">Ошибка загрузки</div>'; } }
 window.showPhotoModalByData = function(base64data, city, ip, qty, user, date) { var existing = document.querySelector('.photo-modal-overlay'); if (existing) existing.remove(); var modal = document.createElement('div'); modal.className = 'photo-modal-overlay'; modal.innerHTML = '<button class="photo-modal-close">✕</button><img src="'+base64data+'" alt="Фото паллеты"><div class="photo-modal-info">'+city+' — '+ip+' | '+qty+' | '+user+' | '+date+'</div>'; modal.addEventListener('click', function(e) { if (e.target === modal || e.target.classList.contains('photo-modal-close')) modal.remove(); }); document.body.appendChild(modal); };
 window.deletePallet = async function(palletId) { if (!confirm('Удалить паллету и все фото?')) return; try { await db.collection('pallet_photos').doc(palletId).delete(); await loadPalletPhotos(); } catch (error) { alert('Ошибка удаления'); } };
+
+// ============ АРХИВАЦИЯ СТАРЫХ ФОТО ============
+async function archiveOldPhotos(monthsOld) {
+    var cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() - monthsOld);
+    var cutoffStr = cutoffDate.toISOString().slice(0,10);
+    
+    var countSnap = await db.collection('pallet_photos').where('date', '<=', cutoffStr).get();
+    var count = countSnap.size;
+    
+    if (count === 0) {
+        alert('✅ Нет фото старше ' + monthsOld + ' месяцев.');
+        return;
+    }
+    
+    var monthNames = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    var cutoffDisplay = cutoffDate.getDate() + ' ' + monthNames[cutoffDate.getMonth()] + ' ' + cutoffDate.getFullYear();
+    
+    if (!confirm('Найдено ' + count + ' паллет с фото старше ' + cutoffDisplay + '.\n\nУдалить их?')) return;
+    
+    var deletedCount = 0;
+    var batchSize = 100;
+    
+    for (var i = 0; i < countSnap.docs.length; i += batchSize) {
+        var batch = db.batch();
+        var chunk = countSnap.docs.slice(i, i + batchSize);
+        chunk.forEach(function(doc) { batch.delete(doc.ref); });
+        await batch.commit();
+        deletedCount += chunk.length;
+    }
+    
+    alert('✅ Удалено ' + deletedCount + ' паллет с фото.');
+    await loadPalletPhotos();
+    await loadAdminEmployees();
+}
 
 async function createInitialEmployees() { var list = [ { login: 'popov', password: 'admin0111', name: 'Попов А.', role: 'superadmin', active: true }, { login: 'sazonov', password: 'admin0111', name: 'Сазонов М.', role: 'admin', active: true }, { login: 'roman', password: '123', name: 'Роман', role: 'user', active: true }, { login: 'yakimov', password: '123', name: 'Якимов', role: 'user', active: true }, { login: 'varivcev', password: '123', name: 'Варивцев', role: 'user', active: true }, { login: 'goncharov', password: '123', name: 'Гончаров', role: 'user', active: true } ]; for (var i = 0; i < list.length; i++) await db.collection('employees').add(list[i]); }
 async function getEmployees() { var s = await db.collection('employees').orderBy('name').get(); var e = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; }); if (e.length === 0) { await createInitialEmployees(); var s2 = await db.collection('employees').orderBy('name').get(); e = s2.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; }); } employees = e; return e; }
@@ -305,104 +339,30 @@ function updateAllCounters() { var ids = ['moscowReceived','moscowCollected','mo
 async function loadHistoryForDate(ds) { if (!currentUser) return; var tb = document.getElementById('myHistoryBody'); if(!tb) return; tb.innerHTML = '<tr><td colspan="4" class="loading">Загрузка...</td></tr>'; var s = await db.collection('work_logs').where('userId', '==', currentUser.id).where('date', '==', ds).get(); if (s.empty) { tb.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</td></tr>'; return; } var logs = s.docs.map(function(d) { return d.data(); }).sort(function(a,b) { return (b.timestamp?.toDate()||0) - (a.timestamp?.toDate()||0); }); var h = ''; logs.forEach(function(l) { var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; h += '<tr><td>'+time+'</td><td>'+(l.warehouse||'—')+'</td><td>'+(l.action||'—')+'</td><td>'+(l.details||'—')+'</td></tr>'; }); tb.innerHTML = h; }
 async function loadAdminLogs() { if (!isAdmin) return; var tb = document.getElementById('adminLogsBody'); if(!tb) return; tb.innerHTML = '<tr><td colspan="6" class="loading">Загрузка...</td></tr>'; var eid = document.getElementById('adminFilterEmployee')?.value; var fd = document.getElementById('adminFilterDate')?.value; var q = db.collection('work_logs'); if (eid) q = q.where('userId', '==', eid); if (fd) q = q.where('date', '==', fd); var s = await q.orderBy('timestamp', 'desc').limit(200).get(); if (s.empty) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Нет записей</td></tr>'; return; } var h = ''; s.docs.forEach(function(d) { var l = d.data(); var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleString('ru-RU') : '—'; h += '<tr><td>'+time+'</td><td>'+l.warehouse+'</td><td><strong>'+l.userName+'</strong></td><td>'+l.action+'</td><td>'+(l.details||'—')+'</td><td><button class="delete-log-btn" data-id="'+d.id+'">🗑️</button></td></tr>'; }); tb.innerHTML = h; tb.querySelectorAll('.delete-log-btn').forEach(function(b) { b.addEventListener('click', async function() { if (confirm('Удалить?')) { await db.collection('work_logs').doc(b.dataset.id).delete(); await loadAdminLogs(); } }); }); }
 
-// ============ ОЧИСТКА НЕАКТИВНЫХ СОТРУДНИКОВ ============
-async function cleanInactiveEmployees() {
-    if (!confirm('Найти и удалить всех сотрудников, у которых нет ни одной записи (операции, фото, отметки присутствия)?')) return;
-    
-    var allEmps = await getEmployees();
-    var inactiveList = [];
-    
-    // Проверяем каждого сотрудника
-    for (var i = 0; i < allEmps.length; i++) {
-        var emp = allEmps[i];
-        
-        // Админов и суперадминов не трогаем
-        if (emp.role === 'admin' || emp.role === 'superadmin') continue;
-        // Текущего пользователя не трогаем
-        if (emp.id === currentUser.id) continue;
-        
-        // Считаем записи в трёх коллекциях
-        var logsSnap = await db.collection('work_logs').where('userId', '==', emp.id).limit(1).get();
-        var photosSnap = await db.collection('pallet_photos').where('userId', '==', emp.id).limit(1).get();
-        var attendanceSnap = await db.collection('attendance').where('userId', '==', emp.id).limit(1).get();
-        
-        var hasRecords = !logsSnap.empty || !photosSnap.empty || !attendanceSnap.empty;
-        
-        if (!hasRecords) {
-            inactiveList.push({ id: emp.id, name: emp.name, login: emp.login });
-        }
-    }
-    
-    if (inactiveList.length === 0) {
-        alert('✅ Все сотрудники активны! Неактивных не найдено.');
-        return;
-    }
-    
-    // Показываем список на удаление
-    var nameList = inactiveList.map(function(e) { return e.name + ' (' + e.login + ')'; }).join('\n');
-    if (!confirm('Найдено ' + inactiveList.length + ' неактивных сотрудников:\n\n' + nameList + '\n\nУдалить их?')) return;
-    
-    // Удаляем
-    var batch = db.batch();
-    inactiveList.forEach(function(emp) { batch.delete(db.collection('employees').doc(emp.id)); });
-    await batch.commit();
-    
-    alert('✅ Удалено ' + inactiveList.length + ' неактивных сотрудников!');
-    
-    // Обновляем списки
-    await getEmployees();
-    await loadAdminEmployees();
-    updateFilterEmployeeSelect();
-    updatePhotoFilterEmployees();
-}
-
 async function loadAdminEmployees() {
     if (!isAdmin) return;
     var s = await db.collection('employees').orderBy('name').get();
     var tb = document.getElementById('adminEmployeesBody');
     if(!tb) return;
-    
-    // Сначала получаем статистику по всем сотрудникам
     var statsMap = {};
     var allEmps = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; });
-    
-    for (var i = 0; i < allEmps.length; i++) {
-        var emp = allEmps[i];
-        var logsSnap = await db.collection('work_logs').where('userId', '==', emp.id).limit(1).get();
-        var photosSnap = await db.collection('pallet_photos').where('userId', '==', emp.id).limit(1).get();
-        var attendanceSnap = await db.collection('attendance').where('userId', '==', emp.id).limit(1).get();
-        statsMap[emp.id] = { logs: !logsSnap.empty, photos: !photosSnap.empty, attendance: !attendanceSnap.empty };
-    }
-    
+    for (var i = 0; i < allEmps.length; i++) { var emp = allEmps[i]; var logsSnap = await db.collection('work_logs').where('userId', '==', emp.id).limit(1).get(); var photosSnap = await db.collection('pallet_photos').where('userId', '==', emp.id).limit(1).get(); var attendanceSnap = await db.collection('attendance').where('userId', '==', emp.id).limit(1).get(); statsMap[emp.id] = { logs: !logsSnap.empty, photos: !photosSnap.empty, attendance: !attendanceSnap.empty }; }
     var h = '';
-    s.docs.forEach(function(d) {
-        var e = d.data();
-        var rt = e.role==='superadmin'?'⭐ Суперадмин':(e.role==='admin'?'👑 Админ':'👤 Сотрудник');
-        var stats = statsMap[d.id] || { logs: false, photos: false, attendance: false };
-        var hasData = stats.logs || stats.photos || stats.attendance;
-        var activityStatus = hasData ? '✅' : '❌';
-        h += '<tr><td><strong>'+e.name+'</strong></td><td>'+rt+'</td><td>'+activityStatus+'</td><td>'+(e.role!=='superadmin'?'<button class="delete-log-btn" data-id="'+d.id+'" data-name="'+e.name+'" data-role="'+e.role+'">🗑️</button>':'—')+'</td></tr>';
-    });
+    s.docs.forEach(function(d) { var e = d.data(); var rt = e.role==='superadmin'?'⭐ Суперадмин':(e.role==='admin'?'👑 Админ':'👤 Сотрудник'); var stats = statsMap[d.id] || { logs: false, photos: false, attendance: false }; var hasData = stats.logs || stats.photos || stats.attendance; var activityStatus = hasData ? '✅' : '❌'; h += '<tr><td><strong>'+e.name+'</strong></td><td>'+rt+'</td><td>'+activityStatus+'</td><td>'+(e.role!=='superadmin'?'<button class="delete-log-btn" data-id="'+d.id+'" data-name="'+e.name+'" data-role="'+e.role+'">🗑️</button>':'—')+'</td></tr>'; });
     tb.innerHTML = h;
-    tb.querySelectorAll('.delete-log-btn').forEach(function(b) {
-        b.addEventListener('click', async function() {
-            var n = b.dataset.name, r = b.dataset.role, id = b.dataset.id;
-            if (r === 'superadmin') { alert('Невозможно удалить суперадмина'); return; }
-            if (r === 'admin' && !isSuperAdmin) { alert('Только суперадмин может удалять админов'); return; }
-            if (n === currentUser.name) { alert('Нельзя удалить себя'); return; }
-            if (confirm('Удалить '+n+'?')) {
-                var ba = db.batch();
-                var ls = await db.collection('work_logs').where('userId', '==', id).get();
-                ls.docs.forEach(function(d) { ba.delete(d.ref); });
-                ba.delete(db.collection('employees').doc(id));
-                await ba.commit();
-                await loadAdminEmployees();
-                await getEmployees();
-                updateFilterEmployeeSelect();
-                updatePhotoFilterEmployees();
-            }
-        });
-    });
+    tb.querySelectorAll('.delete-log-btn').forEach(function(b) { b.addEventListener('click', async function() { var n = b.dataset.name, r = b.dataset.role, id = b.dataset.id; if (r === 'superadmin') { alert('Невозможно удалить суперадмина'); return; } if (r === 'admin' && !isSuperAdmin) { alert('Только суперадмин может удалять админов'); return; } if (n === currentUser.name) { alert('Нельзя удалить себя'); return; } if (confirm('Удалить '+n+'?')) { var ba = db.batch(); var ls = await db.collection('work_logs').where('userId', '==', id).get(); ls.docs.forEach(function(d) { ba.delete(d.ref); }); ba.delete(db.collection('employees').doc(id)); await ba.commit(); await loadAdminEmployees(); await getEmployees(); updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); } }); });
+}
+
+async function cleanInactiveEmployees() {
+    if (!confirm('Найти и удалить всех сотрудников, у которых нет ни одной записи?')) return;
+    var allEmps = await getEmployees();
+    var inactiveList = [];
+    for (var i = 0; i < allEmps.length; i++) { var emp = allEmps[i]; if (emp.role === 'admin' || emp.role === 'superadmin' || emp.id === currentUser.id) continue; var logsSnap = await db.collection('work_logs').where('userId', '==', emp.id).limit(1).get(); var photosSnap = await db.collection('pallet_photos').where('userId', '==', emp.id).limit(1).get(); var attendanceSnap = await db.collection('attendance').where('userId', '==', emp.id).limit(1).get(); if (logsSnap.empty && photosSnap.empty && attendanceSnap.empty) inactiveList.push({ id: emp.id, name: emp.name, login: emp.login }); }
+    if (inactiveList.length === 0) { alert('✅ Все сотрудники активны!'); return; }
+    var nameList = inactiveList.map(function(e) { return e.name + ' (' + e.login + ')'; }).join('\n');
+    if (!confirm('Найдено ' + inactiveList.length + ' неактивных:\n\n' + nameList + '\n\nУдалить?')) return;
+    var batch = db.batch(); inactiveList.forEach(function(emp) { batch.delete(db.collection('employees').doc(emp.id)); }); await batch.commit();
+    alert('✅ Удалено ' + inactiveList.length + '!'); await getEmployees(); await loadAdminEmployees(); updateFilterEmployeeSelect(); updatePhotoFilterEmployees();
 }
 
 async function addEmployee(n) { if (!n) return; await db.collection('employees').add({ login: n.toLowerCase().replace(/\s/g,''), password: '123', name: n.trim(), role: 'user', active: true }); await getEmployees(); await loadAdminEmployees(); updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); }
@@ -423,7 +383,7 @@ async function renderUserPanel() {
 
 async function renderAdminPanel() {
     var ipOptions = IP_LIST.map(function(ip){return '<option value="'+ip+'">'+ip+'</option>';}).join('');
-    return '<div class="admin-panel"><div class="admin-title">👑 Панель администратора</div><div class="admin-tabs"><button class="admin-tab active" data-tab="logs">📋 Все записи</button><button class="admin-tab" data-tab="employees">👥 Сотрудники</button><button class="admin-tab" data-tab="reports">📊 Отчёты</button><button class="admin-tab" data-tab="photos">📸 Фото паллет</button></div><div id="tabLogs"><div class="admin-filters"><select id="adminFilterEmployee" class="admin-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="adminFilterDate" class="admin-filter-date"><button class="admin-filter-btn" id="applyAdminFilterBtn">🔍</button><button class="admin-filter-clear" id="clearAdminFilterBtn">🗑️</button></div><div class="table-wrap"><table><thead><tr><th>Время</th><th>Склад</th><th>Сотрудник</th><th>Действие</th><th>Детали</th><th></th></tr></thead><tbody id="adminLogsBody"><tr><td colspan="6" class="loading">Загрузка...</td></tr></tbody></table></div></div><div id="tabEmployees" style="display:none;"><div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;"><button class="btn-ok" id="addEmployeeAdminBtn" style="width:auto;padding:8px 16px;font-size:0.9rem;">➕ Добавить сотрудника</button><button class="btn-clean" id="cleanInactiveBtn">🧹 Очистить неактивных</button></div><div class="table-wrap"><table><thead><tr><th>Сотрудник</th><th>Роль</th><th>Активен</th><th></th></tr></thead><tbody id="adminEmployeesBody"><tr><td colspan="4" class="loading">Загрузка...</td></tr></tbody></table></div></div><div id="tabReports" style="display:none;"><div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;"><select id="reportEmployeeSelect" style="padding:8px;border-radius:20px;font-size:0.8rem;"><option value="">Все сотрудники</option></select><input type="date" id="reportStartDate" style="padding:8px;border-radius:20px;font-size:0.8rem;"><input type="date" id="reportEndDate" style="padding:8px;border-radius:20px;font-size:0.8rem;"><button class="btn-ok" id="generateAdminReportBtn" style="width:auto;padding:8px 14px;font-size:0.85rem;">Сформировать</button></div><div id="adminReportResult" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;"></div></div><div id="tabPhotos" style="display:none;"><div class="admin-filters"><select id="photoFilterEmployee" class="admin-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="photoFilterDate" class="admin-filter-date" placeholder="Дата"><select id="photoFilterIP" class="admin-filter-select"><option value="">Все ИП</option>'+ipOptions+'</select><input type="text" id="photoFilterCityInput" class="admin-filter-select" placeholder="Город" style="width:100px;"><button class="admin-filter-btn" id="applyPhotoFilterBtn">🔍</button><button class="admin-filter-clear" id="clearPhotoFilterBtn">🗑️</button></div><div id="palletPhotosContainer"><div class="loading">Загрузка фото...</div></div></div></div>';
+    return '<div class="admin-panel"><div class="admin-title">👑 Панель администратора</div><div class="admin-tabs"><button class="admin-tab active" data-tab="logs">📋 Все записи</button><button class="admin-tab" data-tab="employees">👥 Сотрудники</button><button class="admin-tab" data-tab="reports">📊 Отчёты</button><button class="admin-tab" data-tab="photos">📸 Фото паллет</button></div><div id="tabLogs"><div class="admin-filters"><select id="adminFilterEmployee" class="admin-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="adminFilterDate" class="admin-filter-date"><button class="admin-filter-btn" id="applyAdminFilterBtn">🔍</button><button class="admin-filter-clear" id="clearAdminFilterBtn">🗑️</button></div><div class="table-wrap"><table><thead><tr><th>Время</th><th>Склад</th><th>Сотрудник</th><th>Действие</th><th>Детали</th><th></th></tr></thead><tbody id="adminLogsBody"><tr><td colspan="6" class="loading">Загрузка...</td></tr></tbody></table></div></div><div id="tabEmployees" style="display:none;"><div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;"><button class="btn-ok" id="addEmployeeAdminBtn" style="width:auto;padding:8px 16px;font-size:0.9rem;">➕ Добавить сотрудника</button><button class="btn-clean delete-log-btn" id="cleanInactiveBtn" style="padding:8px 14px;font-size:0.8rem;">🧹 Очистить неактивных</button></div><div class="table-wrap"><table><thead><tr><th>Сотрудник</th><th>Роль</th><th>Активен</th><th></th></tr></thead><tbody id="adminEmployeesBody"><tr><td colspan="4" class="loading">Загрузка...</td></tr></tbody></table></div></div><div id="tabReports" style="display:none;"><div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px;"><select id="reportEmployeeSelect" style="padding:8px;border-radius:20px;font-size:0.8rem;"><option value="">Все сотрудники</option></select><input type="date" id="reportStartDate" style="padding:8px;border-radius:20px;font-size:0.8rem;"><input type="date" id="reportEndDate" style="padding:8px;border-radius:20px;font-size:0.8rem;"><button class="btn-ok" id="generateAdminReportBtn" style="width:auto;padding:8px 14px;font-size:0.85rem;">Сформировать</button></div><div id="adminReportResult" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;"></div></div><div id="tabPhotos" style="display:none;"><div class="admin-filters"><select id="photoFilterEmployee" class="admin-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="photoFilterDate" class="admin-filter-date" placeholder="Дата"><select id="photoFilterIP" class="admin-filter-select"><option value="">Все ИП</option>'+ipOptions+'</select><input type="text" id="photoFilterCityInput" class="admin-filter-select" placeholder="Город" style="width:100px;"><button class="admin-filter-btn" id="applyPhotoFilterBtn">🔍</button><button class="admin-filter-clear" id="clearPhotoFilterBtn">🗑️</button></div><div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><button class="btn-archive" id="archivePhotosBtn">📦 Архив старых фото</button></div><div id="palletPhotosContainer"><div class="loading">Загрузка фото...</div></div></div></div>';
 }
 
 async function completeLogin(u) {
@@ -462,6 +422,7 @@ async function init() {
     document.getElementById('clearAdminFilterBtn')?.addEventListener('click', function(){var emp=document.getElementById('adminFilterEmployee'),date=document.getElementById('adminFilterDate');if(emp)emp.value='';if(date)date.value=getTodayStr();loadAdminLogs();});
     document.getElementById('addEmployeeAdminBtn')?.addEventListener('click', function(){var n=prompt('Фамилия нового сотрудника:');if(n)addEmployee(n);});
     document.getElementById('cleanInactiveBtn')?.addEventListener('click', cleanInactiveEmployees);
+    document.getElementById('archivePhotosBtn')?.addEventListener('click', function(){var months=prompt('Удалить фото старше скольких месяцев?','5');var m=parseInt(months);if(m&&m>0)archiveOldPhotos(m);});
     document.getElementById('generateAdminReportBtn')?.addEventListener('click', generateAdminReport);
     document.getElementById('applyPhotoFilterBtn')?.addEventListener('click', function(){var f={};var emp=document.getElementById('photoFilterEmployee')?.value,date=document.getElementById('photoFilterDate')?.value,ip=document.getElementById('photoFilterIP')?.value,city=document.getElementById('photoFilterCityInput')?.value.trim();if(emp)f.userId=emp;if(date)f.date=date;if(ip)f.ip=ip;if(city)f.city=city;loadPalletPhotos(f);});
     document.getElementById('clearPhotoFilterBtn')?.addEventListener('click', function(){var emp=document.getElementById('photoFilterEmployee'),date=document.getElementById('photoFilterDate'),ip=document.getElementById('photoFilterIP'),city=document.getElementById('photoFilterCityInput');if(emp)emp.value='';if(date)date.value='';if(ip)ip.value='';if(city)city.value='';loadPalletPhotos();});
