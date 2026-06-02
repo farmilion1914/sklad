@@ -42,17 +42,19 @@
         
         .input-group-login { margin-bottom: 14px; text-align: left; }
         .input-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 5px; letter-spacing: 0.5px; }
+        body.dark-theme .input-label { color: #9ca3af; }
         .login-input { width: 100%; padding: 12px 14px; font-size: 0.95rem; border: 1.5px solid #e5e7eb; border-radius: 10px; background: #f9fafb; transition: all 0.2s; outline: none; color: #111827; }
         .login-input:focus { border-color: #0f1a2e; box-shadow: 0 0 0 3px rgba(15,26,46,0.08); background: #fff; }
         body.dark-theme .login-input { background: #374151; border-color: #4b5563; color: #f3f4f6; }
-        body.dark-theme .login-input:focus { border-color: #6b7280; }
+        body.dark-theme .login-input:focus { border-color: #6b7280; background: #1f2937; }
         .login-btn { width: 100%; padding: 13px; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 10px; background: #0f1a2e; color: #fff; cursor: pointer; transition: all 0.2s; margin-top: 4px; }
         .login-btn:active { transform: scale(0.98); }
         .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        body.dark-theme .login-btn { background: #374151; }
+        body.dark-theme .login-btn { background: #374151; color: #fff; }
         
         .reg-toggle { font-size: 0.8rem; color: #6b7280; cursor: pointer; margin-top: 16px; text-decoration: underline; text-underline-offset: 3px; }
         .reg-toggle:hover { color: #0f1a2e; }
+        body.dark-theme .reg-toggle { color: #9ca3af; }
         body.dark-theme .reg-toggle:hover { color: #d1d5db; }
         .reg-block { display: none; margin-top: 14px; text-align: left; }
         .reg-block.show { display: block; }
@@ -68,15 +70,15 @@
         .dashboard.active { display: block; }
         
         /* Шапка */
-        .employee-header { background: #0f1a2e; color: #fff; border-radius: 14px; margin-bottom: 0.75rem; overflow: hidden; }
+        .employee-header { background: #0f1a2e; color: #fff; border-radius: 14px; margin-bottom: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         body.dark-theme .employee-header { background: #1f2937; }
         
         .header-main { padding: 0.7rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-        .user-avatar { width: 36px; height: 36px; background: rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
+        .user-avatar { width: 36px; height: 36px; background: rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; color: #fff; }
         .user-info { min-width: 0; }
-        .user-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .user-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 8px; background: rgba(255,255,255,0.15); margin-left: 6px; }
+        .user-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .user-tag { font-size: 0.6rem; padding: 2px 6px; border-radius: 8px; background: rgba(255,255,255,0.15); margin-left: 6px; color: rgba(255,255,255,0.9); }
         .header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
         .btn-icon { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 34px; height: 34px; border-radius: 10px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; padding: 0; }
         .btn-icon:hover { background: rgba(255,255,255,0.2); }
@@ -85,7 +87,7 @@
         
         /* Объединенный блок склада с переключателем */
         .warehouse-integrated { padding: 0.5rem 1rem 0.7rem 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-        .current-warehouse-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; }
+        .current-warehouse-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.7); }
         .current-warehouse-name { font-weight: 700; font-size: 1rem; margin-left: 6px; color: #fbbf24; }
         .warehouse-selector { display: inline-flex; gap: 4px; background: rgba(255,255,255,0.08); padding: 3px; border-radius: 10px; }
         .wh-btn { background: transparent; border: none; color: rgba(255,255,255,0.7); padding: 5px 12px; border-radius: 8px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
@@ -97,136 +99,205 @@
         .warehouse-container { display: none; }
         .warehouse-container.active { display: block; }
         
-        /* Убрали заголовки складов, теперь они не нужны */
+        /* Секция присутствия */
+        .work-day-card { 
+            background: #fff; 
+            border-radius: 16px; 
+            padding: 0.9rem 1rem; 
+            margin-bottom: 16px; 
+            border: 1px solid #e8ecf0; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 1px 4px rgba(0,0,0,0.02);
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            flex-wrap: wrap; 
+            gap: 10px;
+        }
+        body.dark-theme .work-day-card { background: #1f2937; border-color: #374151; box-shadow: none; }
+        .work-day-card span { color: #374151; }
+        body.dark-theme .work-day-card span { color: #d1d5db; }
         
-        .work-day-card { background: #fff; border-radius: 14px; padding: 0.8rem 1rem; margin-bottom: 12px; border: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-        body.dark-theme .work-day-card { background: #1f2937; border-color: #374151; }
-        .btn-work { background: #059669; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; padding: 7px 16px; border-radius: 10px; cursor: pointer; }
-        .btn-work:active { transform: scale(0.97); }
-        
-        .operations-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px; }
+        /* Карточки операций */
+        .operations-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
         @media (min-width: 480px) { .operations-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (min-width: 768px) { .operations-grid { grid-template-columns: repeat(3, 1fr); } }
-        .op-card { background: #fff; border-radius: 14px; padding: 0.9rem; border: 1px solid #e5e7eb; }
-        body.dark-theme .op-card { background: #1f2937; border-color: #374151; }
-        .op-card h3 { font-weight: 600; font-size: 0.8rem; color: #374151; margin-bottom: 0.6rem; }
-        body.dark-theme .op-card h3 { color: #d1d5db; }
-        .counter-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; background: #f3f4f6; padding: 4px 10px; border-radius: 10px; }
+        .op-card { 
+            background: #fff; 
+            border-radius: 16px; 
+            padding: 1rem; 
+            border: 1px solid #e8ecf0; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 1px 4px rgba(0,0,0,0.02);
+        }
+        body.dark-theme .op-card { background: #1f2937; border-color: #374151; box-shadow: none; }
+        .op-card h3 { font-weight: 600; font-size: 0.8rem; color: #374151; margin-bottom: 0.75rem; letter-spacing: -0.2px; }
+        body.dark-theme .op-card h3 { color: #e5e7eb; }
+        
+        /* Блок фото паллет */
+        .photo-card { 
+            background: #fff; 
+            border-radius: 16px; 
+            padding: 1rem; 
+            margin-bottom: 16px; 
+            border: 1px solid #e8ecf0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 1px 4px rgba(0,0,0,0.02);
+        }
+        body.dark-theme .photo-card { background: #1f2937; border-color: #374151; }
+        .photo-card .photo-title { font-weight: 600; font-size: 0.85rem; color: #d97706; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; }
+        
+        /* Блок истории */
+        .history-section { 
+            background: #fff; 
+            border-radius: 16px; 
+            padding: 1rem; 
+            margin-top: 16px; 
+            border: 1px solid #e8ecf0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 1px 4px rgba(0,0,0,0.02);
+        }
+        body.dark-theme .history-section { background: #1f2937; border-color: #374151; }
+        .history-header h3 { color: #111827; }
+        body.dark-theme .history-header h3 { color: #f3f4f6; }
+        
+        .btn-work { background: #059669; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; padding: 7px 16px; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+        .btn-work:active { transform: scale(0.97); }
+        
+        .counter-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; background: #f8f9fb; padding: 6px 12px; border-radius: 12px; }
         body.dark-theme .counter-row { background: #374151; }
+        .counter-row span:first-child { color: #6b7280; }
+        body.dark-theme .counter-row span:first-child { color: #9ca3af; }
         .counter-value { font-size: 1.3rem; font-weight: 700; color: #111827; }
         body.dark-theme .counter-value { color: #f3f4f6; }
-        .adjust-buttons { display: flex; gap: 5px; margin-bottom: 8px; }
-        .btn-adjust { flex: 1; background: #f3f4f6; border: 1px solid #e5e7eb; color: #374151; font-size: 1.1rem; font-weight: 700; padding: 5px 0; border-radius: 10px; cursor: pointer; }
+        
+        .adjust-buttons { display: flex; gap: 6px; margin-bottom: 8px; }
+        .btn-adjust { flex: 1; background: #f8f9fb; border: 1px solid #e8ecf0; color: #374151; font-size: 1.1rem; font-weight: 700; padding: 6px 0; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
         body.dark-theme .btn-adjust { background: #374151; border-color: #4b5563; color: #d1d5db; }
-        .btn-ok { background: #059669; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; padding: 9px; border-radius: 10px; width: 100%; cursor: pointer; margin-top: 4px; }
+        
+        .btn-ok { background: #059669; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; padding: 10px; border-radius: 12px; width: 100%; cursor: pointer; margin-top: 6px; transition: all 0.2s; }
         .btn-ok:active { transform: scale(0.97); }
         .btn-ok.orange { background: #d97706; }
         .btn-ok.blue { background: #2563eb; }
         .btn-ok.purple { background: #7c3aed; }
         .btn-ok.teal { background: #0d9488; }
         .btn-ok.green { background: #059669; }
-        .input-field { padding: 9px 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 0.85rem; width: 100%; margin-bottom: 6px; background: #f9fafb; color: #111827; }
-        body.dark-theme .input-field { background: #374151; border-color: #4b5563; color: #f3f4f6; }
-        .reset-btn { background: none; border: 1px solid #e5e7eb; padding: 4px 8px; border-radius: 8px; color: #6b7280; font-size: 0.6rem; cursor: pointer; margin-top: 4px; width: 100%; }
-        body.dark-theme .reset-btn { border-color: #4b5563; color: #9ca3af; }
-        .manual-input-row { display: flex; align-items: center; gap: 5px; margin-bottom: 6px; }
-        .manual-input-row .input-field { margin-bottom: 0; text-align: center; flex: 1; }
-        .btn-set { background: #2563eb; border: none; color: #fff; font-weight: 600; font-size: 0.75rem; padding: 9px 10px; border-radius: 10px; cursor: pointer; flex-shrink: 0; }
         
-        .photo-card { background: #fff; border-radius: 14px; padding: 0.9rem; border: 1px solid #d97706; margin-bottom: 12px; }
-        body.dark-theme .photo-card { background: #1f2937; border-color: #b45309; }
-        .photo-card .photo-title { font-weight: 600; font-size: 0.9rem; color: #d97706; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; }
-        .photo-slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .input-field { padding: 10px 12px; border: 1px solid #e8ecf0; border-radius: 12px; font-size: 0.85rem; width: 100%; margin-bottom: 8px; background: #f8f9fb; color: #111827; transition: all 0.2s; }
+        .input-field:focus { border-color: #0f1a2e; outline: none; background: #fff; }
+        body.dark-theme .input-field { background: #374151; border-color: #4b5563; color: #f3f4f6; }
+        body.dark-theme .input-field:focus { border-color: #6b7280; background: #1f2937; }
+        .input-field::placeholder { color: #9ca3af; }
+        body.dark-theme .input-field::placeholder { color: #6b7280; }
+        
+        .reset-btn { background: none; border: 1px solid #e8ecf0; padding: 5px 10px; border-radius: 10px; color: #9ca3af; font-size: 0.6rem; cursor: pointer; margin-top: 6px; width: 100%; transition: all 0.2s; }
+        body.dark-theme .reset-btn { border-color: #4b5563; color: #9ca3af; }
+        
+        .manual-input-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+        .manual-input-row .input-field { margin-bottom: 0; text-align: center; flex: 1; }
+        .btn-set { background: #2563eb; border: none; color: #fff; font-weight: 600; font-size: 0.75rem; padding: 10px 12px; border-radius: 12px; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+        .btn-set:active { transform: scale(0.97); }
+        
+        .photo-slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
         @media (min-width: 480px) { .photo-slots { grid-template-columns: repeat(4, 1fr); } }
-        .photo-slot { aspect-ratio: 1; border: 2px dashed #e5e7eb; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fafafa; overflow: hidden; position: relative; min-height: 70px; }
+        .photo-slot { aspect-ratio: 1; border: 2px dashed #e0e4e9; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fafbfc; overflow: hidden; position: relative; min-height: 70px; transition: all 0.2s; }
         body.dark-theme .photo-slot { background: #374151; border-color: #4b5563; }
-        .photo-slot.has-photo { border-style: solid; border-color: #059669; }
+        .photo-slot.has-photo { border-style: solid; border-color: #059669; background: #fff; }
+        body.dark-theme .photo-slot.has-photo { background: #1f2937; }
         .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-slot .slot-number { font-size: 1.8rem; color: #d1d5db; font-weight: 700; }
+        .photo-slot .slot-number { font-size: 1.8rem; color: #cbd5e1; font-weight: 700; }
+        body.dark-theme .photo-slot .slot-number { color: #6b7280; }
         .photo-slot .remove-photo { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.5); color: #fff; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 0.65rem; cursor: pointer; display: none; align-items: center; justify-content: center; }
         .photo-slot.has-photo:hover .remove-photo { display: flex; }
-        .photo-form-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: flex-end; }
+        
+        .photo-form-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; align-items: flex-end; }
         .photo-form-row .input-field-wrap { flex: 1; min-width: 100px; }
         .date-picker-wrap { position: relative; min-width: 100px; }
-        .date-picker-label { display: block; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 2px; }
+        .date-picker-label { display: block; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 3px; letter-spacing: 0.3px; }
+        body.dark-theme .date-picker-label { color: #9ca3af; }
         .date-picker-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .date-value { padding: 9px 10px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 0.8rem; background: #f9fafb; color: #111827; text-align: center; }
+        .date-value { padding: 10px 12px; border: 1px solid #e8ecf0; border-radius: 12px; font-size: 0.8rem; background: #f8f9fb; color: #111827; text-align: center; }
         body.dark-theme .date-value { background: #374151; border-color: #4b5563; color: #f3f4f6; }
-        .ip-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
-        .ip-row { display: flex; align-items: center; gap: 8px; background: #f9fafb; padding: 7px 12px; border-radius: 10px; border: 1px solid #e5e7eb; }
+        
+        .ip-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+        .ip-row { display: flex; align-items: center; gap: 10px; background: #f8f9fb; padding: 8px 14px; border-radius: 12px; border: 1px solid #e8ecf0; }
         body.dark-theme .ip-row { background: #374151; border-color: #4b5563; }
-        .ip-row .ip-name { font-weight: 700; font-size: 0.85rem; color: #111827; min-width: 42px; }
+        .ip-row .ip-name { font-weight: 700; font-size: 0.85rem; color: #111827; min-width: 45px; }
         body.dark-theme .ip-row .ip-name { color: #f3f4f6; }
-        .ip-row .ip-qty-input { width: 65px; padding: 7px 8px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; text-align: center; background: #fff; color: #111827; }
+        .ip-row .ip-qty-input { width: 70px; padding: 8px 10px; border: 1px solid #e0e4e9; border-radius: 10px; font-size: 0.85rem; text-align: center; background: #fff; color: #111827; }
         body.dark-theme .ip-row .ip-qty-input { background: #1f2937; border-color: #4b5563; color: #f3f4f6; }
         .ip-row .ip-unit { font-size: 0.7rem; color: #6b7280; }
-        .btn-photo { background: #d97706; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; padding: 10px; border-radius: 10px; cursor: pointer; width: 100%; margin-top: 4px; }
+        body.dark-theme .ip-row .ip-unit { color: #9ca3af; }
+        
+        .btn-photo { background: #d97706; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; padding: 12px; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 6px; transition: all 0.2s; }
         .btn-photo:active { transform: scale(0.97); }
         .btn-photo:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-archive { background: #dc2626; border: none; color: #fff; padding: 7px 12px; border-radius: 10px; cursor: pointer; font-size: 0.75rem; font-weight: 600; }
-        .photo-counter { text-align: center; font-size: 0.7rem; color: #6b7280; margin-top: 4px; }
+        .photo-counter { text-align: center; font-size: 0.7rem; color: #6b7280; margin-top: 6px; }
+        body.dark-theme .photo-counter { color: #9ca3af; }
         
-        .photo-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
+        .photo-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
         @media (max-width: 480px) { .photo-gallery { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
-        .pallet-group { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; padding: 10px; }
+        .pallet-group { background: #fff; border-radius: 14px; overflow: hidden; border: 1px solid #e8ecf0; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
         body.dark-theme .pallet-group { background: #1f2937; border-color: #374151; }
-        .pallet-group .pallet-header { font-weight: 600; font-size: 0.75rem; color: #374151; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .pallet-group .pallet-header { font-weight: 600; font-size: 0.75rem; color: #374151; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         body.dark-theme .pallet-group .pallet-header { color: #d1d5db; }
-        .pallet-group .photo-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
-        .pallet-group .photo-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; cursor: pointer; }
+        .pallet-group .photo-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        .pallet-group .photo-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; cursor: pointer; }
         
         .photo-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1002; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; cursor: pointer; }
-        .photo-modal-overlay img { max-width: 95%; max-height: 80vh; border-radius: 8px; }
+        .photo-modal-overlay img { max-width: 95%; max-height: 80vh; border-radius: 12px; }
         .photo-modal-close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.2); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; }
         
-        .history-section { background: #fff; border-radius: 14px; padding: 0.9rem; margin-top: 12px; border: 1px solid #e5e7eb; }
-        body.dark-theme .history-section { background: #1f2937; border-color: #374151; }
-        .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 6px; }
-        .history-header h3 { font-size: 0.9rem; color: #111827; }
-        body.dark-theme .history-header h3 { color: #f3f4f6; }
-        .date-selector { display: flex; align-items: center; gap: 4px; background: #f3f4f6; padding: 3px 8px; border-radius: 10px; }
-        body.dark-theme .date-selector { background: #374151; }
-        .date-selector input { border: none; background: transparent; font-size: 0.75rem; padding: 5px; outline: none; width: 90px; color: #111827; }
+        .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 8px; }
+        .history-header h3 { font-size: 0.9rem; font-weight: 600; }
+        .date-selector { display: flex; align-items: center; gap: 6px; background: #f8f9fb; padding: 4px 10px; border-radius: 12px; border: 1px solid #e8ecf0; }
+        body.dark-theme .date-selector { background: #374151; border-color: #4b5563; }
+        .date-selector input { border: none; background: transparent; font-size: 0.75rem; padding: 6px; outline: none; width: 95px; color: #111827; }
         body.dark-theme .date-selector input { color: #f3f4f6; }
-        .date-nav-btn { background: #e5e7eb; border: none; padding: 5px 10px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.7rem; }
-        body.dark-theme .date-nav-btn { background: #4b5563; color: #d1d5db; }
+        .date-nav-btn { background: #fff; border: 1px solid #e8ecf0; padding: 5px 12px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; color: #374151; }
+        body.dark-theme .date-nav-btn { background: #4b5563; border-color: #6b7280; color: #d1d5db; }
+        
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.7rem; min-width: 500px; }
-        th { background: #f3f4f6; padding: 8px 6px; text-align: left; font-size: 0.65rem; color: #6b7280; }
-        body.dark-theme th { background: #374151; color: #9ca3af; }
-        td { padding: 8px 6px; border-bottom: 1px solid #f3f4f6; color: #374151; }
-        body.dark-theme td { border-color: #374151; color: #d1d5db; }
+        th { background: #f8f9fb; padding: 10px 8px; text-align: left; font-size: 0.65rem; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e8ecf0; }
+        body.dark-theme th { background: #374151; color: #9ca3af; border-bottom-color: #4b5563; }
+        td { padding: 10px 8px; border-bottom: 1px solid #f0f2f5; color: #374151; }
+        body.dark-theme td { border-bottom-color: #374151; color: #d1d5db; }
         
-        .admin-panel { background: #fff; border-radius: 14px; padding: 0.9rem; margin: 12px 0; border: 1px solid #fbbf24; }
-        body.dark-theme .admin-panel { background: #1f2937; border-color: #92400e; }
-        .admin-title { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 0.6rem; }
+        .admin-panel { background: #fff; border-radius: 16px; padding: 1rem; margin: 12px 0; border: 1px solid #e8ecf0; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        body.dark-theme .admin-panel { background: #1f2937; border-color: #374151; }
+        .admin-title { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem; }
         body.dark-theme .admin-title { color: #f3f4f6; }
-        .admin-tabs { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
-        .admin-tab { background: #f3f4f6; border: none; padding: 6px 10px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.7rem; color: #6b7280; }
-        body.dark-theme .admin-tab { background: #374151; color: #9ca3af; }
-        .admin-tab.active { background: #0f1a2e; color: #fff; }
-        body.dark-theme .admin-tab.active { background: #4b5563; }
-        .admin-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; align-items: center; background: #f9fafb; padding: 8px 10px; border-radius: 10px; }
-        body.dark-theme .admin-filters { background: #374151; }
-        .admin-filter-select, .admin-filter-date { padding: 6px 10px; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; font-size: 0.7rem; color: #111827; }
+        
+        .admin-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+        .admin-tab { background: #f8f9fb; border: 1px solid #e8ecf0; padding: 7px 12px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 0.7rem; color: #6b7280; transition: all 0.2s; }
+        body.dark-theme .admin-tab { background: #374151; border-color: #4b5563; color: #9ca3af; }
+        .admin-tab.active { background: #0f1a2e; color: #fff; border-color: #0f1a2e; }
+        body.dark-theme .admin-tab.active { background: #4b5563; border-color: #6b7280; color: #fff; }
+        
+        .admin-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; background: #f8f9fb; padding: 10px 12px; border-radius: 14px; border: 1px solid #e8ecf0; }
+        body.dark-theme .admin-filters { background: #374151; border-color: #4b5563; }
+        .admin-filter-select, .admin-filter-date { padding: 8px 12px; border-radius: 10px; border: 1px solid #e0e4e9; background: #fff; font-size: 0.7rem; color: #111827; }
         body.dark-theme .admin-filter-select, body.dark-theme .admin-filter-date { background: #1f2937; border-color: #4b5563; color: #f3f4f6; }
-        .admin-filter-btn, .admin-filter-clear { padding: 6px 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 0.7rem; }
+        .admin-filter-btn, .admin-filter-clear { padding: 7px 14px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; }
         .admin-filter-btn { background: #0f1a2e; color: #fff; }
-        .admin-filter-clear { background: #e5e7eb; color: #374151; }
-        body.dark-theme .admin-filter-clear { background: #4b5563; color: #d1d5db; }
-        .delete-log-btn { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 3px 8px; border-radius: 8px; cursor: pointer; font-size: 0.65rem; }
+        body.dark-theme .admin-filter-btn { background: #2563eb; }
+        .admin-filter-clear { background: #f0f2f5; color: #374151; border: 1px solid #e0e4e9; }
+        body.dark-theme .admin-filter-clear { background: #4b5563; color: #d1d5db; border-color: #6b7280; }
+        
+        .delete-log-btn { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.65rem; transition: all 0.2s; }
         body.dark-theme .delete-log-btn { background: #450a0a; border-color: #7f1d1d; color: #fca5a5; }
         
-        .loading { text-align: center; padding: 25px; color: #6b7280; }
-        .stat-item { text-align: center; padding: 8px; background: #f9fafb; border-radius: 10px; }
-        body.dark-theme .stat-item { background: #374151; }
-        .stat-value { font-size: 1.2rem; font-weight: 800; color: #111827; }
-        body.dark-theme .stat-value { color: #f3f4f6; }
-        .stat-label { color: #6b7280; font-size: 0.6rem; }
+        .btn-archive { background: #dc2626; border: none; color: #fff; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; }
+        .btn-archive:active { transform: scale(0.97); }
         
-        .install-banner { display: none; background: #0f1a2e; color: #fff; text-align: center; padding: 10px 16px; border-radius: 12px; margin-bottom: 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .loading { text-align: center; padding: 30px; color: #9ca3af; }
+        .stat-item { text-align: center; padding: 10px; background: #f8f9fb; border-radius: 12px; border: 1px solid #e8ecf0; }
+        body.dark-theme .stat-item { background: #374151; border-color: #4b5563; }
+        .stat-value { font-size: 1.3rem; font-weight: 800; color: #111827; }
+        body.dark-theme .stat-value { color: #f3f4f6; }
+        .stat-label { color: #6b7280; font-size: 0.6rem; font-weight: 500; }
+        body.dark-theme .stat-label { color: #9ca3af; }
+        
+        .install-banner { display: none; background: #0f1a2e; color: #fff; text-align: center; padding: 12px 16px; border-radius: 14px; margin-bottom: 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
         .install-banner.show { display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .ios-install-hint { display: none; background: #fffbeb; border: 1px solid #fbbf24; border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; font-size: 0.8rem; color: #92400e; text-align: center; }
+        .ios-install-hint { display: none; background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px; padding: 12px 16px; margin-bottom: 12px; font-size: 0.8rem; color: #92400e; text-align: center; }
         .ios-install-hint.show { display: block; }
         body.dark-theme .ios-install-hint { background: #451a03; border-color: #78350f; color: #fbbf24; }
     </style>
@@ -369,7 +440,7 @@ async function renderUserPanel() {
     IP_LIST.forEach(function(ip) { ipRowsHtml += '<div class="ip-row"><span class="ip-name">'+ip+'</span><input type="number" id="ipQty_'+ip+'" class="ip-qty-input" placeholder="0" min="0"><span class="ip-unit">кор.</span></div>'; });
     ipRowsHtml += '</div>';
     var todayStr = getTodayStr(), todayDisplay = formatDateForDisplay(todayStr);
-    return '<div class="warehouse-container active" id="moscowContainer"><div class="work-day-card"><div><span style="font-size:1.3rem;">👷</span> <span style="font-size:0.85rem;">Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="moscowWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" id="moscowWorkBtn">Отметить</button></div></div><div class="operations-grid"><div class="op-card"><h3>📥 ПРИНЯЛ коробов</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="moscowReceived">0</span></div><div class="manual-input-row"><input type="number" id="moscowReceivedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowReceived" data-manual="moscowReceivedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowReceived" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowReceived" data-delta="1">+</button></div><button class="btn-ok green" data-action="receive">ОК</button><button class="reset-btn" data-reset="moscowReceived">↺ сброс</button></div><div class="op-card"><h3>📦 СОБРАЛ паллет</h3><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowCollected">0</span></div><div class="manual-input-row"><input type="number" id="moscowCollectedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowCollected" data-manual="moscowCollectedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button></div><button class="btn-ok" data-action="collect">ОК</button><button class="reset-btn" data-reset="moscowCollected">↺ сброс</button></div><div class="op-card"><h3>🚚 ОТГРУЗИЛ паллет</h3><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowShipped">0</span></div><div class="manual-input-row"><input type="number" id="moscowShippedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowShipped" data-manual="moscowShippedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="ship">ОК</button><button class="reset-btn" data-reset="moscowShipped">↺ сброс</button></div><div class="op-card"><h3>📋 ВЫЛОЖИЛ товар</h3><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" value="1" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Последний: <span id="moscowLastArticle">—</span></div></div><div class="op-card"><h3>📑 СБОРКА по накл.</h3><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" value="1" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div></div><div class="photo-card"><div class="photo-title">📸 Фото паллет (до 4 фото)</div><div class="photo-slots">'+slotsHtml+'</div><div class="photo-counter" id="photoCounter">Заполнено: 0 / '+MAX_PHOTOS+'</div><div class="photo-form-row"><div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" style="margin-bottom:0;"></div><div class="date-picker-wrap"><label class="date-picker-label" for="photoDate">📅 Дата</label><input type="date" id="photoDate" class="date-picker-input" value="'+todayStr+'"><div class="date-value" id="dateDisplayValue">'+todayDisplay+'</div></div></div>'+ipRowsHtml+'<button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">💾 Сохранить паллету</button><div id="photoMsg"></div></div></div><div class="warehouse-container" id="pushkinoContainer"><div class="work-day-card"><div><span style="font-size:1.3rem;">👷</span> <span style="font-size:0.85rem;">Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="pushkinoWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" id="pushkinoWorkBtn">Отметить</button></div></div><div class="operations-grid"><div class="op-card"><h3>📥 ПРИНЯЛ с осн. склада</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoAccepted">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="1">+</button></div><button class="btn-ok" data-action="accept">ОК</button><button class="reset-btn" data-reset="pushkinoAccepted">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoAcceptedTotal">0</span> кор.</div></div><div class="op-card"><h3>🚛 ОТГРУЗИЛ на осн.</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="shipPushkino">ОК</button><button class="reset-btn" data-reset="pushkinoShipped">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoShippedTotal">0</span> кор.</div></div><div class="op-card"><h3>🚛 ВЫГРУЗКА фуры</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoUnloaded">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="1">+</button></div><button class="btn-ok blue" data-action="unload">ОК</button><button class="reset-btn" data-reset="pushkinoUnloaded">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoUnloadedTotal">0</span> кор.</div></div><div class="op-card"><h3>🔄 ПЕРЕБРАЛ паллеты</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoReworked">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoReworked" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoReworked" data-delta="1">+</button></div><button class="btn-ok teal" data-action="rework">ОК</button><button class="reset-btn" data-reset="pushkinoReworked">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoReworkedTotal">0</span> кор.</div></div></div></div><div class="history-section"><div class="history-header"><h3>📋 Мои записи</h3><div class="date-selector"><div class="date-nav"><button class="date-nav-btn" id="prevDayBtn">←</button><button class="date-nav-btn" id="nextDayBtn">→</button></div><input type="date" id="historyDateInput"><button class="date-nav-btn" id="todayHistoryBtn">Сегодня</button></div></div><div class="table-wrap"><table><thead><tr><th>Время</th><th>Склад</th><th>Действие</th><th>Детали</th></tr></thead><tbody id="myHistoryBody"><tr><td colspan="4" class="loading">Выберите дату</td></tr></tbody></table></div></div>';
+    return '<div class="warehouse-container active" id="moscowContainer"><div class="work-day-card"><div><span style="font-size:1.3rem;">👷</span> <span style="font-size:0.85rem;">Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="moscowWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" id="moscowWorkBtn">Отметить</button></div></div><div class="operations-grid"><div class="op-card"><h3>📥 ПРИНЯЛ коробов</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="moscowReceived">0</span></div><div class="manual-input-row"><input type="number" id="moscowReceivedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowReceived" data-manual="moscowReceivedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowReceived" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowReceived" data-delta="1">+</button></div><button class="btn-ok green" data-action="receive">ОК</button><button class="reset-btn" data-reset="moscowReceived">↺ сброс</button></div><div class="op-card"><h3>📦 СОБРАЛ паллет</h3><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowCollected">0</span></div><div class="manual-input-row"><input type="number" id="moscowCollectedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowCollected" data-manual="moscowCollectedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button></div><button class="btn-ok" data-action="collect">ОК</button><button class="reset-btn" data-reset="moscowCollected">↺ сброс</button></div><div class="op-card"><h3>🚚 ОТГРУЗИЛ паллет</h3><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowShipped">0</span></div><div class="manual-input-row"><input type="number" id="moscowShippedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowShipped" data-manual="moscowShippedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="ship">ОК</button><button class="reset-btn" data-reset="moscowShipped">↺ сброс</button></div><div class="op-card"><h3>📋 ВЫЛОЖИЛ товар</h3><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Последний: <span id="moscowLastArticle">—</span></div></div><div class="op-card"><h3>📑 СБОРКА по накладной</h3><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div></div><div class="photo-card"><div class="photo-title">📸 Фото паллет (до 4 фото)</div><div class="photo-slots">'+slotsHtml+'</div><div class="photo-counter" id="photoCounter">Заполнено: 0 / '+MAX_PHOTOS+'</div><div class="photo-form-row"><div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" style="margin-bottom:0;"></div><div class="date-picker-wrap"><label class="date-picker-label" for="photoDate">📅 Дата</label><input type="date" id="photoDate" class="date-picker-input" value="'+todayStr+'"><div class="date-value" id="dateDisplayValue">'+todayDisplay+'</div></div></div>'+ipRowsHtml+'<button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">💾 Сохранить паллету</button><div id="photoMsg"></div></div></div><div class="warehouse-container" id="pushkinoContainer"><div class="work-day-card"><div><span style="font-size:1.3rem;">👷</span> <span style="font-size:0.85rem;">Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="pushkinoWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" id="pushkinoWorkBtn">Отметить</button></div></div><div class="operations-grid"><div class="op-card"><h3>📥 ПРИНЯЛ с осн. склада</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoAccepted">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="1">+</button></div><button class="btn-ok" data-action="accept">ОК</button><button class="reset-btn" data-reset="pushkinoAccepted">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoAcceptedTotal">0</span> кор.</div></div><div class="op-card"><h3>🚛 ОТГРУЗИЛ на осн.</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="shipPushkino">ОК</button><button class="reset-btn" data-reset="pushkinoShipped">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoShippedTotal">0</span> кор.</div></div><div class="op-card"><h3>🚛 ВЫГРУЗКА фуры</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoUnloaded">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="1">+</button></div><button class="btn-ok blue" data-action="unload">ОК</button><button class="reset-btn" data-reset="pushkinoUnloaded">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoUnloadedTotal">0</span> кор.</div></div><div class="op-card"><h3>🔄 ПЕРЕБРАЛ паллеты</h3><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoReworked">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoReworked" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoReworked" data-delta="1">+</button></div><button class="btn-ok teal" data-action="rework">ОК</button><button class="reset-btn" data-reset="pushkinoReworked">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoReworkedTotal">0</span> кор.</div></div></div></div><div class="history-section"><div class="history-header"><h3>📋 Мои записи</h3><div class="date-selector"><div class="date-nav"><button class="date-nav-btn" id="prevDayBtn">←</button><button class="date-nav-btn" id="nextDayBtn">→</button></div><input type="date" id="historyDateInput"><button class="date-nav-btn" id="todayHistoryBtn">Сегодня</button></div></div><div class="table-wrap"><table><thead><tr><th>Время</th><th>Склад</th><th>Действие</th><th>Детали</th></tr></thead><tbody id="myHistoryBody"><tr><td colspan="4" class="loading">Выберите дату</td></tr></tbody></table></div></div>';
 }
 
 async function renderAdminPanel() {
@@ -425,7 +496,18 @@ function attachLoginEvents() {
     document.getElementById("doRegister").onclick = async function() { var rl = document.getElementById("regLogin").value.trim(), rp = document.getElementById("regPass").value.trim(), rn = document.getElementById("regName").value.trim(); var re = document.getElementById("regError"), result = await registerUser(rl, rp, rn); re.style.display = "block"; re.className = result.success ? "success-msg" : "error-msg"; re.innerText = result.success ? "✅ Регистрация успешна! Теперь войдите." : "❌ "+result.error; if (result.success) { document.getElementById("regLogin").value=""; document.getElementById("regPass").value=""; document.getElementById("regName").value=""; } setTimeout(function() { re.style.display = "none"; }, 3000); };
 }
 
-async function handleAction(a) { if (a === 'receive' && counters.moscowReceived) { await addLog('Москва', '📥 Принял коробов', counters.moscowReceived+' кор.', counters.moscowReceived); counters.moscowReceived = 0; } if (a === 'collect' && counters.moscowCollected) { await addLog('Москва', '📦 Собрал паллеты', counters.moscowCollected+' шт.', counters.moscowCollected); counters.moscowCollected = 0; } if (a === 'ship' && counters.moscowShipped) { await addLog('Москва', '🚚 Отгрузил паллеты', counters.moscowShipped+' шт.', counters.moscowShipped); counters.moscowShipped = 0; } if (a === 'lay') { var artEl=document.getElementById('moscowArticle'), qtyEl=document.getElementById('moscowQuantity'); var art=artEl?.value.trim(), qty=parseInt(qtyEl?.value)||1; if(!art){alert('Укажите артикул');return;} moscowLastArticle=art; await addLog('Москва','📋 Выложил товар','арт. '+art+', '+qty+' шт.',qty); if(artEl)artEl.value=''; } if (a === 'invoice') { var invEl=document.getElementById('moscowInvoiceNumber'), qtyEl=document.getElementById('moscowInvoiceQuantity'); var inv=invEl?.value.trim(), qty=parseInt(qtyEl?.value)||1; if(!inv){alert('Укажите накладную');return;} await addLog('Москва','📑 Сборка по накладной','накл. '+inv+', '+qty+' шт.',qty); await updateTotal('moscow_invoice',qty); if(invEl)invEl.value=''; } if (a === 'accept' && counters.pushkinoAccepted) { await addLog('Пушкино','📥 Принял с осн. склада',counters.pushkinoAccepted+' кор.',counters.pushkinoAccepted); await updateTotal('pushkino_accepted',counters.pushkinoAccepted); counters.pushkinoAccepted=0; } if (a === 'shipPushkino' && counters.pushkinoShipped) { await addLog('Пушкино','🚛 Отгрузил на осн. склад',counters.pushkinoShipped+' кор.',counters.pushkinoShipped); await updateTotal('pushkino_shipped',counters.pushkinoShipped); counters.pushkinoShipped=0; } if (a === 'unload' && counters.pushkinoUnloaded) { await addLog('Пушкино','🚛 Выгрузка фуры',counters.pushkinoUnloaded+' кор.',counters.pushkinoUnloaded); await updateTotal('pushkino_unloaded',counters.pushkinoUnloaded); counters.pushkinoUnloaded=0; } if (a === 'rework' && counters.pushkinoReworked) { await addLog('Пушкино','🔄 Перебрал паллеты',counters.pushkinoReworked+' кор.',counters.pushkinoReworked); await updateTotal('pushkino_reworked',counters.pushkinoReworked); counters.pushkinoReworked=0; } updateAllCounters(); var mq=document.getElementById('moscowQuantity'), miq=document.getElementById('moscowInvoiceQuantity'); if(mq)mq.value=1; if(miq)miq.value=1; }
+async function handleAction(a) { 
+    if (a === 'receive' && counters.moscowReceived) { await addLog('Москва', '📥 Принял коробов', counters.moscowReceived+' кор.', counters.moscowReceived); counters.moscowReceived = 0; } 
+    if (a === 'collect' && counters.moscowCollected) { await addLog('Москва', '📦 Собрал паллеты', counters.moscowCollected+' шт.', counters.moscowCollected); counters.moscowCollected = 0; } 
+    if (a === 'ship' && counters.moscowShipped) { await addLog('Москва', '🚚 Отгрузил паллеты', counters.moscowShipped+' шт.', counters.moscowShipped); counters.moscowShipped = 0; } 
+    if (a === 'lay') { var artEl=document.getElementById('moscowArticle'), qtyEl=document.getElementById('moscowQuantity'); var art=artEl?.value.trim(), qty=parseInt(qtyEl?.value); if(!art){alert('Укажите артикул');return;} if(!qty || qty<1){alert('Укажите количество (минимум 1)');return;} moscowLastArticle=art; await addLog('Москва','📋 Выложил товар','арт. '+art+', '+qty+' шт.',qty); if(artEl)artEl.value=''; if(qtyEl)qtyEl.value=''; } 
+    if (a === 'invoice') { var invEl=document.getElementById('moscowInvoiceNumber'), qtyEl=document.getElementById('moscowInvoiceQuantity'); var inv=invEl?.value.trim(), qty=parseInt(qtyEl?.value); if(!inv){alert('Укажите накладную');return;} if(!qty || qty<1){alert('Укажите количество (минимум 1)');return;} await addLog('Москва','📑 Сборка по накладной','накл. '+inv+', '+qty+' шт.',qty); await updateTotal('moscow_invoice',qty); if(invEl)invEl.value=''; if(qtyEl)qtyEl.value=''; } 
+    if (a === 'accept' && counters.pushkinoAccepted) { await addLog('Пушкино','📥 Принял с осн. склада',counters.pushkinoAccepted+' кор.',counters.pushkinoAccepted); await updateTotal('pushkino_accepted',counters.pushkinoAccepted); counters.pushkinoAccepted=0; } 
+    if (a === 'shipPushkino' && counters.pushkinoShipped) { await addLog('Пушкино','🚛 Отгрузил на осн. склад',counters.pushkinoShipped+' кор.',counters.pushkinoShipped); await updateTotal('pushkino_shipped',counters.pushkinoShipped); counters.pushkinoShipped=0; } 
+    if (a === 'unload' && counters.pushkinoUnloaded) { await addLog('Пушкино','🚛 Выгрузка фуры',counters.pushkinoUnloaded+' кор.',counters.pushkinoUnloaded); await updateTotal('pushkino_unloaded',counters.pushkinoUnloaded); counters.pushkinoUnloaded=0; } 
+    if (a === 'rework' && counters.pushkinoReworked) { await addLog('Пушкино','🔄 Перебрал паллеты',counters.pushkinoReworked+' кор.',counters.pushkinoReworked); await updateTotal('pushkino_reworked',counters.pushkinoReworked); counters.pushkinoReworked=0; } 
+    updateAllCounters(); 
+}
 
 async function init() {
     initTheme(); await getEmployees();
