@@ -99,7 +99,7 @@
         .warehouse-container { display: none; }
         .warehouse-container.active { display: block; }
         
-        /* Секция присутствия — комбинированное обрамление */
+        /* Секция присутствия */
         .work-day-card { 
             background: #fff; 
             border-radius: 16px; 
@@ -117,7 +117,7 @@
         .work-day-card span { color: #374151; }
         body.dark-theme .work-day-card span { color: #d1d5db; }
         
-        /* Карточки операций — комбинированное обрамление */
+        /* Карточки операций */
         .operations-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
         @media (min-width: 480px) { .operations-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (min-width: 768px) { .operations-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -132,7 +132,7 @@
         .op-card h3 { font-weight: 600; font-size: 0.8rem; color: #374151; margin-bottom: 0.75rem; letter-spacing: -0.2px; }
         body.dark-theme .op-card h3 { color: #e5e7eb; }
         
-        /* Блок фото паллет — комбинированное обрамление */
+        /* Блок фото паллет */
         .photo-card { 
             background: #fff; 
             border-radius: 16px; 
@@ -144,7 +144,7 @@
         body.dark-theme .photo-card { background: #1f2937; border-color: #374151; box-shadow: none; }
         .photo-card .photo-title { font-weight: 600; font-size: 0.85rem; color: #d97706; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; }
         
-        /* Блок истории — комбинированное обрамление */
+        /* Блок истории */
         .history-section { 
             background: #fff; 
             border-radius: 16px; 
@@ -403,7 +403,77 @@ window.removePhotoFromSlot = function(si) { if (photoPreviewUrls[si]) URL.revoke
 function updatePhotoSlotDisplay(idx) { var slot = document.getElementById('photoSlot'+idx); if (!slot) return; if (photoPreviewUrls[idx]) { slot.classList.add('has-photo'); slot.innerHTML = '<img src="'+photoPreviewUrls[idx]+'" alt="Фото '+(idx+1)+'"><button class="remove-photo" onclick="event.stopPropagation();window.removePhotoFromSlot('+idx+')">✕</button>'; } else { slot.classList.remove('has-photo'); slot.innerHTML = '<span class="slot-number">'+(idx+1)+'</span>'; } }
 function updatePhotoCounter() { var filled = photoSlots.filter(function(f) { return f !== null; }).length; var counter = document.getElementById('photoCounter'); if (counter) counter.textContent = 'Заполнено: '+filled+' / '+MAX_PHOTOS; }
 
-window.savePhotos = async function() { var cityEl = document.getElementById('photoCity'), dateEl = document.getElementById('photoDate'); var btn = document.getElementById('savePhotoBtn'), msg = document.getElementById('photoMsg'); var city = cityEl ? cityEl.value.trim() : ''; var date = dateEl ? dateEl.value : getTodayStr(); if (!city) { alert('Укажите город'); return; } var ipData = []; IP_LIST.forEach(function(ip) { var qtyEl = document.getElementById('ipQty_'+ip); var qty = qtyEl ? (parseInt(qtyEl.value) || 0) : 0; if (qty > 0) ipData.push({ ip: ip, quantity: qty }); }); if (ipData.length === 0) { alert('Укажите количество коробов'); return; } var filledSlots = []; for (var i = 0; i < MAX_PHOTOS; i++) { if (photoSlots[i] !== null) filledSlots.push({file: photoSlots[i], slot: i}); } if (filledSlots.length === 0) { alert('Сделайте хотя бы одно фото'); return; } btn.disabled = true; btn.textContent = '⏳ Сжатие...'; if (msg) msg.innerHTML = ''; var totalQty = ipData.reduce(function(s, item) { return s + item.quantity; }, 0); var ipDisplay = ipData.map(function(item) { return item.ip + ' — ' + item.quantity + ' кор.'; }).join(', '); try { var photosData = []; for (var j = 0; j < filledSlots.length; j++) { var item = filledSlots[j]; btn.textContent = '⏳ Фото '+(j+1)+'/'+filledSlots.length; var base64 = await compressImage(item.file, MAX_PHOTO_SIZE); photosData.push({ slot: item.slot + 1, data: base64 }); } btn.textContent = '⏳ Сохранение...'; await db.collection('pallet_photos').add({ userId: currentUser.id, userName: currentUser.name, city: city, ipData: ipData, ipDisplay: ipDisplay, totalQuantity: totalQty, date: date, photoCount: photosData.length, photos: photosData, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); for (var k = 0; k < MAX_PHOTOS; k++) { if (photoPreviewUrls[k]) URL.revokeObjectURL(photoPreviewUrls[k]); photoSlots[k] = null; photoPreviewUrls[k] = null; updatePhotoSlotDisplay(k); } updatePhotoCounter(); if (cityEl) cityEl.value = ''; IP_LIST.forEach(function(ip) { var qtyEl = document.getElementById('ipQty_'+ip); if (qtyEl) qtyEl.value = ''; }); if (dateEl) { dateEl.value = getTodayStr(); } var dv = document.getElementById('dateDisplayValue'); if (dv) dv.textContent = formatDateForDisplay(getTodayStr()); if (msg) msg.innerHTML = '<div class="success-msg" style="display:block;">✅ Сохранено! '+ipDisplay+' | Фото: '+photosData.length+'</div>'; setTimeout(function() { if (msg) msg.innerHTML = ''; }, 3000); } catch (error) { alert('Ошибка: ' + (error.message || 'Неизвестная')); } btn.disabled = false; btn.textContent = '💾 Сохранить паллету'; };
+window.savePhotos = async function() { 
+    var cityEl = document.getElementById('photoCity'), dateEl = document.getElementById('photoDate'); 
+    var btn = document.getElementById('savePhotoBtn'), msg = document.getElementById('photoMsg'); 
+    var city = cityEl ? cityEl.value.trim() : ''; 
+    var date = dateEl ? dateEl.value : getTodayStr(); 
+    if (!city) { alert('Укажите город'); return; } 
+    var ipData = []; 
+    IP_LIST.forEach(function(ip) { 
+        var qtyEl = document.getElementById('ipQty_'+ip); 
+        var qty = qtyEl ? (parseInt(qtyEl.value) || 0) : 0; 
+        if (qty > 0) ipData.push({ ip: ip, quantity: qty }); 
+    }); 
+    if (ipData.length === 0) { alert('Укажите количество коробов'); return; } 
+    var filledSlots = []; 
+    for (var i = 0; i < MAX_PHOTOS; i++) { 
+        if (photoSlots[i] !== null) filledSlots.push({file: photoSlots[i], slot: i}); 
+    } 
+    if (filledSlots.length === 0) { alert('Сделайте хотя бы одно фото'); return; } 
+    btn.disabled = true; 
+    btn.textContent = '⏳ Сжатие...'; 
+    if (msg) msg.innerHTML = ''; 
+    var totalQty = ipData.reduce(function(s, item) { return s + item.quantity; }, 0); 
+    var ipDisplay = ipData.map(function(item) { return item.ip + ' — ' + item.quantity + ' кор.'; }).join(', '); 
+    try { 
+        var photosData = []; 
+        for (var j = 0; j < filledSlots.length; j++) { 
+            var item = filledSlots[j]; 
+            btn.textContent = '⏳ Фото '+(j+1)+'/'+filledSlots.length; 
+            var base64 = await compressImage(item.file, MAX_PHOTO_SIZE); 
+            photosData.push({ slot: item.slot + 1, data: base64 }); 
+        } 
+        btn.textContent = '⏳ Сохранение...'; 
+        await db.collection('pallet_photos').add({ 
+            userId: currentUser.id, 
+            userName: currentUser.name, 
+            city: city, 
+            ipData: ipData, 
+            ipDisplay: ipDisplay, 
+            totalQuantity: totalQty, 
+            date: date, 
+            photoCount: photosData.length, 
+            photos: photosData, 
+            timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+        }); 
+        
+        // Добавляем запись в историю о сохранении фото паллеты
+        await addLog('Фото', '📸 Сохранил паллету', 'г.'+city+', '+ipDisplay+', фото: '+photosData.length+' шт.', totalQty);
+        
+        for (var k = 0; k < MAX_PHOTOS; k++) { 
+            if (photoPreviewUrls[k]) URL.revokeObjectURL(photoPreviewUrls[k]); 
+            photoSlots[k] = null; 
+            photoPreviewUrls[k] = null; 
+            updatePhotoSlotDisplay(k); 
+        } 
+        updatePhotoCounter(); 
+        if (cityEl) cityEl.value = ''; 
+        IP_LIST.forEach(function(ip) { 
+            var qtyEl = document.getElementById('ipQty_'+ip); 
+            if (qtyEl) qtyEl.value = ''; 
+        }); 
+        if (dateEl) { dateEl.value = getTodayStr(); } 
+        var dv = document.getElementById('dateDisplayValue'); 
+        if (dv) dv.textContent = formatDateForDisplay(getTodayStr()); 
+        if (msg) msg.innerHTML = '<div class="success-msg" style="display:block;">✅ Сохранено! '+ipDisplay+' | Фото: '+photosData.length+'</div>'; 
+        setTimeout(function() { if (msg) msg.innerHTML = ''; }, 3000); 
+    } catch (error) { 
+        alert('Ошибка: ' + (error.message || 'Неизвестная')); 
+    } 
+    btn.disabled = false; 
+    btn.textContent = '💾 Сохранить паллету'; 
+};
 
 async function loadPalletPhotos(filters) { filters = filters || {}; var container = document.getElementById('palletPhotosContainer'); if (!container) return; container.innerHTML = '<div class="loading">Загрузка...</div>'; var query = db.collection('pallet_photos'); if (filters.userId) query = query.where('userId', '==', filters.userId); if (filters.date) query = query.where('date', '==', filters.date); if (filters.city) query = query.where('city', '==', filters.city); try { var snapshot; if (filters.ip) { var baseQuery = db.collection('pallet_photos'); if (filters.userId) baseQuery = baseQuery.where('userId', '==', filters.userId); if (filters.date) baseQuery = baseQuery.where('date', '==', filters.date); if (filters.city) baseQuery = baseQuery.where('city', '==', filters.city); snapshot = await baseQuery.orderBy('timestamp', 'desc').limit(100).get(); } else { snapshot = await query.orderBy('timestamp', 'desc').limit(50).get(); } var docs = snapshot.docs; if (filters.ip) { docs = docs.filter(function(doc) { var ipData = doc.data().ipData || []; return ipData.some(function(item) { return item.ip === filters.ip; }); }); } if (docs.length === 0) { container.innerHTML = '<div style="text-align:center;padding:30px;">📭 Фото не найдены</div>'; return; } var html = '<div class="photo-gallery">'; docs.forEach(function(doc) { var d = doc.data(); if (!d.photos || d.photos.length === 0) return; var cityEsc = escapeHtml(d.city || '—'), ipEsc = escapeHtml(d.ipDisplay || '—'); var qty = d.totalQuantity || 0, userEsc = escapeHtml(d.userName || '—'), dateEsc = formatDateForDisplay(d.date); var photosHtml = ''; d.photos.forEach(function(photo) { var safeData = photo.data.replace(/'/g, "\\'"); photosHtml += '<img src="'+photo.data+'" alt="Фото" loading="lazy" onclick="window.showPhotoModalByData(\''+safeData+'\',\''+cityEsc.replace(/'/g,"\\'")+'\',\''+ipEsc.replace(/'/g,"\\'")+'\',\''+qty+' кор.\',\''+userEsc.replace(/'/g,"\\'")+'\',\''+dateEsc+'\')">'; }); html += '<div class="pallet-group"><div class="pallet-header"><span>'+cityEsc+'</span><span style="font-size:0.65rem;">'+userEsc+' | '+dateEsc+'</span></div><div style="font-size:0.7rem;color:#6b7280;margin-bottom:4px;">'+ipEsc+'</div><div class="photo-strip">'+photosHtml+'</div><button class="delete-log-btn" onclick="window.deletePallet(\''+doc.id+'\')" style="margin-top:6px;width:100%;">🗑️ Удалить</button></div>'; }); html += '</div>'; container.innerHTML = html; } catch (error) { container.innerHTML = '<div style="text-align:center;padding:20px;color:#991b1b;">Ошибка загрузки</div>'; } }
 window.showPhotoModalByData = function(data, city, ip, qty, user, date) { var existing = document.querySelector('.photo-modal-overlay'); if (existing) existing.remove(); var modal = document.createElement('div'); modal.className = 'photo-modal-overlay'; modal.innerHTML = '<button class="photo-modal-close">✕</button><img src="'+data+'" alt="Фото"><div class="photo-modal-info" style="color:#fff;text-align:center;margin-top:12px;font-size:0.85rem;">'+city+' — '+ip+' | '+qty+' | '+user+' | '+date+'</div>'; modal.addEventListener('click', function(e) { if (e.target === modal || e.target.classList.contains('photo-modal-close')) modal.remove(); }); document.body.appendChild(modal); };
@@ -422,8 +492,8 @@ async function markAttendance(w) { if (!currentUser) return; var t = getTodayStr
 async function addLog(w, a, d, q) { if (!currentUser) return; var t = getTodayStr(); await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q || null, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); if (formatDateForInput(currentHistoryDate) === t) await loadHistoryForDate(t); if (isAdmin) await loadAdminLogs(); }
 async function updateTotal(ty, inc) { if (!currentUser) return; var dId = currentUser.id+'_'+ty; await db.runTransaction(async function(t) { var r = db.collection('user_totals').doc(dId); var d = await t.get(r); var nt = inc; if (d.exists) nt = (d.data().total || 0) + inc; t.set(r, { userId: currentUser.id, userName: currentUser.name, type: ty, total: nt, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); }); if (ty === 'pushkino_accepted') counters.pushkinoAcceptedTotal += inc; if (ty === 'pushkino_shipped') counters.pushkinoShippedTotal += inc; if (ty === 'pushkino_unloaded') counters.pushkinoUnloadedTotal += inc; if (ty === 'pushkino_reworked') counters.pushkinoReworkedTotal += inc; if (ty === 'moscow_invoice') counters.moscowInvoiceTotal += inc; updateAllCounters(); }
 function updateAllCounters() { var ids = ['moscowReceived','moscowCollected','moscowShipped','moscowInvoiceTotal','pushkinoAccepted','pushkinoAcceptedTotal','pushkinoShipped','pushkinoShippedTotal','pushkinoUnloaded','pushkinoUnloadedTotal','pushkinoReworked','pushkinoReworkedTotal','moscowLastArticle']; ids.forEach(function(id) { var el = document.getElementById(id); if (el) { if (id === 'moscowLastArticle') el.textContent = moscowLastArticle; else el.textContent = counters[id] || 0; } }); }
-async function loadHistoryForDate(ds) { if (!currentUser) return; var tb = document.getElementById('myHistoryBody'); if(!tb) return; tb.innerHTML = '<tr><td colspan="4" class="loading">Загрузка...</td></tr>'; var s = await db.collection('work_logs').where('userId', '==', currentUser.id).where('date', '==', ds).get(); if (s.empty) { tb.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</td></tr>'; return; } var logs = s.docs.map(function(d) { return d.data(); }).sort(function(a,b) { return (b.timestamp?.toDate()||0) - (a.timestamp?.toDate()||0); }); var h = ''; logs.forEach(function(l) { var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; h += '<tr><td>'+time+'</td><td>'+(l.warehouse||'—')+'</td><td>'+(l.action||'—')+'</td><td>'+(l.details||'—')+'</td></tr>'; }); tb.innerHTML = h; }
-async function loadAdminLogs() { if (!isAdmin) return; var tb = document.getElementById('adminLogsBody'); if(!tb) return; tb.innerHTML = '<tr><td colspan="6" class="loading">Загрузка...</td></tr>'; var eid = document.getElementById('adminFilterEmployee')?.value; var fd = document.getElementById('adminFilterDate')?.value; var q = db.collection('work_logs'); if (eid) q = q.where('userId', '==', eid); if (fd) q = q.where('date', '==', fd); var s = await q.orderBy('timestamp', 'desc').limit(200).get(); if (s.empty) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Нет записей</td></tr>'; return; } var h = ''; s.docs.forEach(function(d) { var l = d.data(); var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleString('ru-RU') : '—'; h += '<tr><td>'+time+'</td><td>'+l.warehouse+'</td><td><strong>'+l.userName+'</strong></td><td>'+l.action+'</td><td>'+(l.details||'—')+'</td><td><button class="delete-log-btn" data-id="'+d.id+'">🗑️</button></td></tr>'; }); tb.innerHTML = h; tb.querySelectorAll('.delete-log-btn').forEach(function(b) { b.addEventListener('click', async function() { if (confirm('Удалить?')) { await db.collection('work_logs').doc(b.dataset.id).delete(); await loadAdminLogs(); } }); }); }
+async function loadHistoryForDate(ds) { if (!currentUser) return; var tb = document.getElementById('myHistoryBody'); if(!tb) return; tb.innerHTML = '<tr><td colspan="4" class="loading">Загрузка...</td></table>'; var s = await db.collection('work_logs').where('userId', '==', currentUser.id).where('date', '==', ds).get(); if (s.empty) { tb.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</td></tr>'; return; } var logs = s.docs.map(function(d) { return d.data(); }).sort(function(a,b) { return (b.timestamp?.toDate()||0) - (a.timestamp?.toDate()||0); }); var h = ''; logs.forEach(function(l) { var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; h += '<tr><td>'+time+'</td><td>'+(l.warehouse||'—')+'</td><td>'+(l.action||'—')+'</td><td>'+(l.details||'—')+'</td></tr>'; }); tb.innerHTML = h; }
+async function loadAdminLogs() { if (!isAdmin) return; var tb = document.getElementById('adminLogsBody'); if(!tb) return; tb.innerHTML = '<tr><td colspan="6" class="loading">Загрузка...<tr></tr>'; var eid = document.getElementById('adminFilterEmployee')?.value; var fd = document.getElementById('adminFilterDate')?.value; var q = db.collection('work_logs'); if (eid) q = q.where('userId', '==', eid); if (fd) q = q.where('date', '==', fd); var s = await q.orderBy('timestamp', 'desc').limit(200).get(); if (s.empty) { tb.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;">Нет записей</td></td>'; return; } var h = ''; s.docs.forEach(function(d) { var l = d.data(); var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleString('ru-RU') : '—'; h += '<tr><td>'+time+'</td><td>'+l.warehouse+'</td><td><strong>'+l.userName+'</strong></td><td>'+l.action+'</td><td>'+(l.details||'—')+'</td><td><button class="delete-log-btn" data-id="'+d.id+'">🗑️</button></td><tr>'; }); tb.innerHTML = h; tb.querySelectorAll('.delete-log-btn').forEach(function(b) { b.addEventListener('click', async function() { if (confirm('Удалить?')) { await db.collection('work_logs').doc(b.dataset.id).delete(); await loadAdminLogs(); } }); }); }
 
 async function loadAdminEmployees() { if (!isAdmin) return; var s = await db.collection('employees').orderBy('name').get(); var tb = document.getElementById('adminEmployeesBody'); if(!tb) return; var statsMap = {}; var allEmps = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role }; }); for (var i = 0; i < allEmps.length; i++) { var emp = allEmps[i]; var ls = await db.collection('work_logs').where('userId', '==', emp.id).limit(1).get(); var ps = await db.collection('pallet_photos').where('userId', '==', emp.id).limit(1).get(); var ats = await db.collection('attendance').where('userId', '==', emp.id).limit(1).get(); statsMap[emp.id] = !ls.empty || !ps.empty || !ats.empty; } var h = ''; s.docs.forEach(function(d) { var e = d.data(); var rt = e.role==='superadmin'?'⭐ Суперадмин':(e.role==='admin'?'👑 Админ':'👤 Сотрудник'); var active = statsMap[d.id] ? '✅' : '❌'; h += '<tr><td><strong>'+e.name+'</strong></td><td>'+rt+'</td><td>'+active+'</td><td>'+(e.role!=='superadmin'?'<button class="delete-log-btn" data-id="'+d.id+'" data-name="'+e.name+'" data-role="'+e.role+'">🗑️</button>':'—')+'</td></tr>'; }); tb.innerHTML = h; tb.querySelectorAll('.delete-log-btn').forEach(function(b) { b.addEventListener('click', async function() { var n = b.dataset.name, r = b.dataset.role, id = b.dataset.id; if (r === 'superadmin') { alert('Невозможно удалить суперадмина'); return; } if (r === 'admin' && !isSuperAdmin) { alert('Только суперадмин может удалять админов'); return; } if (n === currentUser.name) { alert('Нельзя удалить себя'); return; } if (confirm('Удалить '+n+'?')) { var ba = db.batch(); var ls = await db.collection('work_logs').where('userId', '==', id).get(); ls.docs.forEach(function(d) { ba.delete(d.ref); }); ba.delete(db.collection('employees').doc(id)); await ba.commit(); await loadAdminEmployees(); await getEmployees(); updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); } }); }); }
 async function cleanInactiveEmployees() { if (!confirm('Удалить всех сотрудников без записей?')) return; var allEmps = await getEmployees(); var inactiveList = []; for (var i = 0; i < allEmps.length; i++) { var emp = allEmps[i]; if (emp.role === 'admin' || emp.role === 'superadmin' || emp.id === currentUser.id) continue; var ls = await db.collection('work_logs').where('userId', '==', emp.id).limit(1).get(); var ps = await db.collection('pallet_photos').where('userId', '==', emp.id).limit(1).get(); var ats = await db.collection('attendance').where('userId', '==', emp.id).limit(1).get(); if (ls.empty && ps.empty && ats.empty) inactiveList.push({ id: emp.id, name: emp.name, login: emp.login }); } if (inactiveList.length === 0) { alert('✅ Все активны!'); return; } var nameList = inactiveList.map(function(e) { return e.name + ' (' + e.login + ')'; }).join('\n'); if (!confirm('Найдено '+inactiveList.length+':\n\n'+nameList+'\n\nУдалить?')) return; var batch = db.batch(); inactiveList.forEach(function(emp) { batch.delete(db.collection('employees').doc(emp.id)); }); await batch.commit(); alert('✅ Удалено '+inactiveList.length+'!'); await getEmployees(); await loadAdminEmployees(); updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); }
