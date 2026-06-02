@@ -18,7 +18,7 @@
     <style>
         * { box-sizing: border-box; margin: 0; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; }
         body { 
-            background: #f0f2f5; 
+            background: #eef2f6; 
             min-height: 100vh; 
             min-height: 100dvh; 
             display: flex; 
@@ -99,14 +99,14 @@
         .warehouse-container { display: none; }
         .warehouse-container.active { display: block; }
         
-        /* Секция присутствия */
+        /* Секция присутствия — комбинированное обрамление */
         .work-day-card { 
             background: #fff; 
             border-radius: 16px; 
             padding: 0.9rem 1rem; 
             margin-bottom: 16px; 
-            border: 1px solid #e8ecf0; 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 1px 4px rgba(0,0,0,0.02);
+            border: 1px solid #dce3e9; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
@@ -117,7 +117,7 @@
         .work-day-card span { color: #374151; }
         body.dark-theme .work-day-card span { color: #d1d5db; }
         
-        /* Карточки операций */
+        /* Карточки операций — комбинированное обрамление */
         .operations-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
         @media (min-width: 480px) { .operations-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (min-width: 768px) { .operations-grid { grid-template-columns: repeat(3, 1fr); } }
@@ -125,35 +125,35 @@
             background: #fff; 
             border-radius: 16px; 
             padding: 1rem; 
-            border: 1px solid #e8ecf0; 
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 1px 4px rgba(0,0,0,0.02);
+            border: 1px solid #dce3e9; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         body.dark-theme .op-card { background: #1f2937; border-color: #374151; box-shadow: none; }
         .op-card h3 { font-weight: 600; font-size: 0.8rem; color: #374151; margin-bottom: 0.75rem; letter-spacing: -0.2px; }
         body.dark-theme .op-card h3 { color: #e5e7eb; }
         
-        /* Блок фото паллет */
+        /* Блок фото паллет — комбинированное обрамление */
         .photo-card { 
             background: #fff; 
             border-radius: 16px; 
             padding: 1rem; 
             margin-bottom: 16px; 
-            border: 1px solid #e8ecf0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 1px 4px rgba(0,0,0,0.02);
+            border: 1px solid #dce3e9;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        body.dark-theme .photo-card { background: #1f2937; border-color: #374151; }
+        body.dark-theme .photo-card { background: #1f2937; border-color: #374151; box-shadow: none; }
         .photo-card .photo-title { font-weight: 600; font-size: 0.85rem; color: #d97706; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; }
         
-        /* Блок истории */
+        /* Блок истории — комбинированное обрамление */
         .history-section { 
             background: #fff; 
             border-radius: 16px; 
             padding: 1rem; 
             margin-top: 16px; 
-            border: 1px solid #e8ecf0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02), 0 1px 4px rgba(0,0,0,0.02);
+            border: 1px solid #dce3e9;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        body.dark-theme .history-section { background: #1f2937; border-color: #374151; }
+        body.dark-theme .history-section { background: #1f2937; border-color: #374151; box-shadow: none; }
         .history-header h3 { color: #111827; }
         body.dark-theme .history-header h3 { color: #f3f4f6; }
         
@@ -168,7 +168,7 @@
         body.dark-theme .counter-value { color: #f3f4f6; }
         
         .adjust-buttons { display: flex; gap: 6px; margin-bottom: 8px; }
-        .btn-adjust { flex: 1; background: #f8f9fb; border: 1px solid #e8ecf0; color: #374151; font-size: 1.1rem; font-weight: 700; padding: 6px 0; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .btn-adjust { flex: 1; background: #f8f9fb; border: 1px solid #e2e8f0; color: #374151; font-size: 1.1rem; font-weight: 700; padding: 6px 0; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
         body.dark-theme .btn-adjust { background: #374151; border-color: #4b5563; color: #d1d5db; }
         
         .btn-ok { background: #059669; border: none; color: #fff; font-weight: 600; font-size: 0.85rem; padding: 10px; border-radius: 12px; width: 100%; cursor: pointer; margin-top: 6px; transition: all 0.2s; }
@@ -179,14 +179,14 @@
         .btn-ok.teal { background: #0d9488; }
         .btn-ok.green { background: #059669; }
         
-        .input-field { padding: 10px 12px; border: 1px solid #e8ecf0; border-radius: 12px; font-size: 0.85rem; width: 100%; margin-bottom: 8px; background: #f8f9fb; color: #111827; transition: all 0.2s; }
+        .input-field { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.85rem; width: 100%; margin-bottom: 8px; background: #f8f9fb; color: #111827; transition: all 0.2s; }
         .input-field:focus { border-color: #0f1a2e; outline: none; background: #fff; }
         body.dark-theme .input-field { background: #374151; border-color: #4b5563; color: #f3f4f6; }
         body.dark-theme .input-field:focus { border-color: #6b7280; background: #1f2937; }
         .input-field::placeholder { color: #9ca3af; }
         body.dark-theme .input-field::placeholder { color: #6b7280; }
         
-        .reset-btn { background: none; border: 1px solid #e8ecf0; padding: 5px 10px; border-radius: 10px; color: #9ca3af; font-size: 0.6rem; cursor: pointer; margin-top: 6px; width: 100%; transition: all 0.2s; }
+        .reset-btn { background: none; border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 10px; color: #9ca3af; font-size: 0.6rem; cursor: pointer; margin-top: 6px; width: 100%; transition: all 0.2s; }
         body.dark-theme .reset-btn { border-color: #4b5563; color: #9ca3af; }
         
         .manual-input-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
@@ -196,7 +196,7 @@
         
         .photo-slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
         @media (min-width: 480px) { .photo-slots { grid-template-columns: repeat(4, 1fr); } }
-        .photo-slot { aspect-ratio: 1; border: 2px dashed #e0e4e9; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fafbfc; overflow: hidden; position: relative; min-height: 70px; transition: all 0.2s; }
+        .photo-slot { aspect-ratio: 1; border: 2px dashed #dce3e9; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fafbfc; overflow: hidden; position: relative; min-height: 70px; transition: all 0.2s; }
         body.dark-theme .photo-slot { background: #374151; border-color: #4b5563; }
         .photo-slot.has-photo { border-style: solid; border-color: #059669; background: #fff; }
         body.dark-theme .photo-slot.has-photo { background: #1f2937; }
@@ -212,15 +212,15 @@
         .date-picker-label { display: block; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 3px; letter-spacing: 0.3px; }
         body.dark-theme .date-picker-label { color: #9ca3af; }
         .date-picker-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .date-value { padding: 10px 12px; border: 1px solid #e8ecf0; border-radius: 12px; font-size: 0.8rem; background: #f8f9fb; color: #111827; text-align: center; }
+        .date-value { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.8rem; background: #f8f9fb; color: #111827; text-align: center; }
         body.dark-theme .date-value { background: #374151; border-color: #4b5563; color: #f3f4f6; }
         
         .ip-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-        .ip-row { display: flex; align-items: center; gap: 10px; background: #f8f9fb; padding: 8px 14px; border-radius: 12px; border: 1px solid #e8ecf0; }
+        .ip-row { display: flex; align-items: center; gap: 10px; background: #f8f9fb; padding: 8px 14px; border-radius: 12px; border: 1px solid #e2e8f0; }
         body.dark-theme .ip-row { background: #374151; border-color: #4b5563; }
         .ip-row .ip-name { font-weight: 700; font-size: 0.85rem; color: #111827; min-width: 45px; }
         body.dark-theme .ip-row .ip-name { color: #f3f4f6; }
-        .ip-row .ip-qty-input { width: 70px; padding: 8px 10px; border: 1px solid #e0e4e9; border-radius: 10px; font-size: 0.85rem; text-align: center; background: #fff; color: #111827; }
+        .ip-row .ip-qty-input { width: 70px; padding: 8px 10px; border: 1px solid #dce3e9; border-radius: 10px; font-size: 0.85rem; text-align: center; background: #fff; color: #111827; }
         body.dark-theme .ip-row .ip-qty-input { background: #1f2937; border-color: #4b5563; color: #f3f4f6; }
         .ip-row .ip-unit { font-size: 0.7rem; color: #6b7280; }
         body.dark-theme .ip-row .ip-unit { color: #9ca3af; }
@@ -233,7 +233,7 @@
         
         .photo-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
         @media (max-width: 480px) { .photo-gallery { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
-        .pallet-group { background: #fff; border-radius: 14px; overflow: hidden; border: 1px solid #e8ecf0; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .pallet-group { background: #fff; border-radius: 14px; overflow: hidden; border: 1px solid #dce3e9; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
         body.dark-theme .pallet-group { background: #1f2937; border-color: #374151; }
         .pallet-group .pallet-header { font-weight: 600; font-size: 0.75rem; color: #374151; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         body.dark-theme .pallet-group .pallet-header { color: #d1d5db; }
@@ -246,39 +246,39 @@
         
         .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 8px; }
         .history-header h3 { font-size: 0.9rem; font-weight: 600; }
-        .date-selector { display: flex; align-items: center; gap: 6px; background: #f8f9fb; padding: 4px 10px; border-radius: 12px; border: 1px solid #e8ecf0; }
+        .date-selector { display: flex; align-items: center; gap: 6px; background: #f8f9fb; padding: 4px 10px; border-radius: 12px; border: 1px solid #dce3e9; }
         body.dark-theme .date-selector { background: #374151; border-color: #4b5563; }
         .date-selector input { border: none; background: transparent; font-size: 0.75rem; padding: 6px; outline: none; width: 95px; color: #111827; }
         body.dark-theme .date-selector input { color: #f3f4f6; }
-        .date-nav-btn { background: #fff; border: 1px solid #e8ecf0; padding: 5px 12px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; color: #374151; }
+        .date-nav-btn { background: #fff; border: 1px solid #dce3e9; padding: 5px 12px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; color: #374151; }
         body.dark-theme .date-nav-btn { background: #4b5563; border-color: #6b7280; color: #d1d5db; }
         
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.7rem; min-width: 500px; }
-        th { background: #f8f9fb; padding: 10px 8px; text-align: left; font-size: 0.65rem; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e8ecf0; }
+        th { background: #f8f9fb; padding: 10px 8px; text-align: left; font-size: 0.65rem; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e2e8f0; }
         body.dark-theme th { background: #374151; color: #9ca3af; border-bottom-color: #4b5563; }
-        td { padding: 10px 8px; border-bottom: 1px solid #f0f2f5; color: #374151; }
+        td { padding: 10px 8px; border-bottom: 1px solid #eef2f6; color: #374151; }
         body.dark-theme td { border-bottom-color: #374151; color: #d1d5db; }
         
-        .admin-panel { background: #fff; border-radius: 16px; padding: 1rem; margin: 12px 0; border: 1px solid #e8ecf0; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        body.dark-theme .admin-panel { background: #1f2937; border-color: #374151; }
+        .admin-panel { background: #fff; border-radius: 16px; padding: 1rem; margin: 12px 0; border: 1px solid #dce3e9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        body.dark-theme .admin-panel { background: #1f2937; border-color: #374151; box-shadow: none; }
         .admin-title { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem; }
         body.dark-theme .admin-title { color: #f3f4f6; }
         
         .admin-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
-        .admin-tab { background: #f8f9fb; border: 1px solid #e8ecf0; padding: 7px 12px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 0.7rem; color: #6b7280; transition: all 0.2s; }
+        .admin-tab { background: #f8f9fb; border: 1px solid #dce3e9; padding: 7px 12px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 0.7rem; color: #6b7280; transition: all 0.2s; }
         body.dark-theme .admin-tab { background: #374151; border-color: #4b5563; color: #9ca3af; }
         .admin-tab.active { background: #0f1a2e; color: #fff; border-color: #0f1a2e; }
         body.dark-theme .admin-tab.active { background: #4b5563; border-color: #6b7280; color: #fff; }
         
-        .admin-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; background: #f8f9fb; padding: 10px 12px; border-radius: 14px; border: 1px solid #e8ecf0; }
+        .admin-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; background: #f8f9fb; padding: 10px 12px; border-radius: 14px; border: 1px solid #dce3e9; }
         body.dark-theme .admin-filters { background: #374151; border-color: #4b5563; }
-        .admin-filter-select, .admin-filter-date { padding: 8px 12px; border-radius: 10px; border: 1px solid #e0e4e9; background: #fff; font-size: 0.7rem; color: #111827; }
+        .admin-filter-select, .admin-filter-date { padding: 8px 12px; border-radius: 10px; border: 1px solid #dce3e9; background: #fff; font-size: 0.7rem; color: #111827; }
         body.dark-theme .admin-filter-select, body.dark-theme .admin-filter-date { background: #1f2937; border-color: #4b5563; color: #f3f4f6; }
         .admin-filter-btn, .admin-filter-clear { padding: 7px 14px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; }
         .admin-filter-btn { background: #0f1a2e; color: #fff; }
         body.dark-theme .admin-filter-btn { background: #2563eb; }
-        .admin-filter-clear { background: #f0f2f5; color: #374151; border: 1px solid #e0e4e9; }
+        .admin-filter-clear { background: #f0f2f5; color: #374151; border: 1px solid #dce3e9; }
         body.dark-theme .admin-filter-clear { background: #4b5563; color: #d1d5db; border-color: #6b7280; }
         
         .delete-log-btn { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.65rem; transition: all 0.2s; }
@@ -288,7 +288,7 @@
         .btn-archive:active { transform: scale(0.97); }
         
         .loading { text-align: center; padding: 30px; color: #9ca3af; }
-        .stat-item { text-align: center; padding: 10px; background: #f8f9fb; border-radius: 12px; border: 1px solid #e8ecf0; }
+        .stat-item { text-align: center; padding: 10px; background: #f8f9fb; border-radius: 12px; border: 1px solid #e2e8f0; }
         body.dark-theme .stat-item { background: #374151; border-color: #4b5563; }
         .stat-value { font-size: 1.3rem; font-weight: 800; color: #111827; }
         body.dark-theme .stat-value { color: #f3f4f6; }
