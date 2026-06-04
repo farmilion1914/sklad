@@ -117,7 +117,7 @@
         .work-day-card span { color: #374151; font-size: 0.85rem; }
         body.dark-theme .work-day-card span { color: #d1d5db; }
         
-        /* Аккордеон — исправленная версия без вылезающих отступов */
+        /* Аккордеон — классический max-height, без вылезаний */
         .accordion-item, .admin-accordion-item {
             background: #fff;
             border-radius: 16px;
@@ -152,35 +152,25 @@
         }
         
         .accordion-content, .admin-accordion-content {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.25s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s cubic-bezier(0.33, 1, 0.68, 1);
         }
         .accordion-item.open .accordion-content, .admin-accordion-item.open .admin-accordion-content {
-            grid-template-rows: 1fr;
-        }
-        .accordion-content > div, .admin-accordion-content > div {
-            overflow: hidden;
+            max-height: 800px;
         }
         
-        /* Карточки операций внутри аккордеона — отступы только через padding родителя */
+        /* Карточки операций */
         .op-card {
             background: #f8f9fb;
             border-radius: 14px;
             padding: 0.9rem;
             border: 1px solid #e8edf2;
+            margin: 0 1rem 1rem 1rem;
         }
         body.dark-theme .op-card {
             background: #2d3748;
             border-color: #4a5568;
-        }
-        
-        /* Внутренний контейнер для отступов */
-        .accordion-inner {
-            padding: 0 1rem 1rem 1rem;
-        }
-        .admin-accordion-content > div {
-            padding: 0 1rem 1rem 1rem;
         }
         
         /* Блок фото паллет */
@@ -986,42 +976,42 @@ async function renderUserPanel() {
     var moscowAccordions = `
         <div class="accordion-item">
             <div class="accordion-header"><h3>Принял коробов</h3></div>
-            <div class="accordion-content"><div class="accordion-inner"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="moscowReceived">0</span></div><div class="manual-input-row"><input type="number" id="moscowReceivedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowReceived" data-manual="moscowReceivedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowReceived" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowReceived" data-delta="1">+</button></div><button class="btn-ok green" data-action="receive">ОК</button><button class="reset-btn" data-reset="moscowReceived">↺ сброс</button></div></div></div></div>
+            <div class="accordion-content"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="moscowReceived">0</span></div><div class="manual-input-row"><input type="number" id="moscowReceivedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowReceived" data-manual="moscowReceivedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowReceived" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowReceived" data-delta="1">+</button></div><button class="btn-ok green" data-action="receive">ОК</button><button class="reset-btn" data-reset="moscowReceived">↺ сброс</button></div></div></div>
         </div>
         <div class="accordion-item">
             <div class="accordion-header"><h3>Собрал паллет</h3></div>
-            <div class="accordion-content"><div class="accordion-inner"><div class="op-card"><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowCollected">0</span></div><div class="manual-input-row"><input type="number" id="moscowCollectedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowCollected" data-manual="moscowCollectedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button></div><button class="btn-ok" data-action="collect">ОК</button><button class="reset-btn" data-reset="moscowCollected">↺ сброс</button></div></div></div></div>
+            <div class="accordion-content"><div class="op-card"><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowCollected">0</span></div><div class="manual-input-row"><input type="number" id="moscowCollectedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowCollected" data-manual="moscowCollectedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button></div><button class="btn-ok" data-action="collect">ОК</button><button class="reset-btn" data-reset="moscowCollected">↺ сброс</button></div></div></div>
         </div>
         <div class="accordion-item">
             <div class="accordion-header"><h3>Отгрузил паллет</h3></div>
-            <div class="accordion-content"><div class="accordion-inner"><div class="op-card"><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowShipped">0</span></div><div class="manual-input-row"><input type="number" id="moscowShippedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowShipped" data-manual="moscowShippedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="ship">ОК</button><button class="reset-btn" data-reset="moscowShipped">↺ сброс</button></div></div></div></div>
+            <div class="accordion-content"><div class="op-card"><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowShipped">0</span></div><div class="manual-input-row"><input type="number" id="moscowShippedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowShipped" data-manual="moscowShippedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="ship">ОК</button><button class="reset-btn" data-reset="moscowShipped">↺ сброс</button></div></div></div>
         </div>
         <div class="accordion-item">
             <div class="accordion-header"><h3>Выкладка товара</h3></div>
-            <div class="accordion-content"><div class="accordion-inner"><div class="op-card"><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Последний: <span id="moscowLastArticle">—</span></div></div></div></div></div>
+            <div class="accordion-content"><div class="op-card"><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Последний: <span id="moscowLastArticle">—</span></div></div></div></div>
         </div>
         <div class="accordion-item">
             <div class="accordion-header"><h3>Сборка по накладной</h3></div>
-            <div class="accordion-content"><div class="accordion-inner"><div class="op-card"><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div></div></div></div>
+            <div class="accordion-content"><div class="op-card"><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div></div></div>
         </div>
     `;
     
     var pushkinoAccordions = `
         <div class="accordion-item">
             <div class="accordion-header"><h3>Принял с осн. склада</h3></div>
-            <div class="accordion-content"><div class="accordion-inner"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoAccepted">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="1">+</button></div><button class="btn-ok" data-action="accept">ОК</button><button class="reset-btn" data-reset="pushkinoAccepted">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoAcceptedTotal">0</span> кор.</div></div></div></div></div>
+            <div class="accordion-content"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoAccepted">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="1">+</button></div><button class="btn-ok" data-action="accept">ОК</button><button class="reset-btn" data-reset="pushkinoAccepted">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoAcceptedTotal">0</span> кор.</div></div></div></div>
         </div>
         <div class="accordion-item">
             <div class="accordion-header"><h3>Отгрузил на осн.</h3></div>
-            <div class="accordion-content"><div class="accordion-inner"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="shipPushkino">ОК</button><button class="reset-btn" data-reset="pushkinoShipped">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoShippedTotal">0</span> кор.</div></div></div></div></div>
+            <div class="accordion-content"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="shipPushkino">ОК</button><button class="reset-btn" data-reset="pushkinoShipped">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoShippedTotal">0</span> кор.</div></div></div></div>
         </div>
         <div class="accordion-item">
             <div class="accordion-header"><h3>Выгрузка фуры</h3></div>
-            <div class="accordion-content"><div class="accordion-inner"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoUnloaded">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="1">+</button></div><button class="btn-ok blue" data-action="unload">ОК</button><button class="reset-btn" data-reset="pushkinoUnloaded">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoUnloadedTotal">0</span> кор.</div></div></div></div></div>
+            <div class="accordion-content"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoUnloaded">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="1">+</button></div><button class="btn-ok blue" data-action="unload">ОК</button><button class="reset-btn" data-reset="pushkinoUnloaded">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoUnloadedTotal">0</span> кор.</div></div></div></div>
         </div>
         <div class="accordion-item">
             <div class="accordion-header"><h3>Перебрал паллеты</h3></div>
-            <div class="accordion-content"><div class="accordion-inner"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoReworked">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoReworked" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoReworked" data-delta="1">+</button></div><button class="btn-ok teal" data-action="rework">ОК</button><button class="reset-btn" data-reset="pushkinoReworked">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoReworkedTotal">0</span> кор.</div></div></div></div></div>
+            <div class="accordion-content"><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoReworked">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoReworked" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoReworked" data-delta="1">+</button></div><button class="btn-ok teal" data-action="rework">ОК</button><button class="reset-btn" data-reset="pushkinoReworked">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoReworkedTotal">0</span> кор.</div></div></div></div>
         </div>
     `;
     
