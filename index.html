@@ -117,7 +117,7 @@
         .work-day-card span { color: #374151; font-size: 0.85rem; }
         body.dark-theme .work-day-card span { color: #d1d5db; }
         
-        /* Аккордеон — классический max-height, без вылезаний */
+        /* Аккордеон — классический max-height с предрасчётом */
         .accordion-item, .admin-accordion-item {
             background: #fff;
             border-radius: 16px;
@@ -157,7 +157,7 @@
             transition: max-height 0.35s cubic-bezier(0.33, 1, 0.68, 1);
         }
         .accordion-item.open .accordion-content, .admin-accordion-item.open .admin-accordion-content {
-            max-height: 800px;
+            max-height: var(--content-height, 800px);
         }
         
         /* Карточки операций */
@@ -329,7 +329,7 @@
             font-size: 0.8rem;
         }
         
-        /* Админ-панель */
+        /* Админ-панель — порядок блоков изменён */
         .admin-panel {
             margin: 12px 0;
         }
@@ -948,20 +948,66 @@ async function generateAdminReport() {
     '</div>'; 
 }
 
-function initAccordion() {
-    document.querySelectorAll('.accordion-header').forEach(header => {
-        header.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const item = this.parentElement;
-            item.classList.toggle('open');
-        });
+// Функция для предварительного расчёта высоты аккордеонов
+function preloadAccordionHeights() {
+    var items = document.querySelectorAll('.accordion-content, .admin-accordion-content');
+    items.forEach(function(content) {
+        var item = content.parentElement;
+        var wasOpen = item.classList.contains('open');
+        
+        if (!wasOpen) {
+            item.classList.add('open');
+            content.style.maxHeight = 'none';
+            var height = content.scrollHeight;
+            content.style.maxHeight = '0';
+            item.classList.remove('open');
+            content.style.setProperty('--content-height', height + 'px');
+        } else {
+            content.style.maxHeight = 'none';
+            var height = content.scrollHeight;
+            content.style.maxHeight = '';
+            content.style.setProperty('--content-height', height + 'px');
+        }
     });
-    document.querySelectorAll('.admin-accordion-header').forEach(header => {
-        header.addEventListener('click', function(e) {
+}
+
+function initAccordion() {
+    document.querySelectorAll('.accordion-header').forEach(function(header) {
+        header.removeEventListener('click', header._clickHandler);
+        header._clickHandler = function(e) {
             e.stopPropagation();
-            const item = this.parentElement;
+            var item = this.parentElement;
+            var content = item.querySelector('.accordion-content');
+            if (!item.classList.contains('open')) {
+                if (content && !content.style.getPropertyValue('--content-height')) {
+                    content.style.maxHeight = 'none';
+                    var height = content.scrollHeight;
+                    content.style.maxHeight = '0';
+                    content.style.setProperty('--content-height', height + 'px');
+                }
+            }
             item.classList.toggle('open');
-        });
+        };
+        header.addEventListener('click', header._clickHandler);
+    });
+    
+    document.querySelectorAll('.admin-accordion-header').forEach(function(header) {
+        header.removeEventListener('click', header._clickHandler);
+        header._clickHandler = function(e) {
+            e.stopPropagation();
+            var item = this.parentElement;
+            var content = item.querySelector('.admin-accordion-content');
+            if (!item.classList.contains('open')) {
+                if (content && !content.style.getPropertyValue('--content-height')) {
+                    content.style.maxHeight = 'none';
+                    var height = content.scrollHeight;
+                    content.style.maxHeight = '0';
+                    content.style.setProperty('--content-height', height + 'px');
+                }
+            }
+            item.classList.toggle('open');
+        };
+        header.addEventListener('click', header._clickHandler);
     });
 }
 
@@ -1020,11 +1066,12 @@ async function renderUserPanel() {
 
 async function renderAdminPanel() {
     var ipOptions = IP_LIST.map(function(ip){return '<option value="'+ip+'">'+ip+'</option>';}).join('');
+    // Новый порядок: Отчёты, Фото паллет, Сотрудники, Все записи
     return '<div class="admin-panel"><div class="admin-title">Панель администратора</div>' +
-        '<div class="admin-accordion-item"><div class="admin-accordion-header">Все записи</div><div class="admin-accordion-content"><div><div class="admin-filters"><select id="adminFilterEmployee" class="admin-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="adminFilterDate" class="admin-filter-date"><button class="admin-filter-btn" id="applyAdminFilterBtn">🔍</button><button class="admin-filter-clear" id="clearAdminFilterBtn">🗑️</button></div><div id="adminLogsContainer"><div class="loading">Загрузка...</div></div></div></div></div>' +
-        '<div class="admin-accordion-item"><div class="admin-accordion-header">Сотрудники</div><div class="admin-accordion-content"><div><div id="adminEmployeesContainer"><div class="loading">Загрузка...</div></div></div></div></div>' +
         '<div class="admin-accordion-item"><div class="admin-accordion-header">Отчёты</div><div class="admin-accordion-content"><div><div class="admin-filters" style="margin-bottom:8px;"><select id="reportEmployeeSelect" style="padding:8px;border-radius:10px;font-size:0.8rem;"><option value="">Все сотрудники</option></select><input type="date" id="reportStartDate" style="padding:8px;border-radius:10px;font-size:0.8rem;"><input type="date" id="reportEndDate" style="padding:8px;border-radius:10px;font-size:0.8rem;"><button class="admin-filter-btn" id="generateAdminReportBtn">Сформировать</button></div><div id="adminReportResult"><div class="empty-history">Выберите даты</div></div></div></div></div>' +
         '<div class="admin-accordion-item"><div class="admin-accordion-header">Фото паллет</div><div class="admin-accordion-content"><div><div class="admin-filters"><select id="photoFilterEmployee" class="admin-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="photoFilterDate" class="admin-filter-date" placeholder="Дата"><select id="photoFilterIP" class="admin-filter-select"><option value="">Все ИП</option>'+ipOptions+'</select><input type="text" id="photoFilterCityInput" class="admin-filter-select" placeholder="Город" style="width:100px;"><button class="admin-filter-btn" id="applyPhotoFilterBtn">🔍</button><button class="admin-filter-clear" id="clearPhotoFilterBtn">🗑️</button></div><div style="display:flex;justify-content:flex-end;margin-bottom:8px;"><button class="btn-archive" id="archivePhotosBtn">Архив старых фото</button></div><div id="palletPhotosContainer"><div class="loading">Загрузка...</div></div></div></div></div>' +
+        '<div class="admin-accordion-item"><div class="admin-accordion-header">Сотрудники</div><div class="admin-accordion-content"><div><div id="adminEmployeesContainer"><div class="loading">Загрузка...</div></div></div></div></div>' +
+        '<div class="admin-accordion-item"><div class="admin-accordion-header">Все записи</div><div class="admin-accordion-content"><div><div class="admin-filters"><select id="adminFilterEmployee" class="admin-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="adminFilterDate" class="admin-filter-date"><button class="admin-filter-btn" id="applyAdminFilterBtn">🔍</button><button class="admin-filter-clear" id="clearAdminFilterBtn">🗑️</button></div><div id="adminLogsContainer"><div class="loading">Загрузка...</div></div></div></div></div>' +
         '</div>';
 }
 
@@ -1050,6 +1097,12 @@ async function completeLogin(u) {
         await updateReportEmployeeSelect(); 
         await loadPalletPhotos(); 
         initAccordion();
+        // Дожидаемся отрисовки и замеряем высоты
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                preloadAccordionHeights();
+            });
+        });
     }
     else { 
         document.getElementById('userView').classList.add('active'); 
@@ -1064,6 +1117,11 @@ async function completeLogin(u) {
         document.getElementById('historyDateInput').value = formatDateForInput(currentHistoryDate); 
         await loadHistoryForDate(formatDateForInput(currentHistoryDate)); 
         initAccordion();
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                preloadAccordionHeights();
+            });
+        });
         showInstallPrompt(); 
     }
 }
