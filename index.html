@@ -18,17 +18,10 @@
     <style>
         * { box-sizing: border-box; margin: 0; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; }
         body { 
-            background: #eef2f6; 
-            min-height: 100vh; 
-            min-height: 100dvh; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 0.75rem; 
+            background: #eef2f6; min-height: 100vh; min-height: 100dvh; display: flex; 
+            flex-direction: column; align-items: center; padding: 0.75rem; 
             padding-top: env(safe-area-inset-top, 0.75rem);
-            -webkit-tap-highlight-color: transparent; 
-            width: 100%; 
-            transition: background 0.3s; 
+            -webkit-tap-highlight-color: transparent; width: 100%; transition: background 0.3s; 
         }
         body.dark-theme { background: #111827; }
         
@@ -151,18 +144,13 @@
         .date-nav-btn { background: #fff; border: 1px solid #dce3e9; padding: 5px 12px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; color: #374151; }
         body.dark-theme .date-nav-btn { background: #4b5563; border-color: #6b7280; color: #d1d5db; }
         
-        .history-cards {
-            display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto;
-        }
+        .history-cards { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; }
         .history-card {
             background: #f8f9fb; border-radius: 12px; padding: 10px 12px;
             border: 1px solid #e8edf2; transition: all 0.2s;
         }
         body.dark-theme .history-card { background: #2d3748; border-color: #4a5568; }
-        .history-card-header {
-            display: flex; justify-content: space-between; align-items: baseline;
-            margin-bottom: 6px; flex-wrap: wrap; gap: 6px;
-        }
+        .history-card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
         .history-time { font-size: 0.65rem; color: #6b7280; font-weight: 500; }
         body.dark-theme .history-time { color: #9ca3af; }
         .history-warehouse { font-size: 0.65rem; background: #e8edf2; padding: 2px 8px; border-radius: 20px; color: #374151; }
@@ -259,35 +247,18 @@
         .photo-modal-overlay img { max-width: 95%; max-height: 80vh; border-radius: 12px; }
         .photo-modal-close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.2); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; }
 
-        /* ============ АДМИН-ДИЗАЙН ============ */
-        .admin-panel { 
-            background: #fff; border-radius: 16px; padding: 1.25rem; margin: 12px 0; 
-            border: 1px solid #dce3e9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-        }
+        .admin-panel { background: #fff; border-radius: 16px; padding: 1.25rem; margin: 12px 0; border: 1px solid #dce3e9; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         body.dark-theme .admin-panel { background: #1f2937; border-color: #374151; box-shadow: none; }
-        
         .admin-title { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 1rem; }
         body.dark-theme .admin-title { color: #f3f4f6; }
-        
-        .admin-tabs { 
-            display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap;
-            background: #f1f5f9; padding: 4px; border-radius: 12px;
-        }
+        .admin-tabs { display: flex; gap: 4px; margin-bottom: 1rem; flex-wrap: wrap; background: #f1f5f9; padding: 4px; border-radius: 12px; }
         body.dark-theme .admin-tabs { background: #374151; }
-        .admin-tab { 
-            background: transparent; border: none; padding: 8px 16px; border-radius: 10px; 
-            font-weight: 500; cursor: pointer; font-size: 0.8rem; color: #64748b; 
-            transition: all 0.2s; flex: 1; text-align: center; white-space: nowrap;
-        }
+        .admin-tab { background: transparent; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 500; cursor: pointer; font-size: 0.8rem; color: #64748b; transition: all 0.2s; flex: 1; text-align: center; white-space: nowrap; }
         .admin-tab.active { background: #fff; color: #0f1a2e; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
         body.dark-theme .admin-tab.active { background: #1f2937; color: #f3f4f6; }
 
         .admin-logs-list { display: flex; flex-direction: column; gap: 6px; max-height: 60vh; overflow-y: auto; }
-        .admin-log-card { 
-            background: #f8fafc; border-radius: 12px; padding: 10px 14px; 
-            border: 1px solid #e2e8f0; display: grid; grid-template-columns: auto 1fr auto; 
-            gap: 10px; align-items: center; transition: all 0.2s;
-        }
+        .admin-log-card { background: #f8fafc; border-radius: 12px; padding: 10px 14px; border: 1px solid #e2e8f0; display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; transition: all 0.2s; }
         body.dark-theme .admin-log-card { background: #1f2937; border-color: #374151; }
         .admin-log-card:hover { border-color: #94a3b8; }
         .log-time { font-size: 0.7rem; color: #64748b; white-space: nowrap; min-width: 42px; text-align: center; }
@@ -297,46 +268,27 @@
         .log-body .log-action { font-size: 0.75rem; color: #334155; margin-top: 1px; }
         body.dark-theme .log-body .log-action { color: #cbd5e1; }
         .log-body .log-meta { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; display: flex; gap: 8px; flex-wrap: wrap; }
-        .log-warehouse { 
-            font-size: 0.6rem; background: #e2e8f0; padding: 2px 8px; border-radius: 12px; 
-            font-weight: 500; color: #475569; display: inline-block;
-        }
+        .log-warehouse { font-size: 0.6rem; background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-weight: 500; color: #475569; display: inline-block; }
         body.dark-theme .log-warehouse { background: #374151; color: #cbd5e1; }
 
         .admin-emp-list { display: flex; flex-direction: column; gap: 6px; }
-        .admin-emp-card {
-            background: #f8fafc; border-radius: 12px; padding: 10px 14px;
-            border: 1px solid #e2e8f0; display: flex; align-items: center; 
-            justify-content: space-between; gap: 10px; flex-wrap: wrap;
-        }
+        .admin-emp-card { background: #f8fafc; border-radius: 12px; padding: 10px 14px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
         body.dark-theme .admin-emp-card { background: #1f2937; border-color: #374151; }
         .emp-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
-        .emp-avatar { 
-            width: 36px; height: 36px; border-radius: 10px; background: #e2e8f0; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: 700; font-size: 0.85rem; color: #475569; flex-shrink: 0;
-        }
+        .emp-avatar { width: 36px; height: 36px; border-radius: 10px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: #475569; flex-shrink: 0; }
         body.dark-theme .emp-avatar { background: #374151; color: #cbd5e1; }
         .emp-name { font-weight: 600; font-size: 0.85rem; color: #0f172a; }
         body.dark-theme .emp-name { color: #f1f5f9; }
         .emp-role { font-size: 0.65rem; color: #64748b; }
         body.dark-theme .emp-role { color: #94a3b8; }
-        .emp-status { 
-            font-size: 0.65rem; padding: 3px 10px; border-radius: 12px; font-weight: 500;
-        }
+        .emp-status { font-size: 0.65rem; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
         .emp-status.active { background: #dcfce7; color: #166534; }
         body.dark-theme .emp-status.active { background: #064e3b; color: #86efac; }
         .emp-status.inactive { background: #fef2f2; color: #991b1b; }
         body.dark-theme .emp-status.inactive { background: #450a0a; color: #fca5a5; }
 
-        .report-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
-            gap: 8px; 
-        }
-        .report-card {
-            background: #f8fafc; border-radius: 12px; padding: 12px 10px; 
-            text-align: center; border: 1px solid #e2e8f0;
-        }
+        .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; }
+        .report-card { background: #f8fafc; border-radius: 12px; padding: 12px 10px; text-align: center; border: 1px solid #e2e8f0; }
         body.dark-theme .report-card { background: #1f2937; border-color: #374151; }
         .report-card .report-val { font-size: 1.4rem; font-weight: 800; color: #0f172a; }
         body.dark-theme .report-card .report-val { color: #f1f5f9; }
@@ -345,10 +297,7 @@
 
         .admin-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
         @media (max-width: 480px) { .admin-photo-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); } }
-        .admin-photo-card {
-            background: #f8fafc; border-radius: 14px; overflow: hidden; 
-            border: 1px solid #e2e8f0; padding: 10px;
-        }
+        .admin-photo-card { background: #f8fafc; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; padding: 10px; }
         body.dark-theme .admin-photo-card { background: #1f2937; border-color: #374151; }
         .admin-photo-card .photo-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px; }
         .admin-photo-card .photo-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; cursor: pointer; }
@@ -357,46 +306,19 @@
         .admin-photo-card .photo-meta strong { color: #0f172a; }
         body.dark-theme .admin-photo-card .photo-meta strong { color: #f1f5f9; }
 
-        .admin-filters { 
-            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; 
-            align-items: center; background: #f1f5f9; padding: 8px 12px; 
-            border-radius: 14px; border: 1px solid #e2e8f0; 
-        }
+        .admin-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; align-items: center; background: #f1f5f9; padding: 8px 12px; border-radius: 14px; border: 1px solid #e2e8f0; }
         body.dark-theme .admin-filters { background: #1f2937; border-color: #374151; }
-        .filter-select, .filter-input { 
-            padding: 7px 10px; border-radius: 10px; border: 1px solid #dce3e9; 
-            background: #fff; font-size: 0.75rem; color: #0f172a; outline: none;
-        }
-        body.dark-theme .filter-select, body.dark-theme .filter-input { 
-            background: #374151; border-color: #4b5563; color: #f3f4f6; 
-        }
-        .filter-btn { 
-            padding: 7px 12px; border-radius: 10px; border: none; font-weight: 600; 
-            cursor: pointer; font-size: 0.75rem; transition: all 0.2s; 
-            background: #0f1a2e; color: #fff; 
-        }
+        .filter-select, .filter-input { padding: 7px 10px; border-radius: 10px; border: 1px solid #dce3e9; background: #fff; font-size: 0.75rem; color: #0f172a; outline: none; }
+        body.dark-theme .filter-select, body.dark-theme .filter-input { background: #374151; border-color: #4b5563; color: #f3f4f6; }
+        .filter-btn { padding: 7px 12px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; background: #0f1a2e; color: #fff; }
         body.dark-theme .filter-btn { background: #2563eb; }
-        .filter-btn-clear { 
-            padding: 7px 12px; border-radius: 10px; border: 1px solid #dce3e9; 
-            font-weight: 500; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; 
-            background: #fff; color: #475569; 
-        }
+        .filter-btn-clear { padding: 7px 12px; border-radius: 10px; border: 1px solid #dce3e9; font-weight: 500; cursor: pointer; font-size: 0.75rem; transition: all 0.2s; background: #fff; color: #475569; }
         body.dark-theme .filter-btn-clear { background: #374151; border-color: #4b5563; color: #d1d5db; }
 
-        .delete-log-btn { 
-            background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; 
-            padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.65rem; 
-            transition: all 0.2s; white-space: nowrap; 
-        }
+        .delete-log-btn { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 4px 10px; border-radius: 8px; cursor: pointer; font-size: 0.65rem; transition: all 0.2s; white-space: nowrap; }
         body.dark-theme .delete-log-btn { background: #450a0a; border-color: #7f1d1d; color: #fca5a5; }
-        
-        .btn-archive { 
-            background: #dc2626; border: none; color: #fff; padding: 8px 14px; 
-            border-radius: 10px; cursor: pointer; font-size: 0.75rem; font-weight: 600; 
-            transition: all 0.2s; 
-        }
+        .btn-archive { background: #dc2626; border: none; color: #fff; padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; }
         .btn-archive:active { transform: scale(0.97); }
-        
         .loading { text-align: center; padding: 30px; color: #9ca3af; }
 
         .install-banner { display: none; background: #0f1a2e; color: #fff; text-align: center; padding: 12px 16px; border-radius: 14px; margin-bottom: 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
@@ -457,7 +379,7 @@
 <script>
 // ==================== SERVICE WORKER ====================
 if ('serviceWorker' in navigator) {
-    var swCode = "const CACHE_NAME='gqbox-warehouse-v5';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
+    var swCode = "const CACHE_NAME='gqbox-warehouse-v6';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
     var swBlob = new Blob([swCode], { type: 'application/javascript' }); var swUrl = URL.createObjectURL(swBlob);
     navigator.serviceWorker.register(swUrl).then(function() {}).catch(function() {});
     window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); window._deferredPrompt = e; showInstallPrompt(); });
@@ -471,7 +393,6 @@ window.addEventListener('appinstalled', function() { window._deferredPrompt = nu
 // ==================== FIREBASE ====================
 const firebaseConfig = { apiKey: "AIzaSyComSAJzMrarnUBATsTlNs60w6CDe2NTj0", authDomain: "warehouse-b6b75.firebaseapp.com", projectId: "warehouse-b6b75", storageBucket: "warehouse-b6b75.firebasestorage.app", messagingSenderId: "399929411326", appId: "1:399929411326:web:c3c84828ad31b8810b47af" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-// Включаем офлайн-персистентность, но не ждём её
 db.enablePersistence({ synchronizeTabs: true }).catch(function(err) {
     if (err.code === 'failed-precondition') { /* несколько вкладок — ок */ }
     else if (err.code === 'unimplemented') { /* браузер не поддерживает */ }
@@ -494,6 +415,7 @@ function formatDateForInput(d) { return d.getFullYear()+'-'+String(d.getMonth()+
 function formatDateForDisplay(s) { if(!s) return '—'; var p = s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; }
 function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, function(m) { return {'&':'&amp;','<':'&lt;','>':'&gt;'}[m]; }); }
 
+// ==================== ТЕМА ====================
 function initTheme() {
     var s = localStorage.getItem('warehouse_theme');
     var t = document.getElementById('themeToggleFixed');
@@ -502,10 +424,15 @@ function initTheme() {
     t.addEventListener('click', function() { document.body.classList.toggle('dark-theme'); localStorage.setItem('warehouse_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light'); t.textContent = document.body.classList.contains('dark-theme') ? '☀️' : '🌙'; });
 }
 
-document.addEventListener('change', function(e) { if (e.target.id === 'photoDate') { var dv = document.getElementById('dateDisplayValue'); if (dv) dv.textContent = formatDateForDisplay(e.target.value); } });
-
 // ==================== ФОТО ====================
 function compressImage(file, maxSize) { return new Promise(function(resolve, reject) { var reader = new FileReader(); reader.onload = function(e) { var img = new Image(); img.onload = function() { var canvas = document.createElement('canvas'); var ctx = canvas.getContext('2d'); var maxW = 900, maxH = 900; var w = img.width, h = img.height; if (w > maxW || h > maxH) { var ratio = Math.min(maxW/w, maxH/h); w = Math.round(w * ratio); h = Math.round(h * ratio); } canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h); var quality = 0.55; var result = canvas.toDataURL('image/jpeg', quality); while (result.length > maxSize * 1.37 && quality > 0.2) { quality -= 0.1; result = canvas.toDataURL('image/jpeg', quality); } resolve(result); }; img.onerror = reject; img.src = e.target.result; }; reader.onerror = reject; reader.readAsDataURL(file); }); }
+
+function clearAllPhotoPreviews() {
+    for (var i = 0; i < MAX_PHOTOS; i++) {
+        if (photoPreviewUrls[i]) { URL.revokeObjectURL(photoPreviewUrls[i]); photoPreviewUrls[i] = null; }
+        photoSlots[i] = null;
+    }
+}
 
 window.triggerPhotoCapture = function(si) { var input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'environment'; input.onchange = function(e) { var file = e.target.files[0]; if (!file) return; if (file.size > 20*1024*1024) { alert('Фото слишком большое.'); return; } if (photoPreviewUrls[si]) URL.revokeObjectURL(photoPreviewUrls[si]); photoSlots[si] = file; photoPreviewUrls[si] = URL.createObjectURL(file); updatePhotoSlotDisplay(si); updatePhotoCounter(); }; input.click(); };
 window.removePhotoFromSlot = function(si) { if (photoPreviewUrls[si]) URL.revokeObjectURL(photoPreviewUrls[si]); photoSlots[si] = null; photoPreviewUrls[si] = null; updatePhotoSlotDisplay(si); updatePhotoCounter(); };
@@ -519,16 +446,10 @@ window.savePhotos = async function() {
     var date = dateEl ? dateEl.value : getTodayStr(); 
     if (!city) { alert('Укажите город'); return; } 
     var ipData = []; 
-    IP_LIST.forEach(function(ip) { 
-        var qtyEl = document.getElementById('ipQty_'+ip); 
-        var qty = qtyEl ? (parseInt(qtyEl.value) || 0) : 0; 
-        if (qty > 0) ipData.push({ ip: ip, quantity: qty }); 
-    }); 
+    IP_LIST.forEach(function(ip) { var qtyEl = document.getElementById('ipQty_'+ip); var qty = qtyEl ? (parseInt(qtyEl.value) || 0) : 0; if (qty > 0) ipData.push({ ip: ip, quantity: qty }); }); 
     if (ipData.length === 0) { alert('Укажите количество коробов'); return; } 
     var filledSlots = []; 
-    for (var i = 0; i < MAX_PHOTOS; i++) { 
-        if (photoSlots[i] !== null) filledSlots.push({file: photoSlots[i], slot: i}); 
-    } 
+    for (var i = 0; i < MAX_PHOTOS; i++) { if (photoSlots[i] !== null) filledSlots.push({file: photoSlots[i], slot: i}); } 
     if (filledSlots.length === 0) { alert('Сделайте хотя бы одно фото'); return; } 
     btn.disabled = true; btn.textContent = '⏳ Сжатие...'; if (msg) msg.innerHTML = ''; 
     var totalQty = ipData.reduce(function(s, item) { return s + item.quantity; }, 0); 
@@ -536,8 +457,7 @@ window.savePhotos = async function() {
     try { 
         var photosData = []; 
         for (var j = 0; j < filledSlots.length; j++) { 
-            var item = filledSlots[j]; 
-            btn.textContent = '⏳ Фото '+(j+1)+'/'+filledSlots.length; 
+            var item = filledSlots[j]; btn.textContent = '⏳ Фото '+(j+1)+'/'+filledSlots.length; 
             var base64 = await compressImage(item.file, MAX_PHOTO_SIZE); 
             photosData.push({ slot: item.slot + 1, data: base64 }); 
         } 
@@ -549,10 +469,8 @@ window.savePhotos = async function() {
             timestamp: firebase.firestore.FieldValue.serverTimestamp() 
         }); 
         await addLog('Фото', 'Сохранил паллету', 'г.'+city+', '+ipDisplay+', фото: '+photosData.length+' шт.', totalQty);
-        for (var k = 0; k < MAX_PHOTOS; k++) { 
-            if (photoPreviewUrls[k]) URL.revokeObjectURL(photoPreviewUrls[k]); 
-            photoSlots[k] = null; photoPreviewUrls[k] = null; updatePhotoSlotDisplay(k); 
-        } 
+        clearAllPhotoPreviews();
+        for (var k = 0; k < MAX_PHOTOS; k++) updatePhotoSlotDisplay(k); 
         updatePhotoCounter(); if (cityEl) cityEl.value = ''; 
         IP_LIST.forEach(function(ip) { var qtyEl = document.getElementById('ipQty_'+ip); if (qtyEl) qtyEl.value = ''; }); 
         if (dateEl) { dateEl.value = getTodayStr(); } 
@@ -595,8 +513,7 @@ window.deletePallet = async function(pid) { if (!confirm('Удалить пал�
 
 async function archiveOldPhotos(monthsOld) { var cutoffDate = new Date(); cutoffDate.setMonth(cutoffDate.getMonth() - monthsOld); var cutoffStr = cutoffDate.toISOString().slice(0,10); var countSnap = await db.collection('pallet_photos').where('date', '<=', cutoffStr).get(); var count = countSnap.size; if (count === 0) { alert('✅ Нет фото старше ' + monthsOld + ' мес.'); return; } var monthNames = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']; var cutoffDisplay = cutoffDate.getDate() + ' ' + monthNames[cutoffDate.getMonth()] + ' ' + cutoffDate.getFullYear(); if (!confirm('Найдено ' + count + ' паллет старше ' + cutoffDisplay + '.\n\nУдалить?')) return; var deletedCount = 0; for (var i = 0; i < countSnap.docs.length; i += 100) { var batch = db.batch(); var chunk = countSnap.docs.slice(i, i + 100); chunk.forEach(function(doc) { batch.delete(doc.ref); }); await batch.commit(); deletedCount += chunk.length; } alert('✅ Удалено ' + deletedCount + ' паллет.'); await loadPalletPhotos(); await loadAdminEmployees(); }
 
-// ==================== СОТРУДНИКИ ====================
-// КЭШ сотрудников — чтобы не дёргать базу при каждом чихе
+// ==================== СОТРУДНИКИ (с кэшем) ====================
 var _employeesCache = null;
 var _employeesCacheTime = 0;
 
@@ -617,7 +534,6 @@ async function createInitialEmployees() {
 
 async function getEmployees(forceRefresh) { 
     var now = Date.now();
-    // Кэш на 2 минуты, если не форс-рефреш
     if (!forceRefresh && _employeesCache && (now - _employeesCacheTime) < 120000) {
         employees = _employeesCache;
         return _employeesCache;
@@ -629,14 +545,11 @@ async function getEmployees(forceRefresh) {
         var s2 = await db.collection('employees').orderBy('name').get(); 
         e = s2.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; }); 
     } 
-    _employeesCache = e;
-    _employeesCacheTime = now;
-    employees = e;
-    return e; 
+    _employeesCache = e; _employeesCacheTime = now; employees = e; return e; 
 }
 
 async function loginUser(l, p) { 
-    await getEmployees(); // используем кэш
+    await getEmployees();
     var s = await db.collection('employees').where('login', '==', l).where('password', '==', p).get(); 
     if (s.empty) return null; 
     var d = s.docs[0]; 
@@ -648,14 +561,12 @@ async function registerUser(l, p, n) {
     var s = await db.collection('employees').where('login', '==', l).get(); 
     if (!s.empty) return { success: false, error: 'Логин уже существует' }; 
     await db.collection('employees').add({ login: l.trim(), password: p, name: n.trim(), role: 'user', active: true }); 
-    _employeesCache = null; // сбрасываем кэш
-    return { success: true }; 
+    _employeesCache = null; return { success: true }; 
 }
 
 // ==================== ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ====================
 async function loadUserData() { 
     if (!currentUser) return; 
-    // Загружаем totals только для этого юзера
     var s = await db.collection('user_totals').where('userId', '==', currentUser.id).get(); 
     s.docs.forEach(function(d) { 
         var dt = d.data(); 
@@ -686,17 +597,18 @@ async function markAttendance(w) {
     if (!s.empty) { alert('Уже отмечены на '+w); return; } 
     await db.collection('attendance').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, date: t, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); 
     await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: 'Работал на складе', details: 'Присутствие на складе '+w, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); 
+    _historyCache = {}; // сбрасываем кэш истории
     await checkTodayAttendance(); 
     if (formatDateForInput(currentHistoryDate) === t) await loadHistoryForDate(t); 
     if (isAdmin) await loadAdminLogs(); 
 }
 
+// addLog — теперь с await для надёжности
 async function addLog(w, a, d, q) { 
     if (!currentUser) return; 
     var t = getTodayStr(); 
-    // Запись в лог — фоновая, не ждём
-    db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q || null, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }).catch(function(){});
-    // Обновляем UI сразу
+    await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q || null, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); 
+    _historyCache = {}; // сбрасываем кэш истории
     if (formatDateForInput(currentHistoryDate) === t) loadHistoryForDate(t); 
     if (isAdmin) loadAdminLogs(); 
 }
@@ -704,14 +616,15 @@ async function addLog(w, a, d, q) {
 async function updateTotal(ty, inc) { 
     if (!currentUser) return; 
     var dId = currentUser.id+'_'+ty; 
-    // Фоновая транзакция — не блокируем UI
-    db.runTransaction(async function(t) { 
-        var r = db.collection('user_totals').doc(dId); 
-        var d = await t.get(r); 
-        var nt = inc; 
-        if (d.exists) nt = (d.data().total || 0) + inc; 
-        t.set(r, { userId: currentUser.id, userName: currentUser.name, type: ty, total: nt, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); 
-    }).catch(function(){}); 
+    try {
+        await db.runTransaction(async function(t) { 
+            var r = db.collection('user_totals').doc(dId); 
+            var d = await t.get(r); 
+            var nt = inc; 
+            if (d.exists) nt = (d.data().total || 0) + inc; 
+            t.set(r, { userId: currentUser.id, userName: currentUser.name, type: ty, total: nt, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); 
+        }); 
+    } catch(e) { /* тихо */ }
     if (ty === 'pushkino_accepted') counters.pushkinoAcceptedTotal += inc; 
     if (ty === 'pushkino_shipped') counters.pushkinoShippedTotal += inc; 
     if (ty === 'pushkino_unloaded') counters.pushkinoUnloadedTotal += inc; 
@@ -728,24 +641,38 @@ function updateAllCounters() {
     }); 
 }
 
+// ==================== КЭШ ИСТОРИИ ====================
+var _historyCache = {};
+
 async function loadHistoryForDate(ds) { 
     if (!currentUser) return; 
     var container = document.getElementById('myHistoryContainer'); 
     if(!container) return; 
+    
+    // Проверяем кэш
+    var cacheKey = currentUser.id + '_' + ds;
+    if (_historyCache[cacheKey]) {
+        container.innerHTML = _historyCache[cacheKey];
+        return;
+    }
+    
     container.innerHTML = '<div class="loading">Загрузка...</div>'; 
     var s = await db.collection('work_logs').where('userId', '==', currentUser.id).where('date', '==', ds).get(); 
+    var html;
     if (s.empty) { 
-        container.innerHTML = '<div class="empty-history">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</div>'; 
-        return; 
-    } 
-    var logs = s.docs.map(function(d) { return d.data(); }).sort(function(a,b) { return (b.timestamp?.toDate()||0) - (a.timestamp?.toDate()||0); }); 
-    var html = '<div class="history-cards">'; 
-    logs.forEach(function(l) { 
-        var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; 
-        var warehouse = l.warehouse === 'Фото' ? 'Фото' : (l.warehouse || '—'); 
-        html += '<div class="history-card"><div class="history-card-header"><span class="history-time">'+time+'</span><span class="history-warehouse">'+warehouse+'</span></div><div class="history-action">'+(l.action || '—')+'</div><div class="history-details">'+(l.details || '—')+'</div></div>'; 
-    }); 
-    html += '</div>'; container.innerHTML = html; 
+        html = '<div class="empty-history">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</div>'; 
+    } else {
+        var logs = s.docs.map(function(d) { return d.data(); }).sort(function(a,b) { return (b.timestamp?.toDate()||0) - (a.timestamp?.toDate()||0); }); 
+        html = '<div class="history-cards">'; 
+        logs.forEach(function(l) { 
+            var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; 
+            var warehouse = l.warehouse === 'Фото' ? 'Фото' : (l.warehouse || '—'); 
+            html += '<div class="history-card"><div class="history-card-header"><span class="history-time">'+time+'</span><span class="history-warehouse">'+warehouse+'</span></div><div class="history-action">'+(l.action || '—')+'</div><div class="history-details">'+(l.details || '—')+'</div></div>'; 
+        }); 
+        html += '</div>'; 
+    }
+    _historyCache[cacheKey] = html;
+    container.innerHTML = html; 
 }
 
 // ==================== АДМИНКА ====================
@@ -772,15 +699,12 @@ async function loadAdminLogs() {
     html += '</div>'; container.innerHTML = html; 
     container.querySelectorAll('.delete-log-btn').forEach(function(b) { 
         b.addEventListener('click', async function() { 
-            if (confirm('Удалить?')) { 
-                await db.collection('work_logs').doc(b.dataset.id).delete(); 
-                await loadAdminLogs(); 
-            } 
+            if (confirm('Удалить?')) { await db.collection('work_logs').doc(b.dataset.id).delete(); await loadAdminLogs(); } 
         }); 
     }); 
 }
 
-// Оптимизированная загрузка сотрудников — без последовательных запросов
+// Оптимизированная загрузка сотрудников — ОБЩИЕ запросы вместо N индивидуальных
 async function loadAdminEmployees() { 
     if (!isAdmin) return; 
     var container = document.getElementById('adminEmployeesContainer'); 
@@ -788,25 +712,24 @@ async function loadAdminEmployees() {
     container.innerHTML = '<div class="loading">Загрузка...</div>'; 
     var s = await db.collection('employees').orderBy('name').get(); 
     var allEmps = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role }; }); 
+    var empIds = allEmps.map(function(e) { return e.id; });
     
-    // ОДИН запрос на все логи, фото и посещаемость — агрегация по userId
-    // Вместо циклов делаем массовые запросы с limit(1) в параллель
-    var statsMap = {};
-    var promises = allEmps.map(async function(emp) {
-        var [ls, ps, ats] = await Promise.all([
-            db.collection('work_logs').where('userId', '==', emp.id).limit(1).get(),
-            db.collection('pallet_photos').where('userId', '==', emp.id).limit(1).get(),
-            db.collection('attendance').where('userId', '==', emp.id).limit(1).get()
-        ]);
-        statsMap[emp.id] = !ls.empty || !ps.empty || !ats.empty;
-    });
-    await Promise.all(promises); // параллельно все проверки
+    // ТРИ ОБЩИХ ЗАПРОСА вместо N*3
+    var [workLogsSnap, photosSnap, attendanceSnap] = await Promise.all([
+        db.collection('work_logs').where('userId', 'in', empIds.length > 0 ? empIds : ['_none_']).limit(empIds.length).get(),
+        db.collection('pallet_photos').where('userId', 'in', empIds.length > 0 ? empIds : ['_none_']).limit(empIds.length).get(),
+        db.collection('attendance').where('userId', 'in', empIds.length > 0 ? empIds : ['_none_']).limit(empIds.length).get()
+    ]);
+    
+    var workSet = new Set(); workLogsSnap.docs.forEach(function(d) { workSet.add(d.data().userId); });
+    var photoSet = new Set(); photosSnap.docs.forEach(function(d) { photoSet.add(d.data().userId); });
+    var attendSet = new Set(); attendanceSnap.docs.forEach(function(d) { attendSet.add(d.data().userId); });
     
     var html = '<div class="admin-emp-list">'; 
     s.docs.forEach(function(d) { 
         var e = d.data(); 
         var rt = e.role==='superadmin'?'⭐ Суперадмин':(e.role==='admin'?'👑 Админ':'👤 Сотрудник'); 
-        var active = statsMap[d.id]; 
+        var active = workSet.has(d.id) || photoSet.has(d.id) || attendSet.has(d.id); 
         var initials = e.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2); 
         html += '<div class="admin-emp-card"><div class="emp-info"><div class="emp-avatar">'+initials+'</div><div><div class="emp-name">'+escapeHtml(e.name)+'</div><div class="emp-role">'+rt+'</div></div></div><span class="emp-status '+(active?'active':'inactive')+'">'+(active?'✅ Активен':'❌ Без записей')+'</span>'+(e.role!=='superadmin'?'<button class="delete-log-btn" data-id="'+d.id+'" data-name="'+escapeHtml(e.name)+'" data-role="'+e.role+'">🗑️</button>':'<span style="font-size:0.65rem;color:#94a3b8;">—</span>')+'</div>'; 
     }); 
@@ -824,10 +747,8 @@ async function loadAdminEmployees() {
                 ba.delete(db.collection('employees').doc(id)); 
                 await ba.commit(); 
                 _employeesCache = null;
-                await loadAdminEmployees(); 
-                await getEmployees(true); 
-                updateFilterEmployeeSelect(); 
-                updatePhotoFilterEmployees(); 
+                await loadAdminEmployees(); await getEmployees(true); 
+                updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
             } 
         }); 
     }); 
@@ -836,18 +757,22 @@ async function loadAdminEmployees() {
 async function cleanInactiveEmployees() { 
     if (!confirm('Удалить всех сотрудников без записей?')) return; 
     var allEmps = await getEmployees(); 
+    var empIds = allEmps.map(function(e) { return e.id; });
+    var [workLogsSnap, photosSnap, attendanceSnap] = await Promise.all([
+        db.collection('work_logs').where('userId', 'in', empIds.length > 0 ? empIds : ['_none_']).limit(empIds.length).get(),
+        db.collection('pallet_photos').where('userId', 'in', empIds.length > 0 ? empIds : ['_none_']).limit(empIds.length).get(),
+        db.collection('attendance').where('userId', 'in', empIds.length > 0 ? empIds : ['_none_']).limit(empIds.length).get()
+    ]);
+    var workSet = new Set(); workLogsSnap.docs.forEach(function(d) { workSet.add(d.data().userId); });
+    var photoSet = new Set(); photosSnap.docs.forEach(function(d) { photoSet.add(d.data().userId); });
+    var attendSet = new Set(); attendanceSnap.docs.forEach(function(d) { attendSet.add(d.data().userId); });
+    
     var inactiveList = []; 
-    // Параллельная проверка
-    var promises = allEmps.map(async function(emp) {
+    allEmps.forEach(function(emp) {
         if (emp.role === 'admin' || emp.role === 'superadmin' || emp.id === currentUser.id) return;
-        var [ls, ps, ats] = await Promise.all([
-            db.collection('work_logs').where('userId', '==', emp.id).limit(1).get(),
-            db.collection('pallet_photos').where('userId', '==', emp.id).limit(1).get(),
-            db.collection('attendance').where('userId', '==', emp.id).limit(1).get()
-        ]);
-        if (ls.empty && ps.empty && ats.empty) inactiveList.push({ id: emp.id, name: emp.name, login: emp.login });
+        if (!workSet.has(emp.id) && !photoSet.has(emp.id) && !attendSet.has(emp.id)) 
+            inactiveList.push({ id: emp.id, name: emp.name, login: emp.login });
     });
-    await Promise.all(promises);
     
     if (inactiveList.length === 0) { alert('✅ Все активны!'); return; } 
     var nameList = inactiveList.map(function(e) { return e.name + ' (' + e.login + ')'; }).join('\n'); 
@@ -857,47 +782,31 @@ async function cleanInactiveEmployees() {
     await batch.commit(); 
     alert('✅ Удалено '+inactiveList.length+'!'); 
     _employeesCache = null;
-    await getEmployees(true); 
-    await loadAdminEmployees(); 
-    updateFilterEmployeeSelect(); 
-    updatePhotoFilterEmployees(); 
+    await getEmployees(true); await loadAdminEmployees(); 
+    updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
 }
 
 async function addEmployee(n) { 
     if (!n) return; 
     await db.collection('employees').add({ login: n.toLowerCase().replace(/\s/g,''), password: '123', name: n.trim(), role: 'user', active: true }); 
-    _employeesCache = null;
-    await getEmployees(true); 
-    await loadAdminEmployees(); 
-    updateFilterEmployeeSelect(); 
-    updatePhotoFilterEmployees(); 
+    _employeesCache = null; await getEmployees(true); await loadAdminEmployees(); 
+    updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
 }
 
 function updateFilterEmployeeSelect() { 
-    var s = document.getElementById('adminFilterEmployee'); 
-    if (!s) return; 
+    var s = document.getElementById('adminFilterEmployee'); if (!s) return; 
     s.innerHTML = '<option value="">Все сотрудники</option>'; 
-    employees.filter(function(e) { return e.active !== false; }).forEach(function(e) { 
-        var o = document.createElement('option'); o.value = e.id; o.textContent = e.name; s.appendChild(o); 
-    }); 
+    employees.filter(function(e) { return e.active !== false; }).forEach(function(e) { var o = document.createElement('option'); o.value = e.id; o.textContent = e.name; s.appendChild(o); }); 
 }
-
 function updatePhotoFilterEmployees() { 
-    var s = document.getElementById('photoFilterEmployee'); 
-    if (!s) return; 
+    var s = document.getElementById('photoFilterEmployee'); if (!s) return; 
     s.innerHTML = '<option value="">Все сотрудники</option>'; 
-    employees.filter(function(e) { return e.active !== false; }).forEach(function(e) { 
-        var o = document.createElement('option'); o.value = e.id; o.textContent = e.name; s.appendChild(o); 
-    }); 
+    employees.filter(function(e) { return e.active !== false; }).forEach(function(e) { var o = document.createElement('option'); o.value = e.id; o.textContent = e.name; s.appendChild(o); }); 
 }
-
 async function updateReportEmployeeSelect() { 
-    var s = document.getElementById('reportEmployeeSelect'); 
-    if(!s) return; 
+    var s = document.getElementById('reportEmployeeSelect'); if(!s) return; 
     s.innerHTML = '<option value="">Все сотрудники</option>'; 
-    employees.filter(function(e) { return e.active; }).forEach(function(e) { 
-        var o = document.createElement('option'); o.value = e.id; o.textContent = e.name; s.appendChild(o); 
-    }); 
+    employees.filter(function(e) { return e.active; }).forEach(function(e) { var o = document.createElement('option'); o.value = e.id; o.textContent = e.name; s.appendChild(o); }); 
 }
 
 async function generateAdminReport() { 
@@ -905,8 +814,7 @@ async function generateAdminReport() {
     var start = document.getElementById('reportStartDate')?.value; 
     var end = document.getElementById('reportEndDate')?.value; 
     if (!start || !end) { alert('Выберите даты'); return; } 
-    var container = document.getElementById('adminReportResult'); 
-    if(!container) return; 
+    var container = document.getElementById('adminReportResult'); if(!container) return; 
     container.innerHTML = '<div style="text-align:center;padding:20px;">Загрузка...</div>'; 
     var q = db.collection('work_logs').where('date', '>=', start).where('date', '<=', end); 
     if (eid) q = q.where('userId', '==', eid); 
@@ -943,8 +851,7 @@ function initAccordion() {
     document.querySelectorAll('.accordion-header').forEach(header => {
         header.addEventListener('click', function(e) {
             e.stopPropagation();
-            const item = this.parentElement;
-            item.classList.toggle('open');
+            this.parentElement.classList.toggle('open');
         });
     });
 }
@@ -1000,7 +907,6 @@ async function renderAdminPanel() {
     '</div>';
 }
 
-// ==================== COMPLETE LOGIN ====================
 async function completeLogin(u) {
     currentUser = u; isAdmin = (u.role === 'admin' || u.role === 'superadmin'); isSuperAdmin = (u.role === 'superadmin');
     document.getElementById('userName').textContent = u.name;
@@ -1010,6 +916,7 @@ async function completeLogin(u) {
     else { document.getElementById('adminTag').style.display = 'none'; document.getElementById('superadminTag').style.display = 'none'; }
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashboard').classList.add('active');
+    _historyCache = {}; // сбрасываем кэш истории при входе
     
     if (isAdmin) { 
         document.getElementById('userView').classList.remove('active'); 
@@ -1019,35 +926,25 @@ async function completeLogin(u) {
         document.getElementById('adminFilterDate').value = getTodayStr(); 
         await updateFilterEmployeeSelect(); 
         await updatePhotoFilterEmployees(); 
-        // Запускаем загрузки параллельно
         Promise.all([
-            loadAdminLogs(),
-            loadAdminEmployees(),
-            updateReportEmployeeSelect(),
-            loadPalletPhotos()
+            loadAdminLogs(), loadAdminEmployees(), updateReportEmployeeSelect(), loadPalletPhotos()
         ]).catch(function(){});
     }
     else { 
         document.getElementById('userView').classList.add('active'); 
         document.getElementById('adminView').classList.remove('active'); 
         document.getElementById('warehouseSwitchBar').style.display = 'flex'; 
+        clearAllPhotoPreviews();
         document.getElementById('userView').innerHTML = await renderUserPanel(); 
-        photoSlots = [null,null,null,null]; 
-        photoPreviewUrls = [null,null,null,null]; 
-        // Запускаем загрузки параллельно
-        Promise.all([
-            loadUserData(),
-            checkTodayAttendance()
-        ]).catch(function(){});
+        Promise.all([loadUserData(), checkTodayAttendance()]).catch(function(){});
         currentHistoryDate = new Date(); 
         document.getElementById('historyDateInput').value = formatDateForInput(currentHistoryDate); 
-        loadHistoryForDate(formatDateForInput(currentHistoryDate)); // не ждём
+        loadHistoryForDate(formatDateForInput(currentHistoryDate)); 
         initAccordion();
         showInstallPrompt(); 
     }
 }
 
-// ==================== РЕНДЕР ПОЛЬЗОВАТЕЛЬСКОЙ ПАНЕЛИ ====================
 async function renderUserPanel() {
     var slotsHtml = '';
     for (var i = 0; i < MAX_PHOTOS; i++) { slotsHtml += '<div class="photo-slot" id="photoSlot'+i+'" onclick="window.triggerPhotoCapture('+i+')"><span class="slot-number">'+(i+1)+'</span></div>'; }
@@ -1057,51 +954,31 @@ async function renderUserPanel() {
     var todayStr = getTodayStr(), todayDisplay = formatDateForDisplay(todayStr);
     
     var moscowAccordions = `
-        <div class="accordion-item" id="accordionReceive">
-            <div class="accordion-header"><h3><span class="accordion-icon">▶</span> Принял коробов</h3></div>
-            <div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="moscowReceived">0</span></div><div class="manual-input-row"><input type="number" id="moscowReceivedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowReceived" data-manual="moscowReceivedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowReceived" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowReceived" data-delta="1">+</button></div><button class="btn-ok green" data-action="receive">ОК</button><button class="reset-btn" data-reset="moscowReceived">↺ сброс</button></div></div></div>
-        </div>
-        <div class="accordion-item" id="accordionCollect">
-            <div class="accordion-header"><h3><span class="accordion-icon">▶</span> Собрал паллет</h3></div>
-            <div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowCollected">0</span></div><div class="manual-input-row"><input type="number" id="moscowCollectedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowCollected" data-manual="moscowCollectedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button></div><button class="btn-ok" data-action="collect">ОК</button><button class="reset-btn" data-reset="moscowCollected">↺ сброс</button></div></div></div>
-        </div>
-        <div class="accordion-item" id="accordionShip">
-            <div class="accordion-header"><h3><span class="accordion-icon">▶</span> Отгрузил паллет</h3></div>
-            <div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowShipped">0</span></div><div class="manual-input-row"><input type="number" id="moscowShippedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowShipped" data-manual="moscowShippedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="ship">ОК</button><button class="reset-btn" data-reset="moscowShipped">↺ сброс</button></div></div></div>
-        </div>
-        <div class="accordion-item" id="accordionLay">
-            <div class="accordion-header"><h3><span class="accordion-icon">▶</span> Выкладка товара</h3></div>
-            <div class="accordion-content"><div><div class="op-card"><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Последний: <span id="moscowLastArticle">—</span></div></div></div></div>
-        </div>
-        <div class="accordion-item" id="accordionInvoice">
-            <div class="accordion-header"><h3><span class="accordion-icon">▶</span> Сборка по накладной</h3></div>
-            <div class="accordion-content"><div><div class="op-card"><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div></div></div>
-        </div>
+        <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">▶</span> Принял коробов</h3></div><div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="moscowReceived">0</span></div><div class="manual-input-row"><input type="number" id="moscowReceivedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowReceived" data-manual="moscowReceivedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowReceived" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowReceived" data-delta="1">+</button></div><button class="btn-ok green" data-action="receive">ОК</button><button class="reset-btn" data-reset="moscowReceived">↺ сброс</button></div></div></div></div>
+        <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">▶</span> Собрал паллет</h3></div><div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowCollected">0</span></div><div class="manual-input-row"><input type="number" id="moscowCollectedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowCollected" data-manual="moscowCollectedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowCollected" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowCollected" data-delta="1">+</button></div><button class="btn-ok" data-action="collect">ОК</button><button class="reset-btn" data-reset="moscowCollected">↺ сброс</button></div></div></div></div>
+        <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">▶</span> Отгрузил паллет</h3></div><div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>палл.</span><span class="counter-value" id="moscowShipped">0</span></div><div class="manual-input-row"><input type="number" id="moscowShippedManual" class="input-field" placeholder="Введите" min="0"><button class="btn-set" data-target="moscowShipped" data-manual="moscowShippedManual">Уст.</button></div><div class="adjust-buttons"><button class="btn-adjust" data-target="moscowShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="moscowShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="ship">ОК</button><button class="reset-btn" data-reset="moscowShipped">↺ сброс</button></div></div></div></div>
+        <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">▶</span> Выкладка товара</h3></div><div class="accordion-content"><div><div class="op-card"><input type="text" id="moscowArticle" class="input-field" placeholder="Артикул"><input type="number" id="moscowQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok blue" data-action="lay">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Последний: <span id="moscowLastArticle">—</span></div></div></div></div></div>
+        <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">▶</span> Сборка по накладной</h3></div><div class="accordion-content"><div><div class="op-card"><input type="text" id="moscowInvoiceNumber" class="input-field" placeholder="Накладная"><input type="number" id="moscowInvoiceQuantity" class="input-field" placeholder="Кол-во" min="1"><button class="btn-ok purple" data-action="invoice">ОК</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="moscowInvoiceTotal">0</span> шт.</div></div></div></div></div>
     `;
     
     var pushkinoAccordions = `
-        <div class="accordion-item" id="accordionAccept">
-            <div class="accordion-header"><h3><span class="accordion-icon">▶</span> Принял с осн. склада</h3></div>
-            <div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoAccepted">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="1">+</button></div><button class="btn-ok" data-action="accept">ОК</button><button class="reset-btn" data-reset="pushkinoAccepted">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoAcceptedTotal">0</span> кор.</div></div></div></div>
-        </div>
-        <div class="accordion-item" id="accordionShipPush">
-            <div class="accordion-header"><h3><span class="accordion-icon">▶</span> Отгрузил на осн.</h3></div>
-            <div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="shipPushkino">ОК</button><button class="reset-btn" data-reset="pushkinoShipped">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoShippedTotal">0</span> кор.</div></div></div></div>
-        </div>
-        <div class="accordion-item" id="accordionUnload">
-            <div class="accordion-header"><h3><span class="accordion-icon">▶</span> Выгрузка фуры</h3></div>
-            <div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoUnloaded">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="1">+</button></div><button class="btn-ok blue" data-action="unload">ОК</button><button class="reset-btn" data-reset="pushkinoUnloaded">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoUnloadedTotal">0</span> кор.</div></div></div></div>
-        </div>
-        <div class="accordion-item" id="accordionRework">
-            <div class="accordion-header"><h3><span class="accordion-icon">▶</span> Перебрал паллеты</h3></div>
-            <div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoReworked">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoReworked" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoReworked" data-delta="1">+</button></div><button class="btn-ok teal" data-action="rework">ОК</button><button class="reset-btn" data-reset="pushkinoReworked">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoReworkedTotal">0</span> кор.</div></div></div></div>
-        </div>
+        <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">▶</span> Принял с осн. склада</h3></div><div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoAccepted">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoAccepted" data-delta="1">+</button></div><button class="btn-ok" data-action="accept">ОК</button><button class="reset-btn" data-reset="pushkinoAccepted">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoAcceptedTotal">0</span> кор.</div></div></div></div></div>
+        <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">▶</span> Отгрузил на осн.</h3></div><div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoShipped">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoShipped" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoShipped" data-delta="1">+</button></div><button class="btn-ok orange" data-action="shipPushkino">ОК</button><button class="reset-btn" data-reset="pushkinoShipped">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoShippedTotal">0</span> кор.</div></div></div></div></div>
+        <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">▶</span> Выгрузка фуры</h3></div><div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoUnloaded">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoUnloaded" data-delta="1">+</button></div><button class="btn-ok blue" data-action="unload">ОК</button><button class="reset-btn" data-reset="pushkinoUnloaded">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoUnloadedTotal">0</span> кор.</div></div></div></div></div>
+        <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">▶</span> Перебрал паллеты</h3></div><div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoReworked">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoReworked" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoReworked" data-delta="1">+</button></div><button class="btn-ok teal" data-action="rework">ОК</button><button class="reset-btn" data-reset="pushkinoReworked">↺ сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoReworkedTotal">0</span> кор.</div></div></div></div></div>
     `;
     
-    return '<div class="warehouse-container active" id="moscowContainer"><div class="work-day-card"><div><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="moscowWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" id="moscowWorkBtn">Отметить</button></div></div>' + moscowAccordions + '<div class="photo-card"><div class="photo-title">Фото паллет (до 4 фото)</div><div class="photo-slots">'+slotsHtml+'</div><div class="photo-counter" id="photoCounter">Заполнено: 0 / '+MAX_PHOTOS+'</div><div class="photo-form-row"><div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" style="margin-bottom:0;"></div><div class="date-picker-wrap"><label class="date-picker-label" for="photoDate">📅 Дата</label><input type="date" id="photoDate" class="date-picker-input" value="'+todayStr+'"><div class="date-value" id="dateDisplayValue">'+todayDisplay+'</div></div></div>'+ipRowsHtml+'<button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">💾 Сохранить паллету</button><div id="photoMsg"></div></div></div><div class="warehouse-container" id="pushkinoContainer"><div class="work-day-card"><div><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="pushkinoWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" id="pushkinoWorkBtn">Отметить</button></div></div>' + pushkinoAccordions + '</div><div class="history-section"><div class="history-header"><h3>Мои записи</h3><div class="date-selector"><div class="date-nav"><button class="date-nav-btn" id="prevDayBtn">←</button><button class="date-nav-btn" id="nextDayBtn">→</button></div><input type="date" id="historyDateInput"><button class="date-nav-btn" id="todayHistoryBtn">Сегодня</button></div></div><div id="myHistoryContainer" class="history-cards"><div class="loading">Выберите дату</div></div></div>';
+    return '<div class="warehouse-container active" id="moscowContainer"><div class="work-day-card"><div><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="moscowWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" data-action="markAttendance" data-warehouse="Москва">Отметить</button></div></div>' + moscowAccordions + '<div class="photo-card"><div class="photo-title">Фото паллет (до 4 фото)</div><div class="photo-slots">'+slotsHtml+'</div><div class="photo-counter" id="photoCounter">Заполнено: 0 / '+MAX_PHOTOS+'</div><div class="photo-form-row"><div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" style="margin-bottom:0;"></div><div class="date-picker-wrap"><label class="date-picker-label" for="photoDate">📅 Дата</label><input type="date" id="photoDate" class="date-picker-input" value="'+todayStr+'"><div class="date-value" id="dateDisplayValue">'+todayDisplay+'</div></div></div>'+ipRowsHtml+'<button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">💾 Сохранить паллету</button><div id="photoMsg"></div></div></div><div class="warehouse-container" id="pushkinoContainer"><div class="work-day-card"><div><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="pushkinoWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" data-action="markAttendance" data-warehouse="Пушкино">Отметить</button></div></div>' + pushkinoAccordions + '</div><div class="history-section"><div class="history-header"><h3>Мои записи</h3><div class="date-selector"><div class="date-nav"><button class="date-nav-btn" data-action="prevDay">←</button><button class="date-nav-btn" data-action="nextDay">→</button></div><input type="date" id="historyDateInput"><button class="date-nav-btn" data-action="todayHistory">Сегодня</button></div></div><div id="myHistoryContainer" class="history-cards"><div class="loading">Выберите дату</div></div></div>';
 }
 
-function logout() { currentUser = null; isAdmin = false; isSuperAdmin = false; for (var i=0; i<MAX_PHOTOS; i++) { if(photoPreviewUrls[i]) URL.revokeObjectURL(photoPreviewUrls[i]); } photoSlots = [null,null,null,null]; photoPreviewUrls = [null,null,null,null]; _employeesCache = null; clearSession(); document.getElementById('loginScreen').style.display = 'block'; document.getElementById('dashboard').classList.remove('active'); }
+function logout() { 
+    currentUser = null; isAdmin = false; isSuperAdmin = false; 
+    clearAllPhotoPreviews();
+    _employeesCache = null; _historyCache = {};
+    clearSession(); 
+    document.getElementById('loginScreen').style.display = 'block'; 
+    document.getElementById('dashboard').classList.remove('active'); 
+}
 
 function attachLoginEvents() {
     var dl = async function() { 
@@ -1144,38 +1021,77 @@ async function handleAction(a) {
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 async function init() {
     initTheme();
-    
-    // Загружаем сотрудников в фоне, не блокируем UI
     getEmployees().catch(function(){});
-
+    
     var session = getSession();
     if (session) { 
-        try { 
-            await completeLogin(session); 
-        } catch(e) { 
-            clearSession(); 
-            attachLoginEvents(); 
-            document.getElementById('loginScreen').style.display = 'block';
-        } 
-    } else { 
-        attachLoginEvents(); 
-    }
+        try { await completeLogin(session); } 
+        catch(e) { clearSession(); attachLoginEvents(); document.getElementById('loginScreen').style.display = 'block'; } 
+    } else { attachLoginEvents(); }
     
-    // Все обработчики событий на document — делегирование
+    // ===== ЕДИНЫЙ ДЕЛЕГИРОВАННЫЙ ОБРАБОТЧИК НА ВСЁ =====
     document.addEventListener('click', function(e) { 
         var t = e.target; 
-        if (t.classList.contains('btn-set')) { var tg=t.dataset.target, mi=t.dataset.manual, m=document.getElementById(mi); if(m){var v=parseInt(m.value); counters[tg]=(!isNaN(v)&&v>=0)?v:0; m.value=''; updateAllCounters(); } } 
-        if (t.classList.contains('btn-adjust')) { var tg=t.dataset.target, d=parseInt(t.dataset.delta); counters[tg]=Math.max(0,(counters[tg]||0)+d); updateAllCounters(); } 
+        
+        // Аккордеон
+        if (t.closest('.accordion-header')) {
+            t.closest('.accordion-item').classList.toggle('open');
+            return;
+        }
+        
+        // Кнопки установки значения
+        if (t.classList.contains('btn-set')) { 
+            var tg=t.dataset.target, mi=t.dataset.manual, m=document.getElementById(mi); 
+            if(m){var v=parseInt(m.value); counters[tg]=(!isNaN(v)&&v>=0)?v:0; m.value=''; updateAllCounters(); } 
+        } 
+        // Кнопки +/-
+        if (t.classList.contains('btn-adjust')) { 
+            var tg=t.dataset.target, d=parseInt(t.dataset.delta); 
+            counters[tg]=Math.max(0,(counters[tg]||0)+d); updateAllCounters(); 
+        } 
+        // Кнопки сброса
         if (t.hasAttribute('data-reset')) { counters[t.dataset.reset]=0; updateAllCounters(); } 
-        if (t.hasAttribute('data-action')) { handleAction(t.dataset.action); } 
-        if (t.classList.contains('wh-btn')) { document.querySelectorAll('.wh-btn').forEach(function(x){x.classList.remove('active');}); t.classList.add('active'); currentWarehouse=t.dataset.wh; var mc=document.getElementById('moscowContainer'),pc=document.getElementById('pushkinoContainer'); if(mc && pc) { if(currentWarehouse === 'Москва') { mc.classList.add('active'); pc.classList.remove('active'); } else { mc.classList.remove('active'); pc.classList.add('active'); } } } 
-        if (t.classList.contains('admin-tab')) { document.querySelectorAll('.admin-tab').forEach(function(x){x.classList.remove('active');}); t.classList.add('active'); var tab=t.dataset.tab; ['logs','employees','reports','photos'].forEach(function(tn){var el=document.getElementById('tab'+tn.charAt(0).toUpperCase()+tn.slice(1)); if(el)el.style.display=tn===tab?'block':'none';}); if(tab==='photos')loadPalletPhotos(); } 
+        // Кнопки действий (ОК)
+        if (t.hasAttribute('data-action')) {
+            var action = t.dataset.action;
+            if (action === 'markAttendance') { markAttendance(t.dataset.warehouse); return; }
+            if (action === 'prevDay') { currentHistoryDate.setDate(currentHistoryDate.getDate()-1); var ds=formatDateForInput(currentHistoryDate); var inp=document.getElementById('historyDateInput'); if(inp)inp.value=ds; loadHistoryForDate(ds); return; }
+            if (action === 'nextDay') { currentHistoryDate.setDate(currentHistoryDate.getDate()+1); var ds=formatDateForInput(currentHistoryDate); var inp=document.getElementById('historyDateInput'); if(inp)inp.value=ds; loadHistoryForDate(ds); return; }
+            if (action === 'todayHistory') { currentHistoryDate=new Date(); var ds=formatDateForInput(currentHistoryDate); var inp=document.getElementById('historyDateInput'); if(inp)inp.value=ds; loadHistoryForDate(ds); return; }
+            handleAction(action); 
+        } 
+        // Переключатель складов
+        if (t.classList.contains('wh-btn')) { 
+            document.querySelectorAll('.wh-btn').forEach(function(x){x.classList.remove('active');}); 
+            t.classList.add('active'); currentWarehouse=t.dataset.wh; 
+            var mc=document.getElementById('moscowContainer'),pc=document.getElementById('pushkinoContainer'); 
+            if(mc && pc) { 
+                if(currentWarehouse === 'Москва') { mc.classList.add('active'); pc.classList.remove('active'); } 
+                else { mc.classList.remove('active'); pc.classList.add('active'); } 
+            } 
+        } 
+        // Табы админки
+        if (t.classList.contains('admin-tab')) { 
+            document.querySelectorAll('.admin-tab').forEach(function(x){x.classList.remove('active');}); 
+            t.classList.add('active'); var tab=t.dataset.tab; 
+            ['logs','employees','reports','photos'].forEach(function(tn){
+                var el=document.getElementById('tab'+tn.charAt(0).toUpperCase()+tn.slice(1)); 
+                if(el)el.style.display=tn===tab?'block':'none';
+            }); 
+            if(tab==='photos')loadPalletPhotos(); 
+        } 
     });
     
-    // Подписка на глобальные элементы через делегирование или прямые ссылки где возможно
+    // Обработчик изменения даты в истории
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'historyDateInput') { currentHistoryDate=new Date(e.target.value); loadHistoryForDate(e.target.value); }
+        if (e.target.id === 'photoDate') { var dv = document.getElementById('dateDisplayValue'); if (dv) dv.textContent = formatDateForDisplay(e.target.value); }
+    });
+    
+    // Статические элементы (существуют всегда)
     document.getElementById('logoutBtn')?.addEventListener('click', logout);
     
-    // Остальные обработчики только если элементы существуют
+    // Админ-фильтры — ищем через делегирование, но можно и прямо
     document.getElementById('applyAdminFilterBtn')?.addEventListener('click', loadAdminLogs);
     document.getElementById('clearAdminFilterBtn')?.addEventListener('click', function(){var emp=document.getElementById('adminFilterEmployee'),date=document.getElementById('adminFilterDate');if(emp)emp.value='';if(date)date.value=getTodayStr();loadAdminLogs();});
     document.getElementById('addEmployeeAdminBtn')?.addEventListener('click', function(){var n=prompt('Фамилия нового сотрудника:');if(n)addEmployee(n);});
