@@ -76,17 +76,111 @@
         .btn-icon.logout { background: rgba(255,59,48,0.3); }
         .btn-icon.logout:hover { background: rgba(255,59,48,0.5); }
         
-        .warehouse-switch-bar { padding: 0.5rem 1rem 0.7rem 1rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: flex-end; }
-        .warehouse-selector { display: inline-flex; gap: 4px; background: rgba(255,255,255,0.08); padding: 3px; border-radius: 10px; }
-        .wh-btn { background: transparent; border: none; color: rgba(255,255,255,0.7); padding: 5px 12px; border-radius: 8px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
-        .wh-btn.active { background: #fff; color: #000; }
-        body.dark-theme .wh-btn.active { background: #3a3a3c; color: #fff; }
+        /* Обновленная панель переключения складов со свайпом */
+        .warehouse-switch-bar { 
+            padding: 0.5rem 1rem 0.7rem 1rem; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+        }
+        .warehouse-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.7rem;
+            user-select: none;
+        }
+        .warehouse-indicator .swipe-hint {
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.65rem;
+        }
+        .warehouse-indicator .swipe-hint.show {
+            opacity: 1;
+        }
+        .swipe-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transition: all 0.3s;
+        }
+        .swipe-dot.active {
+            background: #fff;
+            width: 18px;
+            border-radius: 3px;
+        }
         
         .user-view, .admin-view { display: none; width: 100%; }
         .user-view.active, .admin-view.active { display: block; }
         
-        .warehouse-container { display: none; opacity: 0; transform: translateY(5px); transition: opacity 0.2s ease, transform 0.2s ease; }
-        .warehouse-container.active { display: block; opacity: 1; transform: translateY(0); }
+        .warehouse-container { 
+            display: none; 
+            opacity: 0; 
+            transform: translateX(20px); 
+            transition: opacity 0.3s ease, transform 0.3s ease; 
+        }
+        .warehouse-container.active { 
+            display: block; 
+            opacity: 1; 
+            transform: translateX(0); 
+        }
+        .warehouse-container.swipe-left {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        .warehouse-container.swipe-right {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        
+        /* Toast уведомления */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+            width: 90%;
+            max-width: 400px;
+        }
+        .toast {
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: #333;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+            pointer-events: auto;
+            backdrop-filter: blur(10px);
+        }
+        .toast.success { background: rgba(52,199,89,0.95); }
+        .toast.error { background: rgba(255,59,48,0.95); }
+        .toast.warning { background: rgba(255,149,0,0.95); }
+        .toast.info { background: rgba(0,122,255,0.95); }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-20px); } }
+        
+        /* Индикатор загрузки */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
         .work-day-card { 
             background: #fff; border-radius: 16px; padding: 0.9rem 1rem; margin-bottom: 16px; 
@@ -144,11 +238,43 @@
         .date-nav-btn { background: #fff; border: 1px solid #dce3e9; padding: 5px 12px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; color: #374151; }
         body.dark-theme .date-nav-btn { background: #3a3a3c; border-color: #48484a; color: #d1d5db; }
         
-        .history-cards { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; }
+        /* Пагинация */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 0;
+        }
+        .pagination button {
+            background: #f8f9fb;
+            border: 1px solid #dce3e9;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s;
+            min-width: 32px;
+        }
+        body.dark-theme .pagination button { background: #2c2c2e; border-color: #3a3a3c; color: #d1d5db; }
+        .pagination button.active { background: #000; color: #fff; border-color: #000; }
+        body.dark-theme .pagination button.active { background: #0a84ff; border-color: #0a84ff; }
+        .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+        .pagination .page-info {
+            font-size: 0.7rem;
+            color: #8e8e93;
+            padding: 0 4px;
+        }
+        
+        .history-cards { display: flex; flex-direction: column; gap: 8px; }
         .history-card {
             background: #f8f9fb; border-radius: 12px; padding: 10px 12px;
             border: 1px solid #e8edf2; transition: all 0.2s;
+            animation: cardIn 0.3s ease;
         }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         body.dark-theme .history-card { background: #2c2c2e; border-color: #3a3a3c; }
         .history-card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
         .history-time { font-size: 0.65rem; color: #6b7280; font-weight: 500; }
@@ -242,14 +368,10 @@
         .photo-gallery-overlay .gallery-close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.2); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; }
         .photo-gallery-overlay .gallery-info { color: #8e8e93; text-align: center; margin-top: 8px; font-size: 0.75rem; }
 
-        /* ==================== iOS-СТИЛЬ АДМИНКИ ==================== */
-        .admin-panel { background: transparent; padding: 0; margin: 12px 0; }
-        
         .ios-segmented-control {
             display: flex; gap: 0; margin-bottom: 1rem;
             background: rgba(118,118,128,0.12); border-radius: 8.93px;
             padding: 2px; backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
         body.dark-theme .ios-segmented-control { background: rgba(118,118,128,0.24); }
         .ios-segment {
@@ -346,7 +468,6 @@
             font-size: 0.65rem; color: #8e8e93; margin-top: 4px; line-height: 1.3;
         }
 
-        /* Города-секции */
         .city-section { margin-bottom: 12px; }
         .city-section-header {
             display: flex; align-items: center; justify-content: space-between;
@@ -366,18 +487,15 @@
         .city-section-chevron {
             font-size: 0.6rem; color: #c7c7cc; transition: transform 0.2s ease;
         }
-        /* По умолчанию секции свернуты */
         .city-section .city-section-chevron { transform: rotate(-90deg); }
         .city-section .city-section-body {
             display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s ease-out;
         }
-        /* Развернутое состояние */
         .city-section.expanded .city-section-chevron { transform: rotate(0deg); }
         .city-section.expanded .city-section-body { grid-template-rows: 1fr; }
         .city-section-body > div { overflow: hidden; }
         .city-accent { width: 3px; height: 14px; border-radius: 2px; flex-shrink: 0; }
         
-        /* Кнопка удаления города */
         .city-delete-btn {
             background: none; border: none; color: #ff3b30; font-size: 0.7rem;
             padding: 4px 8px; cursor: pointer; font-weight: 500;
@@ -448,6 +566,7 @@
         .ios-add-btn:active { opacity: 0.7; }
 
         .loading { text-align: center; padding: 30px; color: #8e8e93; font-size: 0.85rem; }
+        .loading .loading-spinner { margin-right: 8px; border-top-color: #8e8e93; border-color: rgba(142,142,147,0.3); border-top-color: #8e8e93; vertical-align: middle; }
 
         .install-banner { display: none; background: #000; color: #fff; text-align: center; padding: 12px 16px; border-radius: 14px; margin-bottom: 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
         .install-banner.show { display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -457,6 +576,9 @@
     </style>
 </head>
 <body>
+    <!-- Toast контейнер -->
+    <div id="toastContainer" class="toast-container"></div>
+    
     <div id="loginScreen" class="login-screen">
         <div class="login-card">
             <div class="logo-container"><div class="logo-oval"><span class="logo-text">GQbox</span></div></div>
@@ -494,9 +616,11 @@
                 </div>
             </div>
             <div class="warehouse-switch-bar" id="warehouseSwitchBar" style="display:none;">
-                <div class="warehouse-selector" id="warehouseSelector">
-                    <button class="wh-btn active" data-wh="Москва">Москва</button>
-                    <button class="wh-btn" data-wh="Пушкино">Пушкино</button>
+                <div class="warehouse-indicator" id="warehouseIndicator">
+                    <span class="swipe-hint" id="swipeHint">← Свайп →</span>
+                    <span class="swipe-dot active" data-wh="Москва"></span>
+                    <span class="swipe-dot" data-wh="Пушкино"></span>
+                    <span style="font-size:0.75rem;color:rgba(255,255,255,0.8);" id="currentWhLabel">Москва</span>
                 </div>
             </div>
         </div>
@@ -504,46 +628,37 @@
         <div id="adminView" class="admin-view"></div>
     </div>
 
+<!-- ==================== МОДУЛИ ==================== -->
+
+<!-- Модуль 1: Утилиты и конфигурация -->
 <script>
 // ==================== SERVICE WORKER ====================
 if ('serviceWorker' in navigator) {
-    var swCode = "const CACHE_NAME='gqbox-warehouse-v11';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
+    var swCode = "const CACHE_NAME='gqbox-warehouse-v12';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
     var swBlob = new Blob([swCode], { type: 'application/javascript' }); var swUrl = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl).then(function(reg) {
-        reg.addEventListener('updatefound', function() {
-            var newWorker = reg.installing;
-            newWorker.addEventListener('statechange', function() {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    if (confirm('Доступна новая версия приложения. Обновить?')) window.location.reload();
-                }
-            });
-        });
-    }).catch(function() {});
-    window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); window._deferredPrompt = e; showInstallPrompt(); });
+    navigator.serviceWorker.register(swUrl).then(function(reg) {});
 }
-function isPWA() { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone || document.referrer.indexOf('android-app://') >= 0; }
-function getOS() { var ua = navigator.userAgent; if (/iPhone|iPad|iPod/.test(ua)) return 'ios'; if (/Android/.test(ua)) return 'android'; return 'other'; }
-function showInstallPrompt() { if (isPWA()) return; var ls = localStorage.getItem('pwa_prompt_date_warehouse'); var today = getTodayStr(); if (ls === today) return; var os = getOS(); var b = document.getElementById('installBanner'); var ih = document.getElementById('iosInstallHint'); if (os === 'ios') { if (ih) { ih.innerHTML = 'Установите как приложение: нажмите Поделиться в Safari, затем На экран Домой'; ih.classList.add('show'); setTimeout(function() { if (ih) ih.classList.remove('show'); }, 15000); } localStorage.setItem('pwa_prompt_date_warehouse', today); } else if (os === 'android' && window._deferredPrompt) { if (b) { b.innerHTML = '<span>Установить как приложение</span><button class="btn-icon" style="width:20px;height:20px;font-size:0.6rem;margin-left:6px;">&#x2715;</button>'; b.classList.add('show'); b.onclick = function(e) { if (e.target.tagName === 'BUTTON') { b.classList.remove('show'); localStorage.setItem('pwa_prompt_date_warehouse', today); return; } window._deferredPrompt.prompt(); window._deferredPrompt.userChoice.then(function() { window._deferredPrompt = null; b.classList.remove('show'); localStorage.setItem('pwa_prompt_date_warehouse', today); }); }; } } else if (os === 'android') { if (b) { b.innerHTML = 'Нажмите ⋮ в Chrome, затем Добавить на главный экран'; b.classList.add('show'); setTimeout(function() { if (b) b.classList.remove('show'); }, 15000); } } }
-setTimeout(function() { if (!window._deferredPrompt && !isPWA()) showInstallPrompt(); }, 3000);
-window.addEventListener('appinstalled', function() { window._deferredPrompt = null; var b = document.getElementById('installBanner'); if (b) b.classList.remove('show'); });
 
 // ==================== FIREBASE ====================
 const firebaseConfig = { apiKey: "AIzaSyComSAJzMrarnUBATsTlNs60w6CDe2NTj0", authDomain: "warehouse-b6b75.firebaseapp.com", projectId: "warehouse-b6b75", storageBucket: "warehouse-b6b75.firebasestorage.app", messagingSenderId: "399929411326", appId: "1:399929411326:web:c3c84828ad31b8810b47af" };
 firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
-db.enablePersistence({ synchronizeTabs: true }).catch(function(err) {
-    if (err.code === 'failed-precondition') { /* несколько вкладок — ок */ }
-    else if (err.code === 'unimplemented') { /* браузер не поддерживает */ }
-});
+db.enablePersistence({ synchronizeTabs: true }).catch(function(err) {});
 
-// ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
-var currentUser = null, isAdmin = false, isSuperAdmin = false, currentWarehouse = 'Москва', employees = [];
-var counters = { moscowReceived: 0, moscowCollected: 0, moscowShipped: 0, moscowInvoiceTotal: 0, pushkinoAccepted: 0, pushkinoAcceptedTotal: 0, pushkinoShipped: 0, pushkinoShippedTotal: 0, pushkinoUnloaded: 0, pushkinoUnloadedTotal: 0, pushkinoReworked: 0, pushkinoReworkedTotal: 0 };
-var moscowLastArticle = '—', currentHistoryDate = new Date();
-var photoSlots = [null, null, null, null], photoPreviewUrls = [null, null, null, null];
-var MAX_PHOTOS = 4, MAX_PHOTO_SIZE = 400 * 1024;
-var IP_LIST = ["КЮА","КАА","БМС","ДЕВ"];
-var _cityCache = null;
+// ==================== TOAST СИСТЕМА ====================
+function showToast(message, type) {
+    type = type || 'info';
+    var container = document.getElementById('toastContainer');
+    if (!container) return;
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(function() {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 3000);
+}
 
+// ==================== УТИЛИТЫ ====================
 var SESSION_KEY = "warehouse_session";
 function saveSession(u) { localStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
 function getSession() { var r = localStorage.getItem(SESSION_KEY); return r ? JSON.parse(r) : null; }
@@ -561,8 +676,264 @@ function initTheme() {
     else { t.textContent = '\uD83C\uDF19'; }
     t.addEventListener('click', function() { document.body.classList.toggle('dark-theme'); localStorage.setItem('warehouse_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light'); t.textContent = document.body.classList.contains('dark-theme') ? '\u2600\uFE0F' : '\uD83C\uDF19'; });
 }
+</script>
 
-// ==================== ФОТО ====================
+<!-- Модуль 2: Кеширование сотрудников с TTL -->
+<script>
+var _employeesCache = {
+    data: null,
+    timestamp: 0,
+    ttl: 5 * 60 * 1000 // 5 минут
+};
+
+async function getEmployees(forceRefresh) { 
+    var now = Date.now();
+    if (!forceRefresh && _employeesCache.data && (now - _employeesCache.timestamp) < _employeesCache.ttl) {
+        employees = _employeesCache.data;
+        return _employeesCache.data;
+    }
+    var s = await db.collection('employees').orderBy('name').get(); 
+    var e = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; }); 
+    if (e.length === 0) { 
+        await createInitialEmployees(); 
+        var s2 = await db.collection('employees').orderBy('name').get(); 
+        e = s2.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; }); 
+    } 
+    _employeesCache.data = e;
+    _employeesCache.timestamp = now;
+    employees = e;
+    return e; 
+}
+
+async function createInitialEmployees() { 
+    var list = [ 
+        { login: 'popov', password: 'admin0111', name: 'Попов А.', role: 'superadmin', active: true }, 
+        { login: 'sazonov', password: 'admin0111', name: 'Сазонов М.', role: 'admin', active: true }, 
+        { login: 'roman', password: '123', name: 'Роман', role: 'user', active: true }, 
+        { login: 'yakimov', password: '123', name: 'Якимов', role: 'user', active: true }, 
+        { login: 'varivcev', password: '123', name: 'Варивцев', role: 'user', active: true }, 
+        { login: 'goncharov', password: '123', name: 'Гончаров', role: 'user', active: true } 
+    ]; 
+    var batch = db.batch();
+    list.forEach(function(item) { batch.set(db.collection('employees').doc(), item); });
+    await batch.commit();
+    _employeesCache.data = null;
+    _employeesCache.timestamp = 0;
+}
+</script>
+
+<!-- Модуль 3: Аутентификация -->
+<script>
+async function loginUser(l, p) { 
+    await getEmployees();
+    var s = await db.collection('employees').where('login', '==', l).where('password', '==', p).get(); 
+    if (s.empty) return null; 
+    var d = s.docs[0]; 
+    return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; 
+}
+
+async function registerUser(l, p, n) { 
+    if (!l || !p || !n) return { success: false, error: 'Заполните все поля' }; 
+    var s = await db.collection('employees').where('login', '==', l).get(); 
+    if (!s.empty) return { success: false, error: 'Логин уже существует' }; 
+    await db.collection('employees').add({ login: l.trim(), password: p, name: n.trim(), role: 'user', active: true }); 
+    _employeesCache.data = null;
+    _employeesCache.timestamp = 0;
+    return { success: true }; 
+}
+</script>
+
+<!-- Модуль 4: Складские операции -->
+<script>
+var counters = { moscowReceived: 0, moscowCollected: 0, moscowShipped: 0, moscowInvoiceTotal: 0, pushkinoAccepted: 0, pushkinoAcceptedTotal: 0, pushkinoShipped: 0, pushkinoShippedTotal: 0, pushkinoUnloaded: 0, pushkinoUnloadedTotal: 0, pushkinoReworked: 0, pushkinoReworkedTotal: 0 };
+var moscowLastArticle = '—';
+
+async function loadUserData() { 
+    if (!currentUser) return; 
+    var s = await db.collection('user_totals').where('userId', '==', currentUser.id).get(); 
+    s.docs.forEach(function(d) { 
+        var dt = d.data(); 
+        if (dt.type === 'pushkino_accepted') counters.pushkinoAcceptedTotal = dt.total || 0; 
+        if (dt.type === 'pushkino_shipped') counters.pushkinoShippedTotal = dt.total || 0; 
+        if (dt.type === 'pushkino_unloaded') counters.pushkinoUnloadedTotal = dt.total || 0; 
+        if (dt.type === 'pushkino_reworked') counters.pushkinoReworkedTotal = dt.total || 0; 
+        if (dt.type === 'moscow_invoice') counters.moscowInvoiceTotal = dt.total || 0; 
+    }); 
+    updateAllCounters(); 
+}
+
+function updateAllCounters() { 
+    var ids = ['moscowReceived','moscowCollected','moscowShipped','moscowInvoiceTotal','pushkinoAccepted','pushkinoAcceptedTotal','pushkinoShipped','pushkinoShippedTotal','pushkinoUnloaded','pushkinoUnloadedTotal','pushkinoReworked','pushkinoReworkedTotal','moscowLastArticle']; 
+    ids.forEach(function(id) { 
+        var el = document.getElementById(id); 
+        if (el) { if (id === 'moscowLastArticle') el.textContent = moscowLastArticle; else el.textContent = counters[id] || 0; } 
+    }); 
+}
+
+async function updateTotal(ty, inc) { 
+    if (!currentUser) return; 
+    var dId = currentUser.id+'_'+ty; 
+    try {
+        await db.runTransaction(async function(t) { 
+            var r = db.collection('user_totals').doc(dId); 
+            var d = await t.get(r); 
+            var nt = inc; 
+            if (d.exists) nt = (d.data().total || 0) + inc; 
+            t.set(r, { userId: currentUser.id, userName: currentUser.name, type: ty, total: nt, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); 
+        }); 
+    } catch(e) {}
+    if (ty === 'pushkino_accepted') counters.pushkinoAcceptedTotal += inc; 
+    if (ty === 'pushkino_shipped') counters.pushkinoShippedTotal += inc; 
+    if (ty === 'pushkino_unloaded') counters.pushkinoUnloadedTotal += inc; 
+    if (ty === 'pushkino_reworked') counters.pushkinoReworkedTotal += inc; 
+    if (ty === 'moscow_invoice') counters.moscowInvoiceTotal += inc; 
+    updateAllCounters(); 
+}
+
+async function addLog(w, a, d, q) { 
+    if (!currentUser) return; 
+    var t = getTodayStr(); 
+    var logEntry = { userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q || null, timestamp: new Date(), date: t };
+    
+    try {
+        await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q || null, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t });
+    } catch(e) {}
+    
+    _historyCache = {};
+    if (formatDateForInput(currentHistoryDate) === t) loadHistoryForDate(t);
+    if (isAdmin) loadAdminLogs();
+}
+
+async function handleAction(a) { 
+    if (a === 'receive' && counters.moscowReceived) { await addLog('Москва', 'Принял коробов', counters.moscowReceived+' кор.', counters.moscowReceived); showToast('Принято: '+counters.moscowReceived+' кор.', 'success'); counters.moscowReceived = 0; } 
+    if (a === 'collect' && counters.moscowCollected) { await addLog('Москва', 'Собрал паллеты', counters.moscowCollected+' шт.', counters.moscowCollected); showToast('Собрано: '+counters.moscowCollected+' палл.', 'success'); counters.moscowCollected = 0; } 
+    if (a === 'ship' && counters.moscowShipped) { await addLog('Москва', 'Отгрузил паллеты', counters.moscowShipped+' шт.', counters.moscowShipped); showToast('Отгружено: '+counters.moscowShipped+' палл.', 'success'); counters.moscowShipped = 0; } 
+    if (a === 'lay') { var artEl=document.getElementById('moscowArticle'), qtyEl=document.getElementById('moscowQuantity'); var art=artEl?.value.trim(), qty=parseInt(qtyEl?.value); if(!art){showToast('Укажите артикул','warning');return;} if(!qty || qty<1){showToast('Укажите количество','warning');return;} moscowLastArticle=art; await addLog('Москва','Выкладка товара','арт. '+art+', '+qty+' шт.',qty); showToast('Выкладка: '+art+' - '+qty+' шт.','success'); if(artEl)artEl.value=''; if(qtyEl)qtyEl.value=''; } 
+    if (a === 'invoice') { var invEl=document.getElementById('moscowInvoiceNumber'), qtyEl=document.getElementById('moscowInvoiceQuantity'); var inv=invEl?.value.trim(), qty=parseInt(qtyEl?.value); if(!inv){showToast('Укажите накладную','warning');return;} if(!qty || qty<1){showToast('Укажите количество','warning');return;} await addLog('Москва','Сборка по накладной','накл. '+inv+', '+qty+' шт.',qty); await updateTotal('moscow_invoice',qty); showToast('Накладная '+inv+': '+qty+' шт.','success'); if(invEl)invEl.value=''; if(qtyEl)qtyEl.value=''; } 
+    if (a === 'accept' && counters.pushkinoAccepted) { await addLog('Пушкино','Принял с осн. склада',counters.pushkinoAccepted+' кор.',counters.pushkinoAccepted); await updateTotal('pushkino_accepted',counters.pushkinoAccepted); showToast('Принято с осн.: '+counters.pushkinoAccepted+' кор.','success'); counters.pushkinoAccepted=0; } 
+    if (a === 'shipPushkino' && counters.pushkinoShipped) { await addLog('Пушкино','Отгрузил на осн. склад',counters.pushkinoShipped+' кор.',counters.pushkinoShipped); await updateTotal('pushkino_shipped',counters.pushkinoShipped); showToast('Отгружено на осн.: '+counters.pushkinoShipped+' кор.','success'); counters.pushkinoShipped=0; } 
+    if (a === 'unload' && counters.pushkinoUnloaded) { await addLog('Пушкино','Выгрузка фуры',counters.pushkinoUnloaded+' кор.',counters.pushkinoUnloaded); await updateTotal('pushkino_unloaded',counters.pushkinoUnloaded); showToast('Выгружено: '+counters.pushkinoUnloaded+' кор.','success'); counters.pushkinoUnloaded=0; } 
+    if (a === 'rework' && counters.pushkinoReworked) { await addLog('Пушкино','Перебрал паллеты',counters.pushkinoReworked+' кор.',counters.pushkinoReworked); await updateTotal('pushkino_reworked',counters.pushkinoReworked); showToast('Перебрано: '+counters.pushkinoReworked+' кор.','success'); counters.pushkinoReworked=0; } 
+    updateAllCounters(); 
+}
+</script>
+
+<!-- Модуль 5: Посещаемость -->
+<script>
+async function checkTodayAttendance() { 
+    if (!currentUser) return; 
+    var t = getTodayStr(); 
+    var m = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Москва').where('date', '==', t).get(); 
+    var mE = document.getElementById('moscowWorkedToday'); 
+    if(mE) { mE.textContent = m.empty ? 'Не отмечено' : 'Отмечено'; mE.style.color = m.empty ? '#6b7280' : '#059669'; } 
+    var p = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Пушкино').where('date', '==', t).get(); 
+    var pE = document.getElementById('pushkinoWorkedToday'); 
+    if(pE) { pE.textContent = p.empty ? 'Не отмечено' : 'Отмечено'; pE.style.color = p.empty ? '#6b7280' : '#059669'; } 
+}
+
+async function markAttendance(w) { 
+    if (!currentUser) return; 
+    var t = getTodayStr(); 
+    var s = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', w).where('date', '==', t).get(); 
+    if (!s.empty) { showToast('Уже отмечены на '+w, 'warning'); return; } 
+    await db.collection('attendance').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, date: t, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); 
+    await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: 'Работал на складе', details: 'Присутствие на складе '+w, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); 
+    showToast('Отмечено присутствие на '+w, 'success');
+    _historyCache = {};
+    await checkTodayAttendance(); 
+    if (formatDateForInput(currentHistoryDate) === t) await loadHistoryForDate(t); 
+    if (isAdmin) await loadAdminLogs(); 
+}
+</script>
+
+<!-- Модуль 6: История с пагинацией -->
+<script>
+var _historyCache = {};
+var _historyPageSize = 15;
+var currentHistoryDate = new Date();
+var _currentHistoryPage = 1;
+var _historyTotalDocs = 0;
+
+async function loadHistoryForDate(ds, page) { 
+    if (!currentUser) return; 
+    var container = document.getElementById('myHistoryContainer'); 
+    if(!container) return;
+    page = page || 1;
+    _currentHistoryPage = page;
+    
+    var cacheKey = currentUser.id + '_' + ds + '_' + page;
+    if (_historyCache[cacheKey]) { container.innerHTML = _historyCache[cacheKey]; renderPagination(); return; }
+    
+    container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
+    
+    var s = await db.collection('work_logs')
+        .where('userId', '==', currentUser.id)
+        .where('date', '==', ds)
+        .orderBy('timestamp', 'desc')
+        .get();
+    
+    var allLogs = s.docs.map(function(d) { return d.data(); });
+    _historyTotalDocs = allLogs.length;
+    var totalPages = Math.ceil(allLogs.length / _historyPageSize);
+    if (page > totalPages) page = totalPages;
+    if (page < 1) page = 1;
+    _currentHistoryPage = page;
+    
+    var startIdx = (page - 1) * _historyPageSize;
+    var pageLogs = allLogs.slice(startIdx, startIdx + _historyPageSize);
+    
+    var html;
+    if (pageLogs.length === 0) { 
+        html = '<div class="empty-history">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</div>'; 
+    } else {
+        html = '<div class="history-cards">'; 
+        pageLogs.forEach(function(l) { 
+            var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; 
+            var warehouse = l.warehouse === 'Фото' ? 'Фото' : (l.warehouse || '—'); 
+            html += '<div class="history-card"><div class="history-card-header"><span class="history-time">'+time+'</span><span class="history-warehouse">'+warehouse+'</span></div><div class="history-action">'+(l.action || '—')+'</div><div class="history-details">'+(l.details || '—')+'</div></div>'; 
+        }); 
+        html += '</div>'; 
+    }
+    
+    _historyCache[cacheKey] = html;
+    container.innerHTML = html;
+    renderPagination();
+}
+
+function renderPagination() {
+    var container = document.getElementById('myHistoryContainer');
+    if (!container) return;
+    var totalPages = Math.ceil(_historyTotalDocs / _historyPageSize);
+    if (totalPages <= 1) return;
+    
+    var paginationHtml = '<div class="pagination">';
+    paginationHtml += '<button data-page="1" ' + (_currentHistoryPage === 1 ? 'disabled' : '') + '>&#x23EE;</button>';
+    paginationHtml += '<button data-page="' + (_currentHistoryPage - 1) + '" ' + (_currentHistoryPage === 1 ? 'disabled' : '') + '>&#x2039;</button>';
+    paginationHtml += '<span class="page-info">' + _currentHistoryPage + ' / ' + totalPages + '</span>';
+    paginationHtml += '<button data-page="' + (_currentHistoryPage + 1) + '" ' + (_currentHistoryPage === totalPages ? 'disabled' : '') + '>&#x203A;</button>';
+    paginationHtml += '<button data-page="' + totalPages + '" ' + (_currentHistoryPage === totalPages ? 'disabled' : '') + '>&#x23ED;</button>';
+    paginationHtml += '</div>';
+    
+    container.insertAdjacentHTML('beforeend', paginationHtml);
+    
+    container.querySelectorAll('.pagination button:not([disabled])').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var page = parseInt(this.dataset.page);
+            var ds = formatDateForInput(currentHistoryDate);
+            loadHistoryForDate(ds, page);
+        });
+    });
+}
+</script>
+
+<!-- Модуль 7: Фото паллет -->
+<script>
+var photoSlots = [null, null, null, null], photoPreviewUrls = [null, null, null, null];
+var MAX_PHOTOS = 4, MAX_PHOTO_SIZE = 400 * 1024;
+var IP_LIST = ["КЮА","КАА","БМС","ДЕВ"];
+var _cityCache = null;
+
 function compressImage(file, maxSize) { return new Promise(function(resolve, reject) { var reader = new FileReader(); reader.onload = function(e) { var img = new Image(); img.onload = function() { var canvas = document.createElement('canvas'); var ctx = canvas.getContext('2d'); var maxW = 900, maxH = 900; var w = img.width, h = img.height; if (w > maxW || h > maxH) { var ratio = Math.min(maxW/w, maxH/h); w = Math.round(w * ratio); h = Math.round(h * ratio); } canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h); var quality = 0.55; var result = canvas.toDataURL('image/jpeg', quality); while (result.length > maxSize * 1.37 && quality > 0.2) { quality -= 0.1; result = canvas.toDataURL('image/jpeg', quality); } resolve(result); }; img.onerror = reject; img.src = e.target.result; }; reader.onerror = reject; reader.readAsDataURL(file); }); }
 
 function clearAllPhotoPreviews() {
@@ -572,7 +943,7 @@ function clearAllPhotoPreviews() {
     }
 }
 
-window.triggerPhotoCapture = function(si) { var input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'environment'; input.onchange = function(e) { var file = e.target.files[0]; if (!file) return; if (file.size > 20*1024*1024) { alert('Фото слишком большое.'); return; } if (photoPreviewUrls[si]) URL.revokeObjectURL(photoPreviewUrls[si]); photoSlots[si] = file; photoPreviewUrls[si] = URL.createObjectURL(file); updatePhotoSlotDisplay(si); updatePhotoCounter(); }; input.click(); };
+window.triggerPhotoCapture = function(si) { var input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'environment'; input.onchange = function(e) { var file = e.target.files[0]; if (!file) return; if (file.size > 20*1024*1024) { showToast('Фото слишком большое','error'); return; } if (photoPreviewUrls[si]) URL.revokeObjectURL(photoPreviewUrls[si]); photoSlots[si] = file; photoPreviewUrls[si] = URL.createObjectURL(file); updatePhotoSlotDisplay(si); updatePhotoCounter(); }; input.click(); };
 window.removePhotoFromSlot = function(si) { if (photoPreviewUrls[si]) URL.revokeObjectURL(photoPreviewUrls[si]); photoSlots[si] = null; photoPreviewUrls[si] = null; updatePhotoSlotDisplay(si); updatePhotoCounter(); };
 function updatePhotoSlotDisplay(idx) { var slot = document.getElementById('photoSlot'+idx); if (!slot) return; if (photoPreviewUrls[idx]) { slot.classList.add('has-photo'); slot.innerHTML = '<img src="'+photoPreviewUrls[idx]+'" alt="Фото '+(idx+1)+'"><button class="remove-photo" onclick="event.stopPropagation();window.removePhotoFromSlot('+idx+')">&#x2715;</button>'; } else { slot.classList.remove('has-photo'); slot.innerHTML = '<span class="slot-number">'+(idx+1)+'</span>'; } }
 function updatePhotoCounter() { var filled = photoSlots.filter(function(f) { return f !== null; }).length; var counter = document.getElementById('photoCounter'); if (counter) counter.textContent = 'Заполнено: '+filled+' / '+MAX_PHOTOS; }
@@ -591,14 +962,14 @@ window.savePhotos = async function() {
     var btn = document.getElementById('savePhotoBtn'), msg = document.getElementById('photoMsg'); 
     var city = cityEl ? cityEl.value.trim() : ''; 
     var date = dateEl ? dateEl.value : getTodayStr(); 
-    if (!city) { alert('Укажите город'); return; } 
+    if (!city) { showToast('Укажите город','warning'); return; } 
     var ipData = []; 
     IP_LIST.forEach(function(ip) { var qtyEl = document.getElementById('ipQty_'+ip); var qty = qtyEl ? (parseInt(qtyEl.value) || 0) : 0; if (qty > 0) ipData.push({ ip: ip, quantity: qty }); }); 
-    if (ipData.length === 0) { alert('Укажите количество коробов'); return; } 
+    if (ipData.length === 0) { showToast('Укажите количество коробов','warning'); return; } 
     var filledSlots = []; 
     for (var i = 0; i < MAX_PHOTOS; i++) { if (photoSlots[i] !== null) filledSlots.push({file: photoSlots[i], slot: i}); } 
-    if (filledSlots.length === 0) { alert('Сделайте хотя бы одно фото'); return; } 
-    btn.disabled = true; btn.textContent = 'Сжатие...'; if (msg) msg.innerHTML = ''; 
+    if (filledSlots.length === 0) { showToast('Сделайте хотя бы одно фото','warning'); return; } 
+    btn.disabled = true; btn.textContent = 'Сжатие...'; 
     var totalQty = ipData.reduce(function(s, item) { return s + item.quantity; }, 0); 
     var ipDisplay = ipData.map(function(item) { return item.ip + ' — ' + item.quantity + ' кор.'; }).join(', '); 
     try { 
@@ -617,16 +988,15 @@ window.savePhotos = async function() {
         }); 
         _cityCache = null;
         await addLog('Фото', 'Сохранил паллету', 'г.'+city+', '+ipDisplay+', фото: '+photosData.length+' шт.', totalQty);
+        showToast('Сохранено: '+ipDisplay+' | Фото: '+photosData.length, 'success');
         clearAllPhotoPreviews();
         for (var k = 0; k < MAX_PHOTOS; k++) updatePhotoSlotDisplay(k); 
         updatePhotoCounter(); if (cityEl) cityEl.value = ''; 
         IP_LIST.forEach(function(ip) { var qtyEl = document.getElementById('ipQty_'+ip); if (qtyEl) qtyEl.value = ''; }); 
         if (dateEl) { dateEl.value = getTodayStr(); } 
         var dv = document.getElementById('dateDisplayValue'); if (dv) dv.textContent = formatDateForDisplay(getTodayStr()); 
-        if (msg) msg.innerHTML = '<div class="success-msg" style="display:block;">Сохранено: '+ipDisplay+' | Фото: '+photosData.length+'</div>'; 
-        setTimeout(function() { if (msg) msg.innerHTML = ''; }, 3000); 
         updateCityDatalist();
-    } catch (error) { alert('Ошибка: ' + (error.message || 'Неизвестная')); } 
+    } catch (error) { showToast('Ошибка: ' + (error.message || 'Неизвестная'), 'error'); } 
     btn.disabled = false; btn.textContent = 'Сохранить паллету'; 
 };
 
@@ -640,7 +1010,7 @@ async function updateCityDatalist() {
     });
 }
 
-// ==================== ГАЛЕРЕЯ ФОТО ====================
+// Галерея фото
 window.showPhotoGallery = function(docData) {
     var existing = document.querySelector('.photo-gallery-overlay');
     if (existing) existing.remove();
@@ -648,11 +1018,6 @@ window.showPhotoGallery = function(docData) {
     var photos = docData.photos || [];
     if (photos.length === 0) return;
     var currentIdx = 0;
-    var cityEsc = escapeHtml(docData.city || '—');
-    var ipEsc = escapeHtml(docData.ipDisplay || '—');
-    var userEsc = escapeHtml(docData.userName || '—');
-    var dateEsc = formatDateForDisplay(docData.date);
-    var qty = docData.totalQuantity || 0;
     
     var modal = document.createElement('div');
     modal.className = 'photo-gallery-overlay';
@@ -664,22 +1029,20 @@ window.showPhotoGallery = function(docData) {
             '<button class="gallery-prev" '+(photos.length<=1?'style="visibility:hidden"':'')+'>&#x25C0;</button>' +
             '<button class="gallery-next" '+(photos.length<=1?'style="visibility:hidden"':'')+'>&#x25B6;</button>' +
         '</div>' +
-        '<div class="gallery-info">'+cityEsc+' &bull; '+userEsc+' &bull; '+dateEsc+'<br>'+ipEsc+' &bull; '+qty+' кор.</div>';
+        '<div class="gallery-info">'+escapeHtml(docData.city || '—')+' &bull; '+escapeHtml(docData.userName || '—')+' &bull; '+formatDateForDisplay(docData.date)+'<br>'+escapeHtml(docData.ipDisplay || '—')+' &bull; '+(docData.totalQuantity || 0)+' кор.</div>';
     
     document.body.appendChild(modal);
     
     var mainImg = modal.querySelector('.gallery-main');
     var counter = modal.querySelector('.gallery-counter');
-    var prevBtn = modal.querySelector('.gallery-prev');
-    var nextBtn = modal.querySelector('.gallery-next');
     
     function updateImage() {
         mainImg.src = photos[currentIdx].data;
         counter.textContent = (currentIdx+1)+' / '+photos.length;
     }
     
-    prevBtn.addEventListener('click', function(e) { e.stopPropagation(); if (currentIdx > 0) { currentIdx--; updateImage(); } });
-    nextBtn.addEventListener('click', function(e) { e.stopPropagation(); if (currentIdx < photos.length-1) { currentIdx++; updateImage(); } });
+    modal.querySelector('.gallery-prev').addEventListener('click', function(e) { e.stopPropagation(); if (currentIdx > 0) { currentIdx--; updateImage(); } });
+    modal.querySelector('.gallery-next').addEventListener('click', function(e) { e.stopPropagation(); if (currentIdx < photos.length-1) { currentIdx++; updateImage(); } });
     modal.querySelector('.gallery-close').addEventListener('click', function() { modal.remove(); });
     modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
     
@@ -703,7 +1066,6 @@ function getCityColor(city) {
     return _cityColorMap[city];
 }
 
-// Удаление всех паллет города
 async function deleteCityPallets(city, palletIds) {
     if (!confirm('Удалить все ' + palletIds.length + ' паллет из города "' + city + '"?\n\nЭто действие нельзя отменить.')) return;
     var deletedCount = 0;
@@ -715,13 +1077,13 @@ async function deleteCityPallets(city, palletIds) {
         deletedCount += chunk.length;
     }
     _cityCache = null;
-    alert('Удалено ' + deletedCount + ' паллет из города "' + city + '".');
+    showToast('Удалено ' + deletedCount + ' паллет из города "' + city + '"', 'success');
     await loadPalletPhotos();
 }
 
 async function loadPalletPhotos(filters) { 
     filters = filters || {}; var container = document.getElementById('palletPhotosContainer'); 
-    if (!container) return; container.innerHTML = '<div class="loading">Загрузка...</div>'; 
+    if (!container) return; container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
     var query = db.collection('pallet_photos'); 
     if (filters.userId) query = query.where('userId', '==', filters.userId); 
     if (filters.date) query = query.where('date', '==', filters.date); 
@@ -751,7 +1113,6 @@ async function loadPalletPhotos(filters) {
             var pallets = grouped[city];
             var color = city === 'Без города' ? '#8e8e93' : getCityColor(city);
             var palletIds = pallets.map(function(p) { return p.id; });
-            var idsJson = JSON.stringify(palletIds);
             
             html += '<div class="city-section">' +
                 '<div class="city-section-header" onclick="var s=this.parentElement;s.classList.toggle(\'expanded\')">' +
@@ -760,7 +1121,7 @@ async function loadPalletPhotos(filters) {
                         escapeHtml(city) +
                     '</div>' +
                     '<div style="display:flex;align-items:center;gap:8px;">' +
-                        '<button class="city-delete-btn" onclick="event.stopPropagation();deleteCityPallets(\''+escapeHtml(city).replace(/'/g,"\\'")+'\','+idsJson+')">Удалить город</button>' +
+                        '<button class="city-delete-btn" onclick="event.stopPropagation();deleteCityPallets(\''+escapeHtml(city).replace(/'/g,"\\'")+'\','+JSON.stringify(palletIds)+')">Удалить город</button>' +
                         '<span class="city-section-count">'+pallets.length+' палл.</span>' +
                         '<span class="city-section-chevron">&#x25BC;</span>' +
                     '</div>' +
@@ -798,189 +1159,32 @@ async function loadPalletPhotos(filters) {
         container.innerHTML = html; 
     } catch (error) { container.innerHTML = '<div style="text-align:center;padding:20px;color:#ff3b30;">Ошибка загрузки</div>'; } 
 }
-window.deletePallet = async function(pid) { if (!confirm('Удалить паллету и все фото?')) return; try { await db.collection('pallet_photos').doc(pid).delete(); _cityCache = null; await loadPalletPhotos(); } catch (error) { alert('Ошибка удаления'); } };
+window.deletePallet = async function(pid) { if (!confirm('Удалить паллету и все фото?')) return; try { await db.collection('pallet_photos').doc(pid).delete(); _cityCache = null; await loadPalletPhotos(); showToast('Паллета удалена','success'); } catch (error) { showToast('Ошибка удаления','error'); } };
 
-async function archiveOldPhotos(monthsOld) { var cutoffDate = new Date(); cutoffDate.setMonth(cutoffDate.getMonth() - monthsOld); var cutoffStr = cutoffDate.toISOString().slice(0,10); var countSnap = await db.collection('pallet_photos').where('date', '<=', cutoffStr).get(); var count = countSnap.size; if (count === 0) { alert('Нет фото старше ' + monthsOld + ' мес.'); return; } var monthNames = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']; var cutoffDisplay = cutoffDate.getDate() + ' ' + monthNames[cutoffDate.getMonth()] + ' ' + cutoffDate.getFullYear(); if (!confirm('Найдено ' + count + ' паллет старше ' + cutoffDisplay + '.\n\nУдалить?')) return; var deletedCount = 0; for (var i = 0; i < countSnap.docs.length; i += 100) { var batch = db.batch(); var chunk = countSnap.docs.slice(i, i + 100); chunk.forEach(function(doc) { batch.delete(doc.ref); }); await batch.commit(); deletedCount += chunk.length; } alert('Удалено ' + deletedCount + ' паллет.'); _cityCache = null; await loadPalletPhotos(); await loadAdminEmployees(); }
-
-// ==================== СОТРУДНИКИ ====================
-var _employeesCache = null;
-var _employeesCacheTime = 0;
-
-async function createInitialEmployees() { 
-    var list = [ 
-        { login: 'popov', password: 'admin0111', name: 'Попов А.', role: 'superadmin', active: true }, 
-        { login: 'sazonov', password: 'admin0111', name: 'Сазонов М.', role: 'admin', active: true }, 
-        { login: 'roman', password: '123', name: 'Роман', role: 'user', active: true }, 
-        { login: 'yakimov', password: '123', name: 'Якимов', role: 'user', active: true }, 
-        { login: 'varivcev', password: '123', name: 'Варивцев', role: 'user', active: true }, 
-        { login: 'goncharov', password: '123', name: 'Гончаров', role: 'user', active: true } 
-    ]; 
-    var batch = db.batch();
-    list.forEach(function(item) { batch.set(db.collection('employees').doc(), item); });
-    await batch.commit();
-    _employeesCache = null;
-}
-
-async function getEmployees(forceRefresh) { 
-    var now = Date.now();
-    if (!forceRefresh && _employeesCache && (now - _employeesCacheTime) < 120000) {
-        employees = _employeesCache;
-        return _employeesCache;
-    }
-    var s = await db.collection('employees').orderBy('name').get(); 
-    var e = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; }); 
-    if (e.length === 0) { 
-        await createInitialEmployees(); 
-        var s2 = await db.collection('employees').orderBy('name').get(); 
-        e = s2.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; }); 
+async function archiveOldPhotos(monthsOld) { 
+    var cutoffDate = new Date(); cutoffDate.setMonth(cutoffDate.getMonth() - monthsOld); 
+    var cutoffStr = cutoffDate.toISOString().slice(0,10); 
+    var countSnap = await db.collection('pallet_photos').where('date', '<=', cutoffStr).get(); 
+    var count = countSnap.size; 
+    if (count === 0) { showToast('Нет фото старше ' + monthsOld + ' мес.','info'); return; } 
+    if (!confirm('Найдено ' + count + ' паллет старше указанной даты.\n\nУдалить?')) return; 
+    var deletedCount = 0; 
+    for (var i = 0; i < countSnap.docs.length; i += 100) { 
+        var batch = db.batch(); 
+        var chunk = countSnap.docs.slice(i, i + 100); 
+        chunk.forEach(function(doc) { batch.delete(doc.ref); }); 
+        await batch.commit(); 
+        deletedCount += chunk.length; 
     } 
-    _employeesCache = e; _employeesCacheTime = now; employees = e; return e; 
+    showToast('Удалено ' + deletedCount + ' паллет.','success');
+    _cityCache = null; 
+    await loadPalletPhotos(); 
+    await loadAdminEmployees(); 
 }
+</script>
 
-async function loginUser(l, p) { 
-    await getEmployees();
-    var s = await db.collection('employees').where('login', '==', l).where('password', '==', p).get(); 
-    if (s.empty) return null; 
-    var d = s.docs[0]; 
-    return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; 
-}
-
-async function registerUser(l, p, n) { 
-    if (!l || !p || !n) return { success: false, error: 'Заполните все поля' }; 
-    var s = await db.collection('employees').where('login', '==', l).get(); 
-    if (!s.empty) return { success: false, error: 'Логин уже существует' }; 
-    await db.collection('employees').add({ login: l.trim(), password: p, name: n.trim(), role: 'user', active: true }); 
-    _employeesCache = null; return { success: true }; 
-}
-
-// ==================== ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ====================
-async function loadUserData() { 
-    if (!currentUser) return; 
-    var s = await db.collection('user_totals').where('userId', '==', currentUser.id).get(); 
-    s.docs.forEach(function(d) { 
-        var dt = d.data(); 
-        if (dt.type === 'pushkino_accepted') counters.pushkinoAcceptedTotal = dt.total || 0; 
-        if (dt.type === 'pushkino_shipped') counters.pushkinoShippedTotal = dt.total || 0; 
-        if (dt.type === 'pushkino_unloaded') counters.pushkinoUnloadedTotal = dt.total || 0; 
-        if (dt.type === 'pushkino_reworked') counters.pushkinoReworkedTotal = dt.total || 0; 
-        if (dt.type === 'moscow_invoice') counters.moscowInvoiceTotal = dt.total || 0; 
-    }); 
-    updateAllCounters(); 
-}
-
-async function checkTodayAttendance() { 
-    if (!currentUser) return; 
-    var t = getTodayStr(); 
-    var m = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Москва').where('date', '==', t).get(); 
-    var mE = document.getElementById('moscowWorkedToday'); 
-    if(mE) { mE.textContent = m.empty ? 'Не отмечено' : 'Отмечено'; mE.style.color = m.empty ? '#6b7280' : '#059669'; } 
-    var p = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', 'Пушкино').where('date', '==', t).get(); 
-    var pE = document.getElementById('pushkinoWorkedToday'); 
-    if(pE) { pE.textContent = p.empty ? 'Не отмечено' : 'Отмечено'; pE.style.color = p.empty ? '#6b7280' : '#059669'; } 
-}
-
-async function markAttendance(w) { 
-    if (!currentUser) return; 
-    var t = getTodayStr(); 
-    var s = await db.collection('attendance').where('userId', '==', currentUser.id).where('warehouse', '==', w).where('date', '==', t).get(); 
-    if (!s.empty) { alert('Уже отмечены на '+w); return; } 
-    await db.collection('attendance').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, date: t, timestamp: firebase.firestore.FieldValue.serverTimestamp() }); 
-    await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: 'Работал на складе', details: 'Присутствие на складе '+w, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); 
-    _historyCache = {};
-    await checkTodayAttendance(); 
-    if (formatDateForInput(currentHistoryDate) === t) await loadHistoryForDate(t); 
-    if (isAdmin) await loadAdminLogs(); 
-}
-
-var _pendingLogs = [];
-async function addLog(w, a, d, q) { 
-    if (!currentUser) return; 
-    var t = getTodayStr(); 
-    var logEntry = { userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q || null, timestamp: new Date(), date: t, _pending: true };
-    _pendingLogs.push(logEntry);
-    _historyCache = {};
-    
-    if (formatDateForInput(currentHistoryDate) === t) {
-        var container = document.getElementById('myHistoryContainer');
-        if (container && container.querySelector('.empty-history')) loadHistoryForDate(t);
-        else if (container) {
-            var time = new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-            var wh = w === 'Фото' ? 'Фото' : w;
-            var card = document.createElement('div');
-            card.className = 'history-card';
-            card.style.opacity = '0.6';
-            card.innerHTML = '<div class="history-card-header"><span class="history-time">'+time+'</span><span class="history-warehouse">'+wh+'</span></div><div class="history-action">'+a+'</div><div class="history-details">'+d+' (сохраняется...)</div>';
-            var cards = container.querySelector('.history-cards');
-            if (cards) cards.insertBefore(card, cards.firstChild);
-        }
-    }
-    if (isAdmin) loadAdminLogs();
-    
-    try {
-        await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q || null, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t });
-        _pendingLogs = _pendingLogs.filter(function(l) { return l !== logEntry; });
-    } catch(e) { /* тихо */ }
-    _historyCache = {};
-    if (formatDateForInput(currentHistoryDate) === t) loadHistoryForDate(t);
-    if (isAdmin) loadAdminLogs();
-}
-
-async function updateTotal(ty, inc) { 
-    if (!currentUser) return; 
-    var dId = currentUser.id+'_'+ty; 
-    try {
-        await db.runTransaction(async function(t) { 
-            var r = db.collection('user_totals').doc(dId); 
-            var d = await t.get(r); 
-            var nt = inc; 
-            if (d.exists) nt = (d.data().total || 0) + inc; 
-            t.set(r, { userId: currentUser.id, userName: currentUser.name, type: ty, total: nt, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }); 
-        }); 
-    } catch(e) { /* тихо */ }
-    if (ty === 'pushkino_accepted') counters.pushkinoAcceptedTotal += inc; 
-    if (ty === 'pushkino_shipped') counters.pushkinoShippedTotal += inc; 
-    if (ty === 'pushkino_unloaded') counters.pushkinoUnloadedTotal += inc; 
-    if (ty === 'pushkino_reworked') counters.pushkinoReworkedTotal += inc; 
-    if (ty === 'moscow_invoice') counters.moscowInvoiceTotal += inc; 
-    updateAllCounters(); 
-}
-
-function updateAllCounters() { 
-    var ids = ['moscowReceived','moscowCollected','moscowShipped','moscowInvoiceTotal','pushkinoAccepted','pushkinoAcceptedTotal','pushkinoShipped','pushkinoShippedTotal','pushkinoUnloaded','pushkinoUnloadedTotal','pushkinoReworked','pushkinoReworkedTotal','moscowLastArticle']; 
-    ids.forEach(function(id) { 
-        var el = document.getElementById(id); 
-        if (el) { if (id === 'moscowLastArticle') el.textContent = moscowLastArticle; else el.textContent = counters[id] || 0; } 
-    }); 
-}
-
-var _historyCache = {};
-
-async function loadHistoryForDate(ds) { 
-    if (!currentUser) return; 
-    var container = document.getElementById('myHistoryContainer'); 
-    if(!container) return; 
-    var cacheKey = currentUser.id + '_' + ds;
-    if (_historyCache[cacheKey]) { container.innerHTML = _historyCache[cacheKey]; return; }
-    container.innerHTML = '<div class="loading">Загрузка...</div>'; 
-    var s = await db.collection('work_logs').where('userId', '==', currentUser.id).where('date', '==', ds).get(); 
-    var html;
-    if (s.empty) { 
-        html = '<div class="empty-history">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</div>'; 
-    } else {
-        var logs = s.docs.map(function(d) { return d.data(); }).sort(function(a,b) { return (b.timestamp?.toDate()||0) - (a.timestamp?.toDate()||0); }); 
-        html = '<div class="history-cards">'; 
-        logs.forEach(function(l) { 
-            var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; 
-            var warehouse = l.warehouse === 'Фото' ? 'Фото' : (l.warehouse || '—'); 
-            html += '<div class="history-card"><div class="history-card-header"><span class="history-time">'+time+'</span><span class="history-warehouse">'+warehouse+'</span></div><div class="history-action">'+(l.action || '—')+'</div><div class="history-details">'+(l.details || '—')+'</div></div>'; 
-        }); 
-        html += '</div>'; 
-    }
-    _historyCache[cacheKey] = html;
-    container.innerHTML = html; 
-}
-
-// ==================== АДМИНКА ====================
+<!-- Модуль 8: Админ-панель -->
+<script>
 function chunkArray(arr, size) {
     var result = [];
     for (var i = 0; i < arr.length; i += size) { result.push(arr.slice(i, i + size)); }
@@ -1002,7 +1206,7 @@ async function loadAdminLogs() {
     if (!isAdmin) return; 
     var container = document.getElementById('adminLogsContainer'); 
     if(!container) return; 
-    container.innerHTML = '<div class="loading">Загрузка...</div>'; 
+    container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
     var eid = document.getElementById('adminFilterEmployee')?.value; 
     var fd = document.getElementById('adminFilterDate')?.value; 
     var q = db.collection('work_logs'); 
@@ -1032,6 +1236,7 @@ async function loadAdminLogs() {
             if (confirm('Удалить запись?')) { 
                 await db.collection('work_logs').doc(b.dataset.id).delete(); 
                 _historyCache = {};
+                showToast('Запись удалена','success');
                 await loadAdminLogs(); 
             } 
         }); 
@@ -1042,7 +1247,7 @@ async function loadAdminEmployees() {
     if (!isAdmin) return; 
     var container = document.getElementById('adminEmployeesContainer'); 
     if(!container) return; 
-    container.innerHTML = '<div class="loading">Загрузка...</div>'; 
+    container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
     var s = await db.collection('employees').orderBy('name').get(); 
     var allEmps = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role }; }); 
     var empIds = allEmps.map(function(e) { return e.id; });
@@ -1058,14 +1263,13 @@ async function loadAdminEmployees() {
     var attendSet = new Set(); attendDocs.forEach(function(d) { attendSet.add(d.data().userId); });
     
     var roleColors = { superadmin: '#ff3b30', admin: '#ff9500', user: '#007aff' };
-    var defaultRoleColor = '#8e8e93';
     var html = '<div class="ios-list">'; 
     s.docs.forEach(function(d) { 
         var e = d.data(); 
         var rt = e.role==='superadmin'?'Суперадмин':(e.role==='admin'?'Админ':'Сотрудник'); 
         var active = workSet.has(d.id) || photoSet.has(d.id) || attendSet.has(d.id); 
         var initials = e.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2); 
-        var roleColor = roleColors[e.role] || defaultRoleColor;
+        var roleColor = roleColors[e.role] || '#8e8e93';
         html += '<div class="ios-list-item">' +
             '<div class="item-leading" style="background:'+roleColor+'20;color:'+roleColor+'">'+initials+'</div>' +
             '<div class="item-body">' +
@@ -1080,16 +1284,19 @@ async function loadAdminEmployees() {
     container.querySelectorAll('.ios-delete-btn').forEach(function(b) { 
         b.addEventListener('click', async function() { 
             var n = b.dataset.name, r = b.dataset.role, id = b.dataset.id; 
-            if (r === 'superadmin') { alert('Невозможно удалить суперадмина'); return; } 
-            if (r === 'admin' && !isSuperAdmin) { alert('Только суперадмин может удалять админов'); return; } 
-            if (n === currentUser.name) { alert('Нельзя удалить себя'); return; } 
+            if (r === 'superadmin') { showToast('Невозможно удалить суперадмина','warning'); return; } 
+            if (r === 'admin' && !isSuperAdmin) { showToast('Только суперадмин может удалять админов','warning'); return; } 
+            if (n === currentUser.name) { showToast('Нельзя удалить себя','warning'); return; } 
             if (confirm('Удалить '+n+'?')) { 
                 var ba = db.batch(); 
                 var ls = await db.collection('work_logs').where('userId', '==', id).get(); 
                 ls.docs.forEach(function(d) { ba.delete(d.ref); }); 
                 ba.delete(db.collection('employees').doc(id)); 
                 await ba.commit(); 
-                _employeesCache = null; _historyCache = {};
+                _employeesCache.data = null;
+                _employeesCache.timestamp = 0;
+                _historyCache = {};
+                showToast(n + ' удалён','success');
                 await loadAdminEmployees(); await getEmployees(true); 
                 updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
             } 
@@ -1118,14 +1325,16 @@ async function cleanInactiveEmployees() {
             inactiveList.push({ id: emp.id, name: emp.name, login: emp.login });
     });
     
-    if (inactiveList.length === 0) { alert('Все активны!'); return; } 
+    if (inactiveList.length === 0) { showToast('Все активны!','info'); return; } 
     var nameList = inactiveList.map(function(e) { return e.name + ' (' + e.login + ')'; }).join('\n'); 
     if (!confirm('Найдено '+inactiveList.length+':\n\n'+nameList+'\n\nУдалить?')) return; 
     var batch = db.batch(); 
     inactiveList.forEach(function(emp) { batch.delete(db.collection('employees').doc(emp.id)); }); 
     await batch.commit(); 
-    alert('Удалено '+inactiveList.length+'!'); 
-    _employeesCache = null; _historyCache = {};
+    showToast('Удалено '+inactiveList.length+'!','success');
+    _employeesCache.data = null;
+    _employeesCache.timestamp = 0;
+    _historyCache = {};
     await getEmployees(true); await loadAdminEmployees(); 
     updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
 }
@@ -1133,7 +1342,10 @@ async function cleanInactiveEmployees() {
 async function addEmployee(n) { 
     if (!n) return; 
     await db.collection('employees').add({ login: n.toLowerCase().replace(/\s/g,''), password: '123', name: n.trim(), role: 'user', active: true }); 
-    _employeesCache = null; await getEmployees(true); await loadAdminEmployees(); 
+    _employeesCache.data = null;
+    _employeesCache.timestamp = 0;
+    showToast('Сотрудник добавлен','success');
+    await getEmployees(true); await loadAdminEmployees(); 
     updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
 }
 
@@ -1157,9 +1369,9 @@ async function generateAdminReport() {
     var eid = document.getElementById('reportEmployeeSelect')?.value; 
     var start = document.getElementById('reportStartDate')?.value; 
     var end = document.getElementById('reportEndDate')?.value; 
-    if (!start || !end) { alert('Выберите даты'); return; } 
+    if (!start || !end) { showToast('Выберите даты','warning'); return; } 
     var container = document.getElementById('adminReportResult'); if(!container) return; 
-    container.innerHTML = '<div style="text-align:center;padding:20px;color:#8e8e93;">Загрузка...</div>'; 
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:#8e8e93;"><span class="loading-spinner"></span> Загрузка...</div>'; 
     var q = db.collection('work_logs').where('date', '>=', start).where('date', '<=', end); 
     if (eid) q = q.where('userId', '==', eid); 
     var s = await q.get(); 
@@ -1190,6 +1402,11 @@ async function generateAdminReport() {
     cards.forEach(function(c) { html += '<div class="ios-tile"><div class="tile-value">'+c.val+'</div><div class="tile-label">'+c.lbl+'</div></div>'; }); 
     html += '</div>'; container.innerHTML = html; 
 }
+</script>
+
+<!-- Модуль 9: UI рендеринг -->
+<script>
+var currentUser = null, isAdmin = false, isSuperAdmin = false, currentWarehouse = 'Москва', employees = [];
 
 function initAccordion() {
     document.querySelectorAll('.accordion-header').forEach(header => {
@@ -1313,18 +1530,23 @@ async function renderUserPanel() {
         <div class="accordion-item"><div class="accordion-header"><h3><span class="accordion-icon">&#x25B6;</span> Перебрал паллеты</h3></div><div class="accordion-content"><div><div class="op-card"><div class="counter-row"><span>кор.</span><span class="counter-value" id="pushkinoReworked">0</span></div><div class="adjust-buttons"><button class="btn-adjust" data-target="pushkinoReworked" data-delta="-1">–</button><button class="btn-adjust" data-target="pushkinoReworked" data-delta="1">+</button></div><button class="btn-ok teal" data-action="rework">ОК</button><button class="reset-btn" data-reset="pushkinoReworked">сброс</button><div style="margin-top:4px;font-size:0.65rem;">Всего: <span id="pushkinoReworkedTotal">0</span> кор.</div></div></div></div></div>
     `;
     
-    return '<div class="warehouse-container active" id="moscowContainer"><div class="work-day-card"><div><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="moscowWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" data-action="markAttendance" data-warehouse="Москва">Отметить</button></div></div>' + moscowAccordions + '<div class="photo-card"><div class="photo-title">Фото паллет (до 4 фото)</div><div class="photo-slots">'+slotsHtml+'</div><div class="photo-counter" id="photoCounter">Заполнено: 0 / '+MAX_PHOTOS+'</div><div class="photo-form-row"><div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" list="citySuggestions" style="margin-bottom:0;"><datalist id="citySuggestions"></datalist></div><div class="date-picker-wrap"><label class="date-picker-label" for="photoDate">Дата</label><input type="date" id="photoDate" class="date-picker-input" value="'+todayStr+'"><div class="date-value" id="dateDisplayValue">'+todayDisplay+'</div></div></div>'+ipRowsHtml+'<button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">Сохранить паллету</button><div id="photoMsg"></div></div></div><div class="warehouse-container" id="pushkinoContainer"><div class="work-day-card"><div><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="pushkinoWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" data-action="markAttendance" data-warehouse="Пушкино">Отметить</button></div></div>' + pushkinoAccordions + '</div><div class="history-section"><div class="history-header"><h3>Мои записи</h3><div class="date-selector"><div class="date-nav"><button class="date-nav-btn" data-action="prevDay">&larr;</button><button class="date-nav-btn" data-action="nextDay">&rarr;</button></div><input type="date" id="historyDateInput"><button class="date-nav-btn" data-action="todayHistory">Сегодня</button></div></div><div id="myHistoryContainer" class="history-cards"><div class="loading">Выберите дату</div></div></div>';
+    return '<div class="warehouse-container active" id="moscowContainer"><div class="work-day-card"><div><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="moscowWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" data-action="markAttendance" data-warehouse="Москва">Отметить</button></div></div>' + moscowAccordions + '<div class="photo-card"><div class="photo-title">Фото паллет (до 4 фото)</div><div class="photo-slots">'+slotsHtml+'</div><div class="photo-counter" id="photoCounter">Заполнено: 0 / '+MAX_PHOTOS+'</div><div class="photo-form-row"><div class="input-field-wrap"><input type="text" id="photoCity" class="input-field" placeholder="Город" list="citySuggestions" style="margin-bottom:0;"><datalist id="citySuggestions"></datalist></div><div class="date-picker-wrap"><label class="date-picker-label" for="photoDate">Дата</label><input type="date" id="photoDate" class="date-picker-input" value="'+todayStr+'"><div class="date-value" id="dateDisplayValue">'+todayDisplay+'</div></div></div>'+ipRowsHtml+'<button class="btn-photo" id="savePhotoBtn" onclick="window.savePhotos()">Сохранить паллету</button><div id="photoMsg"></div></div></div><div class="warehouse-container" id="pushkinoContainer"><div class="work-day-card"><div><span>Отметить присутствие</span></div><div style="display:flex;align-items:center;gap:8px;"><span id="pushkinoWorkedToday" style="color:#6b7280;font-size:0.75rem;">Не отмечено</span><button class="btn-work" data-action="markAttendance" data-warehouse="Пушкино">Отметить</button></div></div>' + pushkinoAccordions + '</div><div class="history-section"><div class="history-header"><h3>Мои записи</h3><div class="date-selector"><div class="date-nav"><button class="date-nav-btn" data-action="prevDay">&larr;</button><button class="date-nav-btn" data-action="nextDay">&rarr;</button></div><input type="date" id="historyDateInput"><button class="date-nav-btn" data-action="todayHistory">Сегодня</button></div></div><div id="myHistoryContainer"></div></div>';
 }
 
 function logout() { 
     currentUser = null; isAdmin = false; isSuperAdmin = false; 
     clearAllPhotoPreviews();
-    _employeesCache = null; _historyCache = {}; _pendingLogs = []; _cityCache = null; _cityColorMap = {};
+    _employeesCache.data = null;
+    _employeesCache.timestamp = 0;
+    _historyCache = {}; _cityCache = null; _cityColorMap = {};
     clearSession(); 
     document.getElementById('loginScreen').style.display = 'block'; 
     document.getElementById('dashboard').classList.remove('active'); 
 }
+</script>
 
+<!-- Модуль 10: Инициализация и обработчики событий -->
+<script>
 function attachLoginEvents() {
     var dl = async function() { 
         var lv = document.getElementById("loginUser").value.trim(), pv = document.getElementById("loginPass").value.trim(); 
@@ -1350,20 +1572,84 @@ function attachLoginEvents() {
     };
 }
 
-async function handleAction(a) { 
-    if (a === 'receive' && counters.moscowReceived) { await addLog('Москва', 'Принял коробов', counters.moscowReceived+' кор.', counters.moscowReceived); counters.moscowReceived = 0; } 
-    if (a === 'collect' && counters.moscowCollected) { await addLog('Москва', 'Собрал паллеты', counters.moscowCollected+' шт.', counters.moscowCollected); counters.moscowCollected = 0; } 
-    if (a === 'ship' && counters.moscowShipped) { await addLog('Москва', 'Отгрузил паллеты', counters.moscowShipped+' шт.', counters.moscowShipped); counters.moscowShipped = 0; } 
-    if (a === 'lay') { var artEl=document.getElementById('moscowArticle'), qtyEl=document.getElementById('moscowQuantity'); var art=artEl?.value.trim(), qty=parseInt(qtyEl?.value); if(!art){alert('Укажите артикул');return;} if(!qty || qty<1){alert('Укажите количество (минимум 1)');return;} moscowLastArticle=art; await addLog('Москва','Выкладка товара','арт. '+art+', '+qty+' шт.',qty); if(artEl)artEl.value=''; if(qtyEl)qtyEl.value=''; } 
-    if (a === 'invoice') { var invEl=document.getElementById('moscowInvoiceNumber'), qtyEl=document.getElementById('moscowInvoiceQuantity'); var inv=invEl?.value.trim(), qty=parseInt(qtyEl?.value); if(!inv){alert('Укажите накладную');return;} if(!qty || qty<1){alert('Укажите количество (минимум 1)');return;} await addLog('Москва','Сборка по накладной','накл. '+inv+', '+qty+' шт.',qty); await updateTotal('moscow_invoice',qty); if(invEl)invEl.value=''; if(qtyEl)qtyEl.value=''; } 
-    if (a === 'accept' && counters.pushkinoAccepted) { await addLog('Пушкино','Принял с осн. склада',counters.pushkinoAccepted+' кор.',counters.pushkinoAccepted); await updateTotal('pushkino_accepted',counters.pushkinoAccepted); counters.pushkinoAccepted=0; } 
-    if (a === 'shipPushkino' && counters.pushkinoShipped) { await addLog('Пушкино','Отгрузил на осн. склад',counters.pushkinoShipped+' кор.',counters.pushkinoShipped); await updateTotal('pushkino_shipped',counters.pushkinoShipped); counters.pushkinoShipped=0; } 
-    if (a === 'unload' && counters.pushkinoUnloaded) { await addLog('Пушкино','Выгрузка фуры',counters.pushkinoUnloaded+' кор.',counters.pushkinoUnloaded); await updateTotal('pushkino_unloaded',counters.pushkinoUnloaded); counters.pushkinoUnloaded=0; } 
-    if (a === 'rework' && counters.pushkinoReworked) { await addLog('Пушкино','Перебрал паллеты',counters.pushkinoReworked+' кор.',counters.pushkinoReworked); await updateTotal('pushkino_reworked',counters.pushkinoReworked); counters.pushkinoReworked=0; } 
-    updateAllCounters(); 
+// Свайп между складами
+var swipeStartX = 0;
+var swipeThreshold = 60;
+
+function switchWarehouse(wh) {
+    if (!isAdmin && currentWarehouse !== wh) {
+        currentWarehouse = wh;
+        var mc = document.getElementById('moscowContainer');
+        var pc = document.getElementById('pushkinoContainer');
+        var dots = document.querySelectorAll('.swipe-dot');
+        var label = document.getElementById('currentWhLabel');
+        
+        if (mc && pc) {
+            if (wh === 'Москва') {
+                mc.classList.add('active');
+                mc.classList.remove('swipe-left', 'swipe-right');
+                pc.classList.remove('active');
+                pc.classList.add('swipe-right');
+                setTimeout(function() { pc.classList.remove('swipe-right'); }, 300);
+            } else {
+                pc.classList.add('active');
+                pc.classList.remove('swipe-left', 'swipe-right');
+                mc.classList.remove('active');
+                mc.classList.add('swipe-left');
+                setTimeout(function() { mc.classList.remove('swipe-left'); }, 300);
+            }
+        }
+        
+        dots.forEach(function(dot) {
+            dot.classList.toggle('active', dot.dataset.wh === wh);
+        });
+        if (label) label.textContent = wh;
+        
+        var hint = document.getElementById('swipeHint');
+        if (hint) {
+            hint.classList.add('show');
+            setTimeout(function() { hint.classList.remove('show'); }, 2000);
+        }
+    }
 }
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+function initSwipeDetection() {
+    var userView = document.getElementById('userView');
+    if (!userView) return;
+    
+    userView.addEventListener('touchstart', function(e) {
+        swipeStartX = e.touches[0].clientX;
+    }, { passive: true });
+    
+    userView.addEventListener('touchend', function(e) {
+        if (isAdmin) return;
+        var diffX = e.changedTouches[0].clientX - swipeStartX;
+        if (Math.abs(diffX) > swipeThreshold) {
+            if (diffX > 0 && currentWarehouse === 'Пушкино') {
+                switchWarehouse('Москва');
+            } else if (diffX < 0 && currentWarehouse === 'Москва') {
+                switchWarehouse('Пушкино');
+            }
+        }
+    });
+    
+    // Показываем подсказку при первой загрузке
+    setTimeout(function() {
+        var hint = document.getElementById('swipeHint');
+        if (hint && !isAdmin) {
+            hint.classList.add('show');
+            setTimeout(function() { hint.classList.remove('show'); }, 3000);
+        }
+    }, 1000);
+}
+
+function isPWA() { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone || document.referrer.indexOf('android-app://') >= 0; }
+function getOS() { var ua = navigator.userAgent; if (/iPhone|iPad|iPod/.test(ua)) return 'ios'; if (/Android/.test(ua)) return 'android'; return 'other'; }
+function showInstallPrompt() { if (isPWA()) return; var os = getOS(); var ih = document.getElementById('iosInstallHint'); if (os === 'ios') { if (ih) { ih.innerHTML = 'Установите как приложение: нажмите Поделиться в Safari, затем На экран Домой'; ih.classList.add('show'); setTimeout(function() { if (ih) ih.classList.remove('show'); }, 15000); } } else if (os === 'android' && window._deferredPrompt) { var b = document.getElementById('installBanner'); if (b) { b.innerHTML = '<span>Установить как приложение</span>'; b.classList.add('show'); b.onclick = function() { window._deferredPrompt.prompt(); window._deferredPrompt.userChoice.then(function() { window._deferredPrompt = null; b.classList.remove('show'); }); }; } } }
+
+window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); window._deferredPrompt = e; showInstallPrompt(); });
+window.addEventListener('appinstalled', function() { window._deferredPrompt = null; var b = document.getElementById('installBanner'); if (b) b.classList.remove('show'); });
+
 async function init() {
     initTheme();
     getEmployees().catch(function(){});
@@ -1374,6 +1660,7 @@ async function init() {
         catch(e) { clearSession(); attachLoginEvents(); document.getElementById('loginScreen').style.display = 'block'; } 
     } else { attachLoginEvents(); }
     
+    // Глобальный обработчик кликов
     document.addEventListener('click', function(e) { 
         var t = e.target; 
         
@@ -1381,13 +1668,13 @@ async function init() {
         
         if (t.classList.contains('btn-set')) { 
             var tg=t.dataset.target, mi=t.dataset.manual, m=document.getElementById(mi); 
-            if(m){var v=parseInt(m.value); counters[tg]=(!isNaN(v)&&v>=0)?v:0; m.value=''; updateAllCounters(); } 
+            if(m){var v=parseInt(m.value); counters[tg]=(!isNaN(v)&&v>=0)?v:0; m.value=''; updateAllCounters(); showToast('Установлено: '+counters[tg],'info'); } 
         } 
         if (t.classList.contains('btn-adjust')) { 
             var tg=t.dataset.target, d=parseInt(t.dataset.delta); 
             counters[tg]=Math.max(0,(counters[tg]||0)+d); updateAllCounters(); 
         } 
-        if (t.hasAttribute('data-reset')) { counters[t.dataset.reset]=0; updateAllCounters(); } 
+        if (t.hasAttribute('data-reset')) { counters[t.dataset.reset]=0; updateAllCounters(); showToast('Сброшено','info'); } 
         
         if (t.hasAttribute('data-action')) {
             var action = t.dataset.action;
@@ -1410,19 +1697,13 @@ async function init() {
             if (adminAction === 'clearPhotoFilter') { var emp=document.getElementById('photoFilterEmployee'),date=document.getElementById('photoFilterDate'),ip=document.getElementById('photoFilterIP'),city=document.getElementById('photoFilterCityInput');if(emp)emp.value='';if(date)date.value='';if(ip)ip.value='';if(city)city.value='';loadPalletPhotos(); return; }
         }
         
-        if (t.classList.contains('wh-btn')) { 
-            document.querySelectorAll('.wh-btn').forEach(function(x){x.classList.remove('active');}); 
-            t.classList.add('active'); currentWarehouse=t.dataset.wh; 
-            var mc=document.getElementById('moscowContainer'),pc=document.getElementById('pushkinoContainer'); 
-            if(mc && pc) { 
-                if(currentWarehouse === 'Москва') { mc.classList.add('active'); pc.classList.remove('active'); } 
-                else { mc.classList.remove('active'); pc.classList.add('active'); } 
-            } 
-        } 
+        if (t.classList.contains('swipe-dot')) {
+            switchWarehouse(t.dataset.wh);
+        }
         
-        if (t.classList.contains('ios-segment') || t.classList.contains('admin-tab')) { 
-            var seg = t.closest('.ios-segmented-control') || t.closest('.admin-tabs');
-            if(seg) seg.querySelectorAll('.ios-segment, .admin-tab').forEach(function(x){x.classList.remove('active');});
+        if (t.classList.contains('ios-segment')) { 
+            var seg = t.closest('.ios-segmented-control');
+            if(seg) seg.querySelectorAll('.ios-segment').forEach(function(x){x.classList.remove('active');});
             t.classList.add('active'); var tab=t.dataset.tab; 
             ['logs','employees','reports','photos'].forEach(function(tn){
                 var el=document.getElementById('tab'+tn.charAt(0).toUpperCase()+tn.slice(1)); 
@@ -1442,6 +1723,8 @@ async function init() {
     var today=new Date(), weekAgo=new Date(today); weekAgo.setDate(today.getDate()-7);
     var rs=document.getElementById('reportStartDate'), re=document.getElementById('reportEndDate');
     if(rs)rs.value=weekAgo.toISOString().split('T')[0]; if(re)re.value=today.toISOString().split('T')[0];
+    
+    initSwipeDetection();
 }
 
 init();
