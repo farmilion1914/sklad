@@ -135,7 +135,6 @@
             transform: translateX(20px);
         }
         
-        /* Toast уведомления — исправлено для Dynamic Island */
         .toast-container {
             position: fixed;
             top: env(safe-area-inset-top, 20px);
@@ -653,7 +652,7 @@
 <script>
 // ==================== SERVICE WORKER ====================
 if ('serviceWorker' in navigator) {
-    var swCode = "const CACHE_NAME='gqbox-warehouse-v13';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
+    var swCode = "const CACHE_NAME='gqbox-warehouse-v14';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
     var swBlob = new Blob([swCode], { type: 'application/javascript' }); var swUrl = URL.createObjectURL(swBlob);
     navigator.serviceWorker.register(swUrl).then(function(reg) {});
 }
@@ -683,7 +682,7 @@ function saveSession(u) { localStorage.setItem(SESSION_KEY, JSON.stringify(u)); 
 function getSession() { var r = localStorage.getItem(SESSION_KEY); return r ? JSON.parse(r) : null; }
 function clearSession() { localStorage.removeItem(SESSION_KEY); }
 function getTodayStr() { var d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function formatDateForInput(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function formatDateForInput(d) { if (!d || isNaN(d.getTime())) return getTodayStr(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function formatDateForDisplay(s) { if(!s) return '—'; var p = s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; }
 function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, function(m) { return {'&':'&amp;','<':'&lt;','>':'&gt;'}[m]; }); }
 
@@ -800,7 +799,10 @@ async function addLog(w, a, d, q) {
     var t = getTodayStr(); 
     try {
         await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q || null, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t });
-    } catch(e) {}
+    } catch(e) {
+        showToast('Ошибка сохранения записи', 'error');
+        return;
+    }
     _historyCache = {};
     if (formatDateForInput(currentHistoryDate) === t) loadHistoryForDate(t);
     if (isAdmin) loadAdminLogs();
@@ -864,38 +866,42 @@ async function loadHistoryForDate(ds, page) {
     
     container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
     
-    var s = await db.collection('work_logs')
-        .where('userId', '==', currentUser.id)
-        .where('date', '==', ds)
-        .orderBy('timestamp', 'desc')
-        .get();
-    
-    var allLogs = s.docs.map(function(d) { return d.data(); });
-    _historyTotalDocs = allLogs.length;
-    var totalPages = Math.ceil(allLogs.length / _historyPageSize);
-    if (page > totalPages) page = totalPages;
-    if (page < 1) page = 1;
-    _currentHistoryPage = page;
-    
-    var startIdx = (page - 1) * _historyPageSize;
-    var pageLogs = allLogs.slice(startIdx, startIdx + _historyPageSize);
-    
-    var html;
-    if (pageLogs.length === 0) { 
-        html = '<div class="empty-history">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</div>'; 
-    } else {
-        html = '<div class="history-cards">'; 
-        pageLogs.forEach(function(l) { 
-            var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; 
-            var warehouse = l.warehouse === 'Фото' ? 'Фото' : (l.warehouse || '—'); 
-            html += '<div class="history-card"><div class="history-card-header"><span class="history-time">'+time+'</span><span class="history-warehouse">'+warehouse+'</span></div><div class="history-action">'+(l.action || '—')+'</div><div class="history-details">'+(l.details || '—')+'</div></div>'; 
-        }); 
-        html += '</div>'; 
+    try {
+        var s = await db.collection('work_logs')
+            .where('userId', '==', currentUser.id)
+            .where('date', '==', ds)
+            .orderBy('timestamp', 'desc')
+            .get();
+        
+        var allLogs = s.docs.map(function(d) { return d.data(); });
+        _historyTotalDocs = allLogs.length;
+        var totalPages = Math.ceil(allLogs.length / _historyPageSize);
+        if (page > totalPages && totalPages > 0) page = totalPages;
+        if (page < 1) page = 1;
+        _currentHistoryPage = page;
+        
+        var startIdx = (page - 1) * _historyPageSize;
+        var pageLogs = allLogs.slice(startIdx, startIdx + _historyPageSize);
+        
+        var html;
+        if (pageLogs.length === 0) { 
+            html = '<div class="empty-history">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</div>'; 
+        } else {
+            html = '<div class="history-cards">'; 
+            pageLogs.forEach(function(l) { 
+                var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; 
+                var warehouse = l.warehouse === 'Фото' ? 'Фото' : (l.warehouse || '—'); 
+                html += '<div class="history-card"><div class="history-card-header"><span class="history-time">'+time+'</span><span class="history-warehouse">'+warehouse+'</span></div><div class="history-action">'+(l.action || '—')+'</div><div class="history-details">'+(l.details || '—')+'</div></div>'; 
+            }); 
+            html += '</div>'; 
+        }
+        
+        _historyCache[cacheKey] = html;
+        container.innerHTML = html;
+        renderPagination();
+    } catch(e) {
+        container.innerHTML = '<div class="empty-history">Ошибка загрузки истории</div>';
     }
-    
-    _historyCache[cacheKey] = html;
-    container.innerHTML = html;
-    renderPagination();
 }
 
 function renderPagination() {
@@ -929,6 +935,8 @@ var photoSlots = [null, null, null, null], photoPreviewUrls = [null, null, null,
 var MAX_PHOTOS = 4, MAX_PHOTO_SIZE = 400 * 1024;
 var IP_LIST = ["КЮА","КАА","БМС","ДЕВ"];
 var _cityCache = null;
+var _photoDataStore = {};
+var _photoIdCounter = 0;
 
 function compressImage(file, maxSize) { return new Promise(function(resolve, reject) { var reader = new FileReader(); reader.onload = function(e) { var img = new Image(); img.onload = function() { var canvas = document.createElement('canvas'); var ctx = canvas.getContext('2d'); var maxW = 900, maxH = 900; var w = img.width, h = img.height; if (w > maxW || h > maxH) { var ratio = Math.min(maxW/w, maxH/h); w = Math.round(w * ratio); h = Math.round(h * ratio); } canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h); var quality = 0.55; var result = canvas.toDataURL('image/jpeg', quality); while (result.length > maxSize * 1.37 && quality > 0.2) { quality -= 0.1; result = canvas.toDataURL('image/jpeg', quality); } resolve(result); }; img.onerror = reject; img.src = e.target.result; }; reader.onerror = reject; reader.readAsDataURL(file); }); }
 
@@ -986,7 +994,10 @@ window.savePhotos = async function() {
 
 async function updateCityDatalist() { var datalist = document.getElementById('citySuggestions'); if (!datalist) return; var cities = await getCityList(); datalist.innerHTML = ''; cities.forEach(function(c) { var opt = document.createElement('option'); opt.value = c; datalist.appendChild(opt); }); }
 
-window.showPhotoGallery = function(docData) {
+window.showPhotoGallery = function(photoDataId) {
+    var docData = _photoDataStore[photoDataId];
+    if (!docData) return;
+    
     var existing = document.querySelector('.photo-gallery-overlay'); if (existing) existing.remove();
     var photos = docData.photos || []; if (photos.length === 0) return;
     var currentIdx = 0;
@@ -1018,6 +1029,7 @@ async function deleteCityPallets(city, palletIds) {
 async function loadPalletPhotos(filters) { 
     filters = filters || {}; var container = document.getElementById('palletPhotosContainer'); 
     if (!container) return; container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
+    _photoDataStore = {}; _photoIdCounter = 0;
     var query = db.collection('pallet_photos'); 
     if (filters.userId) query = query.where('userId', '==', filters.userId); 
     if (filters.date) query = query.where('date', '==', filters.date); 
@@ -1040,8 +1052,18 @@ async function loadPalletPhotos(filters) {
                 for (var i = 0; i < Math.min(d.photos.length, maxShow); i++) { gridHtml += '<img src="'+d.photos[i].data+'" alt="Фото">'; }
                 if (d.photos.length > maxShow) { gridHtml += '<div class="thumb-more">+'+(d.photos.length - maxShow)+'</div>'; }
                 gridHtml += '</div>';
-                var docJson = JSON.stringify({photos: d.photos, city: d.city, ipDisplay: d.ipDisplay, userName: d.userName, date: d.date, totalQuantity: d.totalQuantity}).replace(/'/g,"&#39;").replace(/"/g,"&quot;");
-                html += '<div class="ios-photo-card" onclick=\'window.showPhotoGallery('+docJson+')\'>'+gridHtml+'<div class="photo-info"><strong>'+escapeHtml(d.city || '—')+'</strong><br>'+escapeHtml(d.userName || '—')+' &bull; '+formatDateForDisplay(d.date)+'<br>'+escapeHtml(d.ipDisplay || '—')+'<br>'+(d.totalQuantity || 0)+' кор. &bull; '+d.photos.length+' фото</div><button class="ios-delete-btn" onclick="event.stopPropagation();window.deletePallet(\''+p.id+'\')" style="margin:0 8px 8px;width:calc(100% - 16px);">Удалить</button></div>';
+                
+                var photoDataId = 'pd_' + (_photoIdCounter++);
+                _photoDataStore[photoDataId] = {
+                    photos: d.photos,
+                    city: d.city,
+                    ipDisplay: d.ipDisplay,
+                    userName: d.userName,
+                    date: d.date,
+                    totalQuantity: d.totalQuantity
+                };
+                
+                html += '<div class="ios-photo-card" onclick="window.showPhotoGallery(\''+photoDataId+'\')">'+gridHtml+'<div class="photo-info"><strong>'+escapeHtml(d.city || '—')+'</strong><br>'+escapeHtml(d.userName || '—')+' &bull; '+formatDateForDisplay(d.date)+'<br>'+escapeHtml(d.ipDisplay || '—')+'<br>'+(d.totalQuantity || 0)+' кор. &bull; '+d.photos.length+' фото</div><button class="ios-delete-btn" onclick="event.stopPropagation();window.deletePallet(\''+p.id+'\')" style="margin:0 8px 8px;width:calc(100% - 16px);">Удалить</button></div>';
             });
             html += '</div></div></div></div>';
         });
@@ -1062,56 +1084,97 @@ async function archiveOldPhotos(monthsOld) {
 
 // ==================== АДМИН-ПАНЕЛЬ ====================
 function chunkArray(arr, size) { var result = []; for (var i = 0; i < arr.length; i += size) { result.push(arr.slice(i, i + size)); } return result; }
-async function queryByUserChunks(collection, empIds) { if (empIds.length === 0) return []; var chunks = chunkArray(empIds, 10); var allDocs = []; for (var i = 0; i < chunks.length; i++) { var snap = await db.collection(collection).where('userId', 'in', chunks[i]).limit(chunks[i].length).get(); snap.docs.forEach(function(d) { allDocs.push(d); }); } return allDocs; }
+async function queryByUserChunks(collection, empIds) { if (empIds.length === 0) return []; var chunks = chunkArray(empIds, 10); var allDocs = []; for (var i = 0; i < chunks.length; i++) { var snap = await db.collection(collection).where('userId', 'in', chunks[i]).get(); snap.docs.forEach(function(d) { allDocs.push(d); }); } return allDocs; }
 
-async function loadAdminLogs() { 
+var _adminLogsPageSize = 15;
+var _adminLogsCurrentPage = 1;
+var _adminLogsTotalDocs = 0;
+var _adminLogsAllDocs = [];
+
+async function loadAdminLogs(page) { 
     if (!isAdmin) return; var container = document.getElementById('adminLogsContainer'); if(!container) return; 
+    page = page || 1;
+    _adminLogsCurrentPage = page;
     container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
     var eid = document.getElementById('adminFilterEmployee')?.value; var fd = document.getElementById('adminFilterDate')?.value; 
     var q = db.collection('work_logs'); if (eid) q = q.where('userId', '==', eid); if (fd) q = q.where('date', '==', fd); 
-    var s = await q.orderBy('timestamp', 'desc').limit(200).get(); 
-    if (s.empty) { container.innerHTML = '<div class="empty-history">Нет записей</div>'; return; } 
-    var html = '<div class="ios-list">'; 
-    s.docs.forEach(function(d) { 
-        var l = d.data(); var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—'; 
-        var wClass = l.warehouse === 'Москва' ? '#007aff' : (l.warehouse === 'Пушкино' ? '#34c759' : '#ff9500');
-        html += '<div class="ios-list-item ios-log-item"><div class="item-leading">'+time+'</div><div class="item-body"><div class="item-title">'+escapeHtml(l.userName || '—')+' <span class="log-warehouse-tag" style="color:'+wClass+'">'+escapeHtml(l.warehouse || '—')+'</span></div><div class="item-subtitle">'+escapeHtml(l.action || '—')+' &bull; '+escapeHtml(l.details || '—')+'</div></div><button class="ios-delete-btn" data-id="'+d.id+'">Удалить</button></div>'; 
-    }); 
-    html += '</div>'; container.innerHTML = html; 
-    container.querySelectorAll('.ios-delete-btn').forEach(function(b) { b.addEventListener('click', async function() { if (confirm('Удалить запись?')) { await db.collection('work_logs').doc(b.dataset.id).delete(); _historyCache = {}; showToast('Запись удалена','success'); await loadAdminLogs(); } }); }); 
+    try {
+        var s = await q.orderBy('timestamp', 'desc').get(); 
+        _adminLogsAllDocs = s.docs;
+        _adminLogsTotalDocs = s.docs.length;
+        var totalPages = Math.ceil(_adminLogsTotalDocs / _adminLogsPageSize);
+        if (page > totalPages && totalPages > 0) page = totalPages;
+        if (page < 1) page = 1;
+        _adminLogsCurrentPage = page;
+        
+        var startIdx = (page - 1) * _adminLogsPageSize;
+        var pageDocs = _adminLogsAllDocs.slice(startIdx, startIdx + _adminLogsPageSize);
+        
+        if (s.empty) { container.innerHTML = '<div class="empty-history">Нет записей</div>'; return; } 
+        var html = '<div class="ios-list">'; 
+        pageDocs.forEach(function(d) { 
+            var l = d.data(); var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleString('ru-RU', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—'; 
+            var wClass = l.warehouse === 'Москва' ? '#007aff' : (l.warehouse === 'Пушкино' ? '#34c759' : '#ff9500');
+            html += '<div class="ios-list-item ios-log-item"><div class="item-leading">'+time+'</div><div class="item-body"><div class="item-title">'+escapeHtml(l.userName || '—')+' <span class="log-warehouse-tag" style="color:'+wClass+'">'+escapeHtml(l.warehouse || '—')+'</span></div><div class="item-subtitle">'+escapeHtml(l.action || '—')+' &bull; '+escapeHtml(l.details || '—')+'</div></div><button class="ios-delete-btn" data-id="'+d.id+'">Удалить</button></div>'; 
+        }); 
+        html += '</div>'; 
+        if (totalPages > 1) {
+            html += '<div class="pagination">';
+            html += '<button data-admin-page="1" ' + (_adminLogsCurrentPage === 1 ? 'disabled' : '') + '>&#x23EE;</button>';
+            html += '<button data-admin-page="' + (_adminLogsCurrentPage - 1) + '" ' + (_adminLogsCurrentPage === 1 ? 'disabled' : '') + '>&#x2039;</button>';
+            html += '<span class="page-info">' + _adminLogsCurrentPage + ' / ' + totalPages + '</span>';
+            html += '<button data-admin-page="' + (_adminLogsCurrentPage + 1) + '" ' + (_adminLogsCurrentPage === totalPages ? 'disabled' : '') + '>&#x203A;</button>';
+            html += '<button data-admin-page="' + totalPages + '" ' + (_adminLogsCurrentPage === totalPages ? 'disabled' : '') + '>&#x23ED;</button>';
+            html += '</div>';
+        }
+        container.innerHTML = html; 
+        container.querySelectorAll('.ios-delete-btn').forEach(function(b) { b.addEventListener('click', async function() { if (confirm('Удалить запись?')) { await db.collection('work_logs').doc(b.dataset.id).delete(); _historyCache = {}; showToast('Запись удалена','success'); await loadAdminLogs(_adminLogsCurrentPage); } }); }); 
+        container.querySelectorAll('.pagination button:not([disabled])').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                loadAdminLogs(parseInt(this.dataset.adminPage));
+            });
+        });
+    } catch(e) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#ff3b30;">Ошибка загрузки</div>';
+    }
 }
 
 async function loadAdminEmployees() { 
     if (!isAdmin) return; var container = document.getElementById('adminEmployeesContainer'); if(!container) return; 
     container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
-    var s = await db.collection('employees').orderBy('name').get(); 
-    var allEmps = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role }; }); 
-    var empIds = allEmps.map(function(e) { return e.id; });
-    var [workDocs, photoDocs, attendDocs] = await Promise.all([queryByUserChunks('work_logs', empIds), queryByUserChunks('pallet_photos', empIds), queryByUserChunks('attendance', empIds)]);
-    var workSet = new Set(); workDocs.forEach(function(d) { workSet.add(d.data().userId); });
-    var photoSet = new Set(); photoDocs.forEach(function(d) { photoSet.add(d.data().userId); });
-    var attendSet = new Set(); attendDocs.forEach(function(d) { attendSet.add(d.data().userId); });
-    var roleColors = { superadmin: '#ff3b30', admin: '#ff9500', user: '#007aff' };
-    var html = '<div class="ios-list">'; 
-    s.docs.forEach(function(d) { 
-        var e = d.data(); var rt = e.role==='superadmin'?'Суперадмин':(e.role==='admin'?'Админ':'Сотрудник'); 
-        var active = workSet.has(d.id) || photoSet.has(d.id) || attendSet.has(d.id); 
-        var initials = e.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2); 
-        var roleColor = roleColors[e.role] || '#8e8e93';
-        html += '<div class="ios-list-item"><div class="item-leading" style="background:'+roleColor+'20;color:'+roleColor+'">'+initials+'</div><div class="item-body"><div class="item-title">'+escapeHtml(e.name)+'</div><div class="item-subtitle">'+rt+'</div></div><span class="ios-badge '+(active?'active':'inactive')+'">'+(active?'Активен':'Без записей')+'</span>'+(e.role!=='superadmin'?'<button class="ios-delete-btn" data-id="'+d.id+'" data-name="'+escapeHtml(e.name)+'" data-role="'+e.role+'">Удалить</button>':'<span class="item-trailing">—</span>')+'</div>'; 
-    }); 
-    html += '</div>'; container.innerHTML = html; 
-    container.querySelectorAll('.ios-delete-btn').forEach(function(b) { b.addEventListener('click', async function() { 
-        var n = b.dataset.name, r = b.dataset.role, id = b.dataset.id; 
-        if (r === 'superadmin') { showToast('Невозможно удалить суперадмина','warning'); return; } 
-        if (r === 'admin' && !isSuperAdmin) { showToast('Только суперадмин может удалять админов','warning'); return; } 
-        if (n === currentUser.name) { showToast('Нельзя удалить себя','warning'); return; } 
-        if (confirm('Удалить '+n+'?')) { 
-            var ba = db.batch(); var ls = await db.collection('work_logs').where('userId', '==', id).get(); ls.docs.forEach(function(d) { ba.delete(d.ref); }); ba.delete(db.collection('employees').doc(id)); 
-            await ba.commit(); _employeesCache.data = null; _employeesCache.timestamp = 0; _historyCache = {}; 
-            showToast(n + ' удалён','success'); await loadAdminEmployees(); await getEmployees(true); updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
-        } 
-    }); }); 
+    try {
+        var s = await db.collection('employees').orderBy('name').get(); 
+        var allEmps = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role }; }); 
+        var empIds = allEmps.map(function(e) { return e.id; });
+        var [workDocs, photoDocs, attendDocs] = await Promise.all([queryByUserChunks('work_logs', empIds), queryByUserChunks('pallet_photos', empIds), queryByUserChunks('attendance', empIds)]);
+        var workSet = new Set(); workDocs.forEach(function(d) { workSet.add(d.data().userId); });
+        var photoSet = new Set(); photoDocs.forEach(function(d) { photoSet.add(d.data().userId); });
+        var attendSet = new Set(); attendDocs.forEach(function(d) { attendSet.add(d.data().userId); });
+        var roleColors = { superadmin: '#ff3b30', admin: '#ff9500', user: '#007aff' };
+        var html = '<div class="ios-list">'; 
+        s.docs.forEach(function(d) { 
+            var e = d.data(); var rt = e.role==='superadmin'?'Суперадмин':(e.role==='admin'?'Админ':'Сотрудник'); 
+            var active = workSet.has(d.id) || photoSet.has(d.id) || attendSet.has(d.id); 
+            var initials = e.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2); 
+            var roleColor = roleColors[e.role] || '#8e8e93';
+            html += '<div class="ios-list-item"><div class="item-leading" style="background:'+roleColor+'20;color:'+roleColor+'">'+initials+'</div><div class="item-body"><div class="item-title">'+escapeHtml(e.name)+'</div><div class="item-subtitle">'+rt+'</div></div><span class="ios-badge '+(active?'active':'inactive')+'">'+(active?'Активен':'Без записей')+'</span>'+(e.role!=='superadmin'?'<button class="ios-delete-btn" data-id="'+d.id+'" data-name="'+escapeHtml(e.name)+'" data-role="'+e.role+'">Удалить</button>':'<span class="item-trailing">—</span>')+'</div>'; 
+        }); 
+        html += '</div>'; container.innerHTML = html; 
+        container.querySelectorAll('.ios-delete-btn').forEach(function(b) { b.addEventListener('click', async function() { 
+            var n = b.dataset.name, r = b.dataset.role, id = b.dataset.id; 
+            if (r === 'superadmin') { showToast('Невозможно удалить суперадмина','warning'); return; } 
+            if (r === 'admin' && !isSuperAdmin) { showToast('Только суперадмин может удалять админов','warning'); return; } 
+            if (n === currentUser.name) { showToast('Нельзя удалить себя','warning'); return; } 
+            if (confirm('Удалить '+n+'?')) { 
+                var ba = db.batch(); var ls = await db.collection('work_logs').where('userId', '==', id).get(); ls.docs.forEach(function(d) { ba.delete(d.ref); }); ba.delete(db.collection('employees').doc(id)); 
+                await ba.commit(); _employeesCache.data = null; _employeesCache.timestamp = 0; _historyCache = {}; 
+                showToast(n + ' удалён','success'); await loadAdminEmployees(); await getEmployees(true); updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
+            } 
+        }); }); 
+    } catch(e) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#ff3b30;">Ошибка загрузки</div>';
+    }
 }
 
 async function cleanInactiveEmployees() { 
@@ -1150,8 +1213,6 @@ async function generateAdminReport() {
 // ==================== UI РЕНДЕРИНГ ====================
 var currentUser = null, isAdmin = false, isSuperAdmin = false, currentWarehouse = 'Москва', employees = [];
 
-function initAccordion() { document.querySelectorAll('.accordion-header').forEach(header => { header.addEventListener('click', function(e) { e.stopPropagation(); this.parentElement.classList.toggle('open'); }); }); }
-
 async function renderAdminPanel() {
     var ipOptions = IP_LIST.map(function(ip){return '<option value="'+ip+'">'+ip+'</option>';}).join('');
     return '<div class="admin-panel"><div class="ios-segmented-control"><button class="ios-segment active" data-tab="logs">Записи</button><button class="ios-segment" data-tab="employees">Сотрудники</button><button class="ios-segment" data-tab="reports">Отчёты</button><button class="ios-segment" data-tab="photos">Фото</button></div><div id="tabLogs"><div class="ios-filters"><select id="adminFilterEmployee" class="ios-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="adminFilterDate" class="ios-filter-input"><button class="ios-filter-btn" data-admin-action="applyAdminFilter">Поиск</button><button class="ios-filter-btn secondary" data-admin-action="clearAdminFilter">Сброс</button></div><div id="adminLogsContainer"><div class="loading">Загрузка...</div></div></div><div id="tabEmployees" style="display:none;"><div style="display:flex;gap:8px;margin-bottom:12px;"><button class="ios-add-btn" data-admin-action="addEmployee">Добавить</button><button class="ios-filter-btn secondary" data-admin-action="cleanInactive" style="font-size:0.75rem;">Очистить</button></div><div id="adminEmployeesContainer"><div class="loading">Загрузка...</div></div></div><div id="tabReports" style="display:none;"><div class="ios-filters"><select id="reportEmployeeSelect" class="ios-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="reportStartDate" class="ios-filter-input"><input type="date" id="reportEndDate" class="ios-filter-input"><button class="ios-filter-btn" data-admin-action="generateReport">Сформировать</button></div><div id="adminReportResult"></div></div><div id="tabPhotos" style="display:none;"><div class="ios-filters"><select id="photoFilterEmployee" class="ios-filter-select"><option value="">Все сотрудники</option></select><input type="date" id="photoFilterDate" class="ios-filter-input"><select id="photoFilterIP" class="ios-filter-select"><option value="">Все ИП</option>'+ipOptions+'</select><input type="text" id="photoFilterCityInput" class="ios-filter-input" placeholder="Город" style="width:80px;"><button class="ios-filter-btn" data-admin-action="applyPhotoFilter">Поиск</button><button class="ios-filter-btn secondary" data-admin-action="clearPhotoFilter">Сброс</button></div><div style="display:flex;justify-content:flex-end;margin-bottom:10px;"><button class="ios-archive-btn" data-admin-action="archivePhotos">Архив старых фото</button></div><div id="palletPhotosContainer"><div class="loading">Загрузка...</div></div></div></div>';
@@ -1185,7 +1246,7 @@ async function completeLogin(u) {
         currentHistoryDate = new Date(); 
         document.getElementById('historyDateInput').value = formatDateForInput(currentHistoryDate); 
         loadHistoryForDate(formatDateForInput(currentHistoryDate)); 
-        initAccordion(); showInstallPrompt(); 
+        showInstallPrompt(); 
     }
 }
 
@@ -1206,6 +1267,7 @@ async function renderUserPanel() {
 function logout() { 
     currentUser = null; isAdmin = false; isSuperAdmin = false; clearAllPhotoPreviews();
     _employeesCache.data = null; _employeesCache.timestamp = 0; _historyCache = {}; _cityCache = null; _cityColorMap = {};
+    _photoDataStore = {}; _photoIdCounter = 0;
     clearSession(); document.getElementById('loginScreen').style.display = 'block'; document.getElementById('dashboard').classList.remove('active'); 
 }
 
