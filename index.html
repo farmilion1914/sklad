@@ -1145,7 +1145,9 @@ async function loadAdminEmployees() {
     container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
     try {
         var s = await db.collection('employees').orderBy('name').get(); 
-        var allEmps = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role }; }); 
+        var allEmps = s.docs.map(function(d) { return { id: d.id, name: d.data().name, login: d.data().login, role: d.data().role, active: d.data().active }; });
+        employees = allEmps;
+        _employeesCache.data = allEmps; _employeesCache.timestamp = Date.now();
         var empIds = allEmps.map(function(e) { return e.id; });
         var [workDocs, photoDocs, attendDocs] = await Promise.all([queryByUserChunks('work_logs', empIds), queryByUserChunks('pallet_photos', empIds), queryByUserChunks('attendance', empIds)]);
         var workSet = new Set(); workDocs.forEach(function(d) { workSet.add(d.data().userId); });
@@ -1167,7 +1169,12 @@ async function loadAdminEmployees() {
             if (r === 'admin' && !isSuperAdmin) { showToast('Только суперадмин может удалять админов','warning'); return; } 
             if (n === currentUser.name) { showToast('Нельзя удалить себя','warning'); return; } 
             if (confirm('Удалить '+n+'?')) { 
-                var ba = db.batch(); var ls = await db.collection('work_logs').where('userId', '==', id).get(); ls.docs.forEach(function(d) { ba.delete(d.ref); }); ba.delete(db.collection('employees').doc(id)); 
+                var ba = db.batch(); 
+                var ls = await db.collection('work_logs').where('userId', '==', id).get(); ls.docs.forEach(function(d) { ba.delete(d.ref); }); 
+                var at = await db.collection('attendance').where('userId', '==', id).get(); at.docs.forEach(function(d) { ba.delete(d.ref); }); 
+                var ph = await db.collection('pallet_photos').where('userId', '==', id).get(); ph.docs.forEach(function(d) { ba.delete(d.ref); }); 
+                var ut = await db.collection('user_totals').where('userId', '==', id).get(); ut.docs.forEach(function(d) { ba.delete(d.ref); }); 
+                ba.delete(db.collection('employees').doc(id)); 
                 await ba.commit(); _employeesCache.data = null; _employeesCache.timestamp = 0; _historyCache = {}; 
                 showToast(n + ' удалён','success'); await loadAdminEmployees(); await getEmployees(true); updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
             } 
@@ -1187,7 +1194,16 @@ async function cleanInactiveEmployees() {
     var inactiveList = []; allEmps.forEach(function(emp) { if (emp.role === 'admin' || emp.role === 'superadmin' || emp.id === currentUser.id) return; if (!workSet.has(emp.id) && !photoSet.has(emp.id) && !attendSet.has(emp.id)) inactiveList.push({ id: emp.id, name: emp.name, login: emp.login }); });
     if (inactiveList.length === 0) { showToast('Все активны!','info'); return; } 
     if (!confirm('Найдено '+inactiveList.length+':\n\n'+inactiveList.map(function(e) { return e.name + ' (' + e.login + ')'; }).join('\n')+'\n\nУдалить?')) return; 
-    var batch = db.batch(); inactiveList.forEach(function(emp) { batch.delete(db.collection('employees').doc(emp.id)); }); await batch.commit(); 
+    var batch = db.batch(); 
+    for (var i = 0; i < inactiveList.length; i++) {
+        var emp = inactiveList[i];
+        var ls = await db.collection('work_logs').where('userId', '==', emp.id).get(); ls.docs.forEach(function(d) { batch.delete(d.ref); });
+        var at = await db.collection('attendance').where('userId', '==', emp.id).get(); at.docs.forEach(function(d) { batch.delete(d.ref); });
+        var ph = await db.collection('pallet_photos').where('userId', '==', emp.id).get(); ph.docs.forEach(function(d) { batch.delete(d.ref); });
+        var ut = await db.collection('user_totals').where('userId', '==', emp.id).get(); ut.docs.forEach(function(d) { batch.delete(d.ref); });
+        batch.delete(db.collection('employees').doc(emp.id));
+    }
+    await batch.commit(); 
     showToast('Удалено '+inactiveList.length+'!','success'); _employeesCache.data = null; _employeesCache.timestamp = 0; _historyCache = {}; await getEmployees(true); await loadAdminEmployees(); updateFilterEmployeeSelect(); updatePhotoFilterEmployees(); 
 }
 
@@ -1219,7 +1235,12 @@ async function renderAdminPanel() {
 }
 
 async function completeLogin(u) {
-    currentUser = u; isAdmin = (u.role === 'admin' || u.role === 'superadmin'); isSuperAdmin = (u.role === 'superadmin');
+    currentUser = u;
+    isAdmin = (u.role === 'admin' || u.role === 'superadmin');
+    isSuperAdmin = (u.role === 'superadmin');
+    
+    await getEmployees(true);
+    
     document.getElementById('userName').textContent = u.name;
     document.getElementById('userAvatar').textContent = u.name.split(' ').map(function(w){return w[0];}).join('').slice(0,2);
     if (isSuperAdmin) { document.getElementById('superadminTag').style.display = 'inline'; document.getElementById('adminTag').style.display = 'none'; }
