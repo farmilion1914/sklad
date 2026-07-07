@@ -537,7 +537,7 @@
         .date-nav-btn { background: #fff; border: 1px solid #dce3e9; padding: 5px 10px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.7rem; transition: all 0.2s; color: #374151; display: flex; align-items: center; justify-content: center; min-width: 30px; }
         body.dark-theme .date-nav-btn { background: #3a3a3c; border-color: #48484a; color: #d1d5db; }
         .history-cards { display: flex; flex-direction: column; gap: 8px; }
-        .history-card { background: #f8f9fb; border-radius: 12px; padding: 10px 12px; border: 1px solid #e8edf2; transition: all 0.2s; animation: cardIn 0.3s ease; }
+        .history-card { background: #f8f9fb; border-radius: 12px; padding: 10px 12px; border: 1px solid #e8edf2; transition: all 0.2s; animation: cardIn 0.3s ease; position: relative; }
         @keyframes cardIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         body.dark-theme .history-card { background: #2c2c2e; border-color: #3a3a3c; }
         .history-card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
@@ -547,8 +547,28 @@
         body.dark-theme .history-warehouse { background: #3a3a3c; color: #e5e7eb; }
         .history-action { font-weight: 600; font-size: 0.8rem; color: #111827; margin-bottom: 4px; }
         body.dark-theme .history-action { color: #f3f4f6; }
-        .history-details { font-size: 0.7rem; color: #6b7280; word-break: break-word; }
+        .history-details { font-size: 0.7rem; color: #6b7280; word-break: break-word; margin-bottom: 8px; }
         body.dark-theme .history-details { color: #8e8e93; }
+        .history-card .delete-log-btn {
+            width: 100%;
+            margin-top: 4px;
+            padding: 6px 12px;
+            background: none;
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .history-card .delete-log-btn:active {
+            background: rgba(255,59,48,0.1);
+        }
+        body.dark-theme .history-card .delete-log-btn {
+            border-color: #ff453a;
+            color: #ff453a;
+        }
         .empty-history { text-align: center; padding: 30px; color: #9ca3af; font-size: 0.8rem; }
         .pagination { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 0; }
         .pagination button { background: #f8f9fb; border: 1px solid #dce3e9; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 500; color: #374151; transition: all 0.2s; min-width: 32px; }
@@ -654,7 +674,7 @@
 <script>
 // ==================== SERVICE WORKER ====================
 if ('serviceWorker' in navigator) {
-    var swCode = "const CACHE_NAME='gqbox-warehouse-v32';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
+    var swCode = "const CACHE_NAME='gqbox-warehouse-v33';const ASSETS=['./','https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'];self.addEventListener('install',function(e){e.waitUntil(caches.open(CACHE_NAME).then(function(c){return c.addAll(ASSETS).catch(function(){})}));self.skipWaiting()});self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE_NAME}).map(function(k){return caches.delete(k)}))}));self.clients.claim()});self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;e.respondWith(caches.match(e.request).then(function(cached){var fetched=fetch(e.request).then(function(response){if(response&&response.status===200){var clone=response.clone();caches.open(CACHE_NAME).then(function(cache){cache.put(e.request,clone)})}return response}).catch(function(){return cached});return cached||fetched}))});";
     var swBlob = new Blob([swCode], { type: 'application/javascript' }); var swUrl = URL.createObjectURL(swBlob);
     navigator.serviceWorker.register(swUrl).then(function(reg) {});
 }
@@ -779,13 +799,134 @@ async function updateTotal(ty, inc) { if (!currentUser) return; var dId = curren
 async function addLog(w, a, d, q) { if (!currentUser) return; var t = getTodayStr(); try { await db.collection('work_logs').add({ userId: currentUser.id, userName: currentUser.name, warehouse: w, action: a, details: d, quantity: q||null, timestamp: firebase.firestore.FieldValue.serverTimestamp(), date: t }); } catch(e) { showToast('Ошибка сохранения', 'error'); return; } _historyCache = {}; _salaryCache = {}; if (formatDateForInput(currentHistoryDate)===t) loadHistoryForDate(t); if (isAdmin) loadAdminLogs(); updateSalaryDisplay(); }
 async function handleAction(a) { if (a==='receive' && counters.moscowReceived) { await addLog('Москва','Принял коробов',counters.moscowReceived+' кор.',counters.moscowReceived); showToast('Принято: '+counters.moscowReceived+' кор.','success'); counters.moscowReceived=0; } if (a==='collect' && counters.moscowCollected) { var q=counters.moscowCollected; await addLog('Москва','Собрал паллеты',q+' шт.',q); showToast('Собрано: '+q+' палл.','success'); counters.moscowCollected=0; } if (a==='ship' && counters.moscowShipped) { await addLog('Москва','Отгрузил паллеты',counters.moscowShipped+' шт.',counters.moscowShipped); showToast('Отгружено: '+counters.moscowShipped+' палл.','success'); counters.moscowShipped=0; } if (a==='lay') { var ae=document.getElementById('moscowArticle'),qe=document.getElementById('moscowQuantity'); var art=ae?.value.trim(),qty=parseInt(qe?.value); if(!art){showToast('Укажите артикул','warning');return;} if(!qty||qty<1){showToast('Укажите количество','warning');return;} moscowLastArticle=art; await addLog('Москва','Выкладка товара','арт. '+art+', '+qty+' шт.',qty); showToast('Выкладка: '+art+' - '+qty+' шт.','success'); if(ae)ae.value=''; if(qe)qe.value=''; } if (a==='invoice') { var ie=document.getElementById('moscowInvoiceNumber'),qe=document.getElementById('moscowInvoiceQuantity'); var inv=ie?.value.trim(),qty=parseInt(qe?.value); if(!inv){showToast('Укажите накладную','warning');return;} if(!qty||qty<1){showToast('Укажите количество','warning');return;} await addLog('Москва','Сборка по накладной','накл. '+inv+', '+qty+' шт.',qty); await updateTotal('moscow_invoice',qty); showToast('Накладная '+inv+': '+qty+' шт.','success'); if(ie)ie.value=''; if(qe)qe.value=''; } if (a==='accept' && counters.pushkinoAccepted) { await addLog('Пушкино','Принял с осн. склада',counters.pushkinoAccepted+' кор.',counters.pushkinoAccepted); await updateTotal('pushkino_accepted',counters.pushkinoAccepted); showToast('Принято с осн.: '+counters.pushkinoAccepted+' кор.','success'); counters.pushkinoAccepted=0; } if (a==='shipPushkino' && counters.pushkinoShipped) { await addLog('Пушкино','Отгрузил на осн. склад',counters.pushkinoShipped+' кор.',counters.pushkinoShipped); await updateTotal('pushkino_shipped',counters.pushkinoShipped); showToast('Отгружено на осн.: '+counters.pushkinoShipped+' кор.','success'); counters.pushkinoShipped=0; } if (a==='unload' && counters.pushkinoUnloaded) { await addLog('Пушкино','Выгрузка фуры',counters.pushkinoUnloaded+' кор.',counters.pushkinoUnloaded); await updateTotal('pushkino_unloaded',counters.pushkinoUnloaded); showToast('Выгружено: '+counters.pushkinoUnloaded+' кор.','success'); counters.pushkinoUnloaded=0; } if (a==='rework' && counters.pushkinoReworked) { await addLog('Пушкино','Перебрал паллеты',counters.pushkinoReworked+' кор.',counters.pushkinoReworked); await updateTotal('pushkino_reworked',counters.pushkinoReworked); showToast('Перебрано: '+counters.pushkinoReworked+' кор.','success'); counters.pushkinoReworked=0; } updateAllCounters(); updateSalaryDisplay(); }
 
+// ==================== УДАЛЕНИЕ ЗАПИСЕЙ КЛАДОВЩИКОМ ====================
+async function deleteLog(docId) {
+    if (!confirm('Удалить эту запись навсегда?\n\nЭто действие нельзя отменить. Все связанные данные также будут удалены.')) return;
+    try {
+        var docRef = db.collection('work_logs').doc(docId);
+        var docSnap = await docRef.get();
+        if (!docSnap.exists) {
+            showToast('Запись не найдена', 'error');
+            return;
+        }
+        var logData = docSnap.data();
+        
+        // Удаляем саму запись
+        await docRef.delete();
+        
+        // Если это запись о присутствии - удаляем связанную attendance
+        if (logData && logData.action === 'Работал на складе' && logData.userId && logData.warehouse && logData.date) {
+            try {
+                var attSnap = await db.collection('attendance')
+                    .where('userId', '==', logData.userId)
+                    .where('warehouse', '==', logData.warehouse)
+                    .where('date', '==', logData.date)
+                    .get();
+                var batch = db.batch();
+                attSnap.docs.forEach(function(doc) {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+            } catch(e) {
+                console.error('Ошибка удаления attendance:', e);
+            }
+        }
+        
+        // Сбрасываем все кеши
+        _historyCache = {};
+        _salaryCache = {};
+        
+        showToast('Запись удалена', 'success');
+        
+        // Обновляем интерфейс
+        var currentDateStr = formatDateForInput(currentHistoryDate);
+        await loadHistoryForDate(currentDateStr);
+        await updateSalaryDisplay();
+        if (isAdmin) {
+            await loadAdminLogs(_adminLogsCurrentPage);
+        }
+        await loadUserData();
+        await checkTodayAttendance();
+        
+    } catch(e) {
+        console.error('Ошибка удаления:', e);
+        showToast('Ошибка удаления: ' + (e.message || 'Неизвестная ошибка'), 'error');
+    }
+}
+
 // ==================== ПОСЕЩАЕМОСТЬ ====================
 async function checkTodayAttendance() { if (!currentUser) return; var t = getTodayStr(); var m = await db.collection('attendance').where('userId','==',currentUser.id).where('warehouse','==','Москва').where('date','==',t).get(); var me = document.getElementById('moscowWorkedToday'); if(me) { me.textContent = m.empty?'Не отмечено':'Отмечено'; me.style.color = m.empty?'#6b7280':'#059669'; } var p = await db.collection('attendance').where('userId','==',currentUser.id).where('warehouse','==','Пушкино').where('date','==',t).get(); var pe = document.getElementById('pushkinoWorkedToday'); if(pe) { pe.textContent = p.empty?'Не отмечено':'Отмечено'; pe.style.color = p.empty?'#6b7280':'#059669'; } }
 async function markAttendance(w) { if (!currentUser) return; var t = getTodayStr(); var s = await db.collection('attendance').where('userId','==',currentUser.id).where('warehouse','==',w).where('date','==',t).get(); if (!s.empty) { showToast('Уже отмечены на '+w,'warning'); return; } await db.collection('attendance').add({ userId:currentUser.id, userName:currentUser.name, warehouse:w, date:t, timestamp:firebase.firestore.FieldValue.serverTimestamp() }); await db.collection('work_logs').add({ userId:currentUser.id, userName:currentUser.name, warehouse:w, action:'Работал на складе', details:'Присутствие на складе '+w, timestamp:firebase.firestore.FieldValue.serverTimestamp(), date:t }); showToast('Отмечено присутствие на '+w,'success'); _historyCache={}; _salaryCache={}; await checkTodayAttendance(); await updateSalaryDisplay(); if (formatDateForInput(currentHistoryDate)===t) await loadHistoryForDate(t); if (isAdmin) await loadAdminLogs(); }
 
 // ==================== ИСТОРИЯ ====================
 var _historyCache = {}, _historyPageSize = 15, currentHistoryDate = new Date(), _currentHistoryPage = 1, _historyTotalDocs = 0;
-async function loadHistoryForDate(ds, page) { if (!currentUser) return; var container = document.getElementById('myHistoryContainer'); if(!container) return; page = page || 1; _currentHistoryPage = page; var cacheKey = currentUser.id + '_' + ds + '_' + page; if (_historyCache[cacheKey]) { container.innerHTML = _historyCache[cacheKey]; renderPagination(); return; } container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; try { var s = await db.collection('work_logs').where('userId','==',currentUser.id).where('date','==',ds).orderBy('timestamp','desc').get(); var allLogs = s.docs.map(function(d){return d.data();}); _historyTotalDocs = allLogs.length; var totalPages = Math.ceil(allLogs.length/_historyPageSize); if (page>totalPages && totalPages>0) page=totalPages; if (page<1) page=1; _currentHistoryPage=page; var startIdx = (page-1)*_historyPageSize; var pageLogs = allLogs.slice(startIdx, startIdx+_historyPageSize); var html; if (pageLogs.length===0) { html='<div class="empty-history">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</div>'; } else { html='<div class="history-cards">'; pageLogs.forEach(function(l){ var time=l.timestamp?new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}):'—'; html+='<div class="history-card"><div class="history-card-header"><span class="history-time">'+time+'</span><span class="history-warehouse">'+(l.warehouse||'—')+'</span></div><div class="history-action">'+(l.action||'—')+'</div><div class="history-details">'+(l.details||'—')+'</div></div>'; }); html+='</div>'; } _historyCache[cacheKey]=html; container.innerHTML=html; renderPagination(); } catch(e) { container.innerHTML='<div class="empty-history">Ошибка загрузки</div>'; } }
+
+function attachDeleteHandlers() {
+    document.querySelectorAll('.delete-log-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var docId = this.dataset.docId;
+            if (docId) deleteLog(docId);
+        });
+    });
+}
+
+async function loadHistoryForDate(ds, page) { 
+    if (!currentUser) return; 
+    var container = document.getElementById('myHistoryContainer');
+    if(!container) return; 
+    page = page || 1; 
+    _currentHistoryPage = page; 
+    var cacheKey = currentUser.id + '_' + ds + '_' + page; 
+    if (_historyCache[cacheKey]) { 
+        container.innerHTML = _historyCache[cacheKey]; 
+        renderPagination(); 
+        attachDeleteHandlers();
+        return; 
+    } 
+    container.innerHTML = '<div class="loading"><span class="loading-spinner"></span> Загрузка...</div>'; 
+    try { 
+        var s = await db.collection('work_logs')
+            .where('userId','==',currentUser.id)
+            .where('date','==',ds)
+            .orderBy('timestamp','desc')
+            .get(); 
+        var allLogs = s.docs.map(function(d){
+            return {id: d.id, data: d.data()};
+        }); 
+        _historyTotalDocs = allLogs.length; 
+        var totalPages = Math.ceil(allLogs.length/_historyPageSize); 
+        if (page>totalPages && totalPages>0) page=totalPages; 
+        if (page<1) page=1; 
+        _currentHistoryPage=page; 
+        var startIdx = (page-1)*_historyPageSize; 
+        var pageLogs = allLogs.slice(startIdx, startIdx+_historyPageSize); 
+        var html; 
+        if (pageLogs.length===0) { 
+            html='<div class="empty-history">'+(ds===getTodayStr()?'Нет записей за сегодня':'Нет записей за '+formatDateForDisplay(ds))+'</div>'; 
+        } else { 
+            html='<div class="history-cards">'; 
+            pageLogs.forEach(function(item){ 
+                var l = item.data;
+                var time = l.timestamp ? new Date(l.timestamp.toDate()).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '—'; 
+                html+='<div class="history-card" data-doc-id="'+item.id+'">';
+                html+='<div class="history-card-header"><span class="history-time">'+time+'</span><span class="history-warehouse">'+(l.warehouse||'—')+'</span></div>'; 
+                html+='<div class="history-action">'+(l.action||'—')+'</div>'; 
+                html+='<div class="history-details">'+(l.details||'—')+'</div>';
+                html+='<button class="delete-log-btn" data-doc-id="'+item.id+'">Удалить запись</button>';
+                html+='</div>'; 
+            }); 
+            html+='</div>'; 
+        } 
+        _historyCache[cacheKey]=html; 
+        container.innerHTML=html; 
+        renderPagination(); 
+        attachDeleteHandlers();
+    } catch(e) { 
+        container.innerHTML='<div class="empty-history">Ошибка загрузки</div>'; 
+    } 
+}
+
 function renderPagination() { var container=document.getElementById('myHistoryContainer'); if(!container) return; var totalPages=Math.ceil(_historyTotalDocs/_historyPageSize); if(totalPages<=1) return; var ph='<div class="pagination">'; ph+='<button data-page="1" '+(_currentHistoryPage===1?'disabled':'')+'>&#x23EE;</button>'; ph+='<button data-page="'+(_currentHistoryPage-1)+'" '+(_currentHistoryPage===1?'disabled':'')+'>&#x2039;</button>'; ph+='<span class="page-info">'+_currentHistoryPage+' / '+totalPages+'</span>'; ph+='<button data-page="'+(_currentHistoryPage+1)+'" '+(_currentHistoryPage===totalPages?'disabled':'')+'>&#x203A;</button>'; ph+='<button data-page="'+totalPages+'" '+(_currentHistoryPage===totalPages?'disabled':'')+'>&#x23ED;</button>'; ph+='</div>'; container.insertAdjacentHTML('beforeend',ph); container.querySelectorAll('.pagination button:not([disabled])').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();loadHistoryForDate(formatDateForInput(currentHistoryDate),parseInt(this.dataset.page));});}); }
 
 // ==================== ФОТО ПАЛЛЕТ ====================
